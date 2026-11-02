@@ -1,6 +1,6 @@
 # Project Model & Portability
 
-**Status:** Proposed · **Revision:** 0.5
+**Status:** Proposed · **Revision:** 0.6
 
 ## Confirmed product behavior
 
@@ -65,3 +65,14 @@ Script files may already exist in the ECU repository, or may be referenced throu
 - Project-shared vs user-local layouts (prefer user-local default).
 - Permitted references outside the project directory.
 - Handling of OS-specific hardware aliases without saving machine-specific paths.
+
+## v0.6 accepted decisions
+
+| ID | Status | Requirement |
+|---|---|---|
+| REQ-PROJ-011 | Accepted | Personal UI layouts, filter presets and preferences are stored in application-local data; only explicitly shared configuration goes into the single ECU project file. |
+| REQ-PROJ-012 | Accepted | ECU project references portable logical channels; physical device mappings are machine-local. |
+
+Acceptance: two checkouts resolve distinct DBCs; local view edits leave Git clean; same logical channel can map to SocketCAN on Linux and PCAN on Windows; unresolved mappings never auto-select a transmit device.
+
+Open: preset sharing/override schema and local mapping identity.
