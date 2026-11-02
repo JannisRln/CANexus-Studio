@@ -40,4 +40,4 @@ Detailed canonical specifications: [Trace Viewer](06-trace-viewer.md), [Unified 
 
 ## Open decisions
 
-Exact default columns, timestamp presentation, logging file format strategy, trace ring-buffer lifetime, DBC editing vs read-only for the first release, transmitter authorization defaults. Sorting and column filtering are confirmed and no longer open decisions.
+Exact default columns, timestamp presentation, which direct-write interoperable standard recording format to use, trace ring-buffer lifetime, transmitter authorization defaults. Sorting and column filtering are confirmed and no longer open decisions.
