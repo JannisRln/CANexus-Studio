@@ -1,6 +1,6 @@
 # Hardware Abstraction & Plugin System
 
-**Status:** Proposed · **Revision:** 0.5
+**Status:** Proposed · **Revision:** 0.6
 
 **Architecture direction:** Separate network-agnostic lifecycle, event routing, timing and UI/query services from typed CAN-specific adapters and future Ethernet adapters. See [Network Extensibility](09-network-extensibility.md). The extension ecosystem contains two complementary layers: native plugins and a scripting runtime, specified in [Scripting & Automation](08-scripting-automation.md).
 
@@ -44,3 +44,13 @@
 ## Open decisions
 
 Native dynamic ABI choice; plugin discovery locations; signed/verified plugin policy; external plugins' write permissions; safety of in-process extensions; module-specific scripting namespaces; network capabilities; hardware/channel arbitration and reconnect strategy.
+
+## v0.6 accepted SDK and channel decisions
+
+| ID | Status | Requirement |
+|---|---|---|
+| REQ-PLG-010 | Accepted | Provide a publicly documented, versioned plugin SDK for independent external developers. |
+| REQ-HAL-008 | Accepted | Portable ECU project logical channels are mapped to concrete hardware in user/machine-local settings. |
+| REQ-PLG-011 | Proposed | Publish example plugins, compatibility diagnostics, SDK migration guidance and a test harness. |
+
+Acceptance: an external developer builds a protocol or device plugin without modifying CANexus source; incompatible plugin fails with clear diagnostics; the same project maps logical CAN1 to different physical adapters on Windows/Linux; unresolved mapping cannot silently transmit.
