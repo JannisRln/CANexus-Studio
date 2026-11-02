@@ -1,6 +1,6 @@
 # CANexus-Studio Requirements
 
-**Revision:** 0.5 draft · **Source of truth:** this repository's Markdown files.
+**Revision:** 0.6 draft · **Source of truth:** this repository's Markdown files.
 
 ## Rules
 
@@ -49,3 +49,16 @@
 ## Process
 
 Propose in discussion → write/update Markdown → review contradictions, feasibility and tests → mark `Accepted` → implement → mark `Verified` with test evidence. 
+
+## v0.6 accepted decisions
+
+- DBC collision resolution: ordered default interpretation plus toggleable concurrent interpretations.
+- DBC sources initially read-only, editing later.
+- Formula and Python-derived signals; professional signal plotting.
+- Independent per-panel Trace presets.
+- Direct-to-standard-format recording; standard choice TBD (MDF4 candidate).
+- Python primary scripting language; external public plugin SDK; GUI and headless CLI testing.
+- Logical channels mapped to local hardware; personal UI settings local, shared settings in project.
+- Interactive UI first; project resources load in background.
+
+See [v0.6 decisions and conflict register](11-decisions-v0.6.md).
