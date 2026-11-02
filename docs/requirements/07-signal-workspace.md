@@ -26,7 +26,7 @@ A signal/object reference must include source module/plugin, network/session, so
 | REQ-SIG-010 | P1 | Proposed | Common explorer and plots remain functional when an optional protocol plugin is not installed; unavailable objects are signaled. |
 | REQ-SIG-011 | P1 | Proposed | Module-specific contextual operations are registered through capability-based commands, with explicit permission checks for writes. |
 | REQ-SIG-012 | P1 | Proposed | Favorites, recent objects and personal visualization preferences are user-local by default, not extra files in an ECU project. |
-| REQ-SIG-013 | P2 | Proposed | Cross-source derived or computed signals can be defined with documented units, timestamp semantics and quality propagation. |
+| REQ-SIG-013 | P1 | Accepted | Formula and Python-computed signals are supported with defined units, timestamps and quality propagation. |
 
 ## Module-specific UX proposals
 
@@ -59,4 +59,4 @@ Mandatory module-specific widgets for MVP; polling rate controls; derived signal
 
 Acceptance: plot DBC/XCP values on separate axes, use two cursors to read delta time and values; calculate a derived signal; a slow Python calculation never blocks acquisition; cyclic dependencies and invalid units show errors; zooming millions of samples remains responsive.
 
-**Supersedes Proposed wording for REQ-SIG-013 above.**
+
