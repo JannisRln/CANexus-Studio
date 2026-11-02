@@ -1,10 +1,12 @@
 # Protocols & Description Formats
 
-**Status:** Proposed · **Revision:** 0.4
+**Status:** Proposed · **Revision:** 0.5
 
 ## Shared principles
 
-Transport layers, protocol state machines, configuration models, ECU resources and views are separate modules. Protocols consume one shared CAN Core / HAL rather than opening hardware directly. Protocol features are exposed through services that remain testable without the UI.
+Transport layers, protocol state machines, configuration models, ECU resources and views are separate modules. Protocols consume shared capability-based transport/session services rather than opening hardware directly. CAN protocol plugins use the CAN transport; future Ethernet-based protocols use an Ethernet transport without being represented as CAN frames. Protocol features are exposed through services that remain testable without the UI.
+
+See [Multi-network Extensibility](09-network-extensibility.md) for future Ethernet and [Unified Signal Explorer](07-signal-workspace.md) for module-specific object semantics. Script APIs per module are specified in [Scripting](08-scripting-automation.md).
 
 ## Network descriptions (DBC)
 
