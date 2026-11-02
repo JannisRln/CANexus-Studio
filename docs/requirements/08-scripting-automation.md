@@ -8,7 +8,7 @@ A scripting system complements the native **plugin system**. Native plugins prov
 
 **Confirmed:** CANexus-Studio needs scripting and plugins; module-specific APIs must be possible.
 
-**Recommendation for evaluation:** Python first for authoring and test ecosystems, executed out-of-process for stronger isolation; do not mandate Python before benchmarking startup, IPC and packaging. A lighter embedded DSL may be added for deterministic filtering/expressions.
+**Accepted:** Python is the primary scripting language. **Proposed implementation:** out-of-process workers, subject to isolation, startup, IPC and packaging benchmarks. A lighter embedded DSL may be added for deterministic filtering/expressions.
 
 ## Requirements
 
