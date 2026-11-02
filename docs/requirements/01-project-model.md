@@ -62,7 +62,7 @@ Script files may already exist in the ECU repository, or may be referenced throu
 ## Open decisions
 
 - Is `canexus.toml` the final filename?
-- Project-shared vs user-local layouts (prefer user-local default).
+- Exact precedence and explicit promotion of personal presets into shared project configuration.
 - Permitted references outside the project directory.
 - Handling of OS-specific hardware aliases without saving machine-specific paths.
 
