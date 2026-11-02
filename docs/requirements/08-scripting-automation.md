@@ -53,7 +53,7 @@ async def on_frame(frame):
         log.info("Received powertrain frame")
 
 subscribe_can(on_frame, channel="powertrain", can_id=0x100)
-await canexus.ud s.read_did("ecu_1", 0xF190)  # namespace and syntax TBD
+await canexus.uds.read_did("ecu_1", 0xF190)  # namespace and syntax TBD
 ```
 
 ## Acceptance tests
