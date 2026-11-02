@@ -1,6 +1,6 @@
 # User Experience & Performance
 
-**Status:** Proposed · **Revision:** 0.4
+**Status:** Proposed · **Revision:** 0.5
 
 ## Principle
 
@@ -22,6 +22,8 @@ Performance includes both high-throughput CAN processing **and perceived respons
 | REQ-UX-008 | P1 | Proposed | Search, filtering and sorting large traces must not freeze unrelated panels. |
 | REQ-UX-009 | P1 | Proposed | Floating/multi-monitor window behavior is validated on both supported OSes. |
 | REQ-UX-010 | P1 | Proposed | UI performance is continuously measured with repeatable representative datasets. |
+
+The Trace must support per-column filter/sort operations and both chronological and fixed-position modes; the corresponding accepted product decisions and proposed measurable detail requirements reside in [Trace Viewer](06-trace-viewer.md). Shared signal browsing and module-specific panels are specified in [Signal Workspace](07-signal-workspace.md).
 
 ## Initial targets (not yet accepted)
 
