@@ -1,6 +1,6 @@
 # Unified Signal Explorer and Module-Specific Views
 
-**Revision:** 0.5 · **Status:** Mixed
+**Revision:** 0.6 · **Status:** Mixed
 
 ## Confirmed interaction model
 
@@ -47,3 +47,16 @@ A signal/object reference must include source module/plugin, network/session, so
 ## Open details
 
 Mandatory module-specific widgets for MVP; polling rate controls; derived signal language; name collisions and aliases; rights model for writable objects.
+
+## v0.6 derived signals and professional plotting
+
+| ID | Status | Requirement |
+|---|---|---|
+| REQ-SIG-013 | Accepted | Users can create formula-based and Python-script-computed signals, respecting timestamp, unit and quality semantics. |
+| REQ-PLOT-001 | Accepted | Provide a professional signal plotter with multiple axes, synchronized timeline, zoom/pan, measurement cursors and markers. |
+| REQ-PLOT-002 | Proposed | Support large histories via downsampling/level-of-detail without discarding underlying measurements. |
+| REQ-PLOT-003 | Proposed | Plot configuration and cross-module time synchronization report unavailable or uncertain timing. |
+
+Acceptance: plot DBC/XCP values on separate axes, use two cursors to read delta time and values; calculate a derived signal; a slow Python calculation never blocks acquisition; cyclic dependencies and invalid units show errors; zooming millions of samples remains responsive.
+
+**Supersedes Proposed wording for REQ-SIG-013 above.**
