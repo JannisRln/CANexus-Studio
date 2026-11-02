@@ -16,7 +16,7 @@ See [Multi-network Extensibility](09-network-extensibility.md) for future Ethern
 | REQ-DBC-002 | P1 | Proposed | Decode/encode signals including bit order, signedness, scaling, multiplexing and value tables. |
 | REQ-DBC-003 | P1 | Proposed | Show message/signal browser, search, description and source file locations. |
 | REQ-DBC-004 | P2 | Proposed | Detect/report invalid or conflicting definitions without blocking unrelated networks. |
-| REQ-DBC-005 | P2 | Proposed | Offer DBC editing with deterministic formatting (separate scope decision). |
+| REQ-DBC-005 | P2 | Accepted | DBC files are read-only initially; a DBC editor is planned for a later milestone. |
 
 ## Diagnostics (ISO-TP and UDS)
 
@@ -64,4 +64,4 @@ Precise supported UDS service list, addressing modes and diagnostic database for
 
 Acceptance: load two DBCs defining CAN 0x123 differently; first wins as default and both interpretations remain available; disable the first to select the next enabled one; reverse order to change default; neither activity alters original frames or DBC files.
 
-**Supersedes the Proposed wording for REQ-DBC-005 above.**
+
