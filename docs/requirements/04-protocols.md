@@ -1,6 +1,6 @@
 # Protocols & Description Formats
 
-**Status:** Proposed · **Revision:** 0.5
+**Status:** Proposed · **Revision:** 0.6
 
 ## Shared principles
 
@@ -52,3 +52,16 @@ See [Multi-network Extensibility](09-network-extensibility.md) for future Ethern
 ## Open decisions
 
 Precise supported UDS service list, addressing modes and diagnostic database formats; A2L coverage and calibration safety; CANopen devices/profiles and CANopen FD; write-access defaults for all active operations.
+
+## v0.6 DBC requirements
+
+| ID | Status | Requirement |
+|---|---|---|
+| REQ-DBC-005 | Accepted | Initial DBC support is read-only; a DBC editor is planned for a later milestone. |
+| REQ-DBC-006 | Accepted | Default interpretation of colliding CAN identifiers follows configurable DBC priority order. |
+| REQ-DBC-007 | Accepted | Additional applicable DBC interpretations can be enabled/disabled and filtered independently. |
+| REQ-DBC-008 | Proposed | Decoding tracks channel/network, standard/extended ID, DBC source and definition, avoiding ambiguous identity. |
+
+Acceptance: load two DBCs defining CAN 0x123 differently; first wins as default and both interpretations remain available; disable the first to select the next enabled one; reverse order to change default; neither activity alters original frames or DBC files.
+
+**Supersedes the Proposed wording for REQ-DBC-005 above.**
