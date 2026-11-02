@@ -1,6 +1,6 @@
 # User Experience & Performance
 
-**Status:** Proposed · **Revision:** 0.5
+**Status:** Proposed · **Revision:** 0.6
 
 ## Principle
 
@@ -38,3 +38,11 @@ These are measurement hypotheses, not current guarantees. Define reference syste
 ## Open decisions
 
 Command palette, global search, keyboard-first workflow, plugin-owned UI panels, layout persistence defaults, accessibility, light/dark themes, high-DPI behavior.
+
+## v0.6 accepted decisions
+
+| ID | Status | Requirement |
+|---|---|---|
+| REQ-UX-011 | Accepted | Opening large ECU projects shows an interactive UI immediately and loads resources asynchronously, exposing per-resource status. |
+
+Acceptance: opening a large DBC/A2L project never blocks UI interactions; unrelated trace panels remain usable; cancellation and switching projects cannot apply stale background results; no new files appear inside the ECU checkout.
