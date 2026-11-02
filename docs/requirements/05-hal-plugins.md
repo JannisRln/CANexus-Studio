@@ -1,6 +1,8 @@
 # Hardware Abstraction & Plugin System
 
-**Status:** Proposed · **Revision:** 0.4
+**Status:** Proposed · **Revision:** 0.5
+
+**Architecture direction:** Separate network-agnostic lifecycle, event routing, timing and UI/query services from typed CAN-specific adapters and future Ethernet adapters. See [Network Extensibility](09-network-extensibility.md). The extension ecosystem contains two complementary layers: native plugins and a scripting runtime, specified in [Scripting & Automation](08-scripting-automation.md).
 
 ## HAL requirements
 
@@ -41,4 +43,4 @@
 
 ## Open decisions
 
-Native dynamic ABI choice; plugin discovery locations; signed/verified plugin policy; external plugins' write permissions; safety of in-process extensions; hardware/channel arbitration and reconnect strategy.
+Native dynamic ABI choice; plugin discovery locations; signed/verified plugin policy; external plugins' write permissions; safety of in-process extensions; module-specific scripting namespaces; network capabilities; hardware/channel arbitration and reconnect strategy.
