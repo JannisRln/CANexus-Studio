@@ -1,10 +1,14 @@
 # CAN Analyzer & Data Workflows
 
-**Status:** Proposed · **Revision:** 0.4
+**Status:** Mixed · **Revision:** 0.5
 
 ## Scope
 
 CAN Classic and CAN FD observation, decoding, transmission, filtering, trigger, recording and replay, with independent core capture and UI presentation.
+
+**Confirmed:** The Trace provides chronological and fixed/overwrite modes and user-controlled column sorting and filtering. The Signal Explorer is common across modules, while module-specific panels retain different controls. Send functions include one-shot, cyclic, sequences, signal values and triggers.
+
+Detailed canonical specifications: [Trace Viewer](06-trace-viewer.md), [Unified Signal Workspace](07-signal-workspace.md), [Transmission/Triggers/Replay](10-transmission-trigger-replay.md).
 
 ## Requirements
 
@@ -36,4 +40,4 @@ CAN Classic and CAN FD observation, decoding, transmission, filtering, trigger, 
 
 ## Open decisions
 
-Which filtering operators and timestamp modes belong in MVP? File format strategy? Trace ring-buffer lifetime? DBC editing vs read-only for the first release? Frame transmission safety defaults?
+Exact default columns, timestamp presentation, logging file format strategy, trace ring-buffer lifetime, DBC editing vs read-only for the first release, transmitter authorization defaults. Sorting and column filtering are confirmed and no longer open decisions.
