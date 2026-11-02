@@ -1,6 +1,6 @@
 # Project Model & Portability
 
-**Status:** Proposed · **Revision:** 0.4
+**Status:** Proposed · **Revision:** 0.5
 
 ## Confirmed product behavior
 
@@ -54,6 +54,10 @@ The file name and schema are **examples**, not yet approved.
 4. Open and close without changes: no extra files or modifications in the ECU repository.
 5. Delete a configured resource: clear validation error, no implicit lookup in A or global directories.
 6. Open the same project configuration on supported Windows and Linux machines.
+
+## Project resources for automation
+
+Script files may already exist in the ECU repository, or may be referenced through an explicit external source; no CANexus-specific `scripts/` directory is mandatory. All project-local script paths follow the same project-file-relative resolution rules, and opening a project never implicitly executes its scripts. See [Scripting & Automation](08-scripting-automation.md).
 
 ## Open decisions
 
