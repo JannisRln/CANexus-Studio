@@ -1,6 +1,6 @@
 # CANexus-Studio Requirements
 
-**Revision:** 0.4 draft · **Source of truth:** this repository's Markdown files.
+**Revision:** 0.5 draft · **Source of truth:** this repository's Markdown files.
 
 ## Rules
 
@@ -21,6 +21,19 @@
 4. [CAN Analyzer & Data Workflows](03-can-analyzer.md)
 5. [Protocols & Data Formats](04-protocols.md)
 6. [HAL & Plugin Extensibility](05-hal-plugins.md)
+7. [Trace Viewer & Column Filtering](06-trace-viewer.md)
+8. [Unified Signal Explorer & Module Views](07-signal-workspace.md)
+9. [Scripting & Automation](08-scripting-automation.md)
+10. [Future Networks & Ethernet Extensibility](09-network-extensibility.md)
+11. [Transmission, Triggers & Replay](10-transmission-trigger-replay.md)
+
+## Confirmed requirements since v0.5
+
+- A CANalyzer-like Trace Viewer with chronological and fixed/overwrite modes, column sorting and filtering.
+- Unified Signal Explorer with protocol/module-specific views.
+- Manual, cyclic, sequence-based, signal-value-driven and triggered transmission.
+- A scripting layer in addition to native plugins, with module-specific APIs.
+- An extensible network architecture which can incorporate future Ethernet without implementing it in the initial CAN MVP.
 
 ## Topics requiring decisions
 
@@ -29,7 +42,9 @@
 - MVP hardware adapters and benchmark reference systems.
 - Recorder native format and interchange formats.
 - Required CANopen, UDS, XCP profiles for the first usable release.
-- Security model for plugins and transmit permissions.
+- Security model for plugins, scripts and transmit permissions.
+- Choice of scripting language/runtime (Python proposed, not yet fixed).
+- Generic event representation, timestamp correlation and Ethernet integration milestones.
 
 ## Process
 
