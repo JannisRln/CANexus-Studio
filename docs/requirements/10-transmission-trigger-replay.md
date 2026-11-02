@@ -42,7 +42,7 @@ The CAN Analyzer supports **one-shot messages**, **cyclic transmission**, **mult
 
 ## Open decisions
 
-Initial trace log format, send scheduler jitter budgets, trigger expression syntax, export format order and TX authorization defaults.
+Selection and validation of direct-write standard format, send scheduler jitter budgets, trigger expression syntax, export format order and TX authorization defaults.
 
 ## v0.6 accepted direct-to-standard recording
 
