@@ -1,6 +1,6 @@
 # Trace Viewer: CANalyzer-like Analysis Workflow
 
-**Revision:** 0.5 · **Status:** Mixed: user-confirmed decisions and proposed details
+**Revision:** 0.6 · **Status:** Mixed: user-confirmed decisions and proposed details
 
 ## Confirmed product decisions
 
@@ -84,3 +84,12 @@ The scope of every filter must be visible; changing a view filter must **not** s
 ## Open details
 
 Exact default columns; row identity for protocol-level decoded events; whether regex filtering is needed; maximum view buffer policy; live sorting behavior and stable grouping details.
+
+## v0.6 trace preset decision
+
+| ID | Status | Requirement |
+|---|---|---|
+| REQ-TRACE-027 | Accepted | Each Trace panel retains independent filters, sorting, columns and reusable named presets. |
+| REQ-TRACE-028 | Proposed | Local presets can be explicitly promoted into portable shared project configuration. |
+
+Acceptance: two Trace panels show distinct filters and sorts simultaneously; saved presets survive restart; personal preset changes cause no ECU Git diff; unavailable plugin-contributed columns are explicitly reported.
