@@ -1,6 +1,6 @@
 # Transmission, Triggers, Logging and Replay
 
-**Revision:** 0.5 · **Status:** Mixed: send modes confirmed, details proposed
+**Revision:** 0.6 · **Status:** Mixed: send modes confirmed, details proposed
 
 ## Confirmed decisions
 
@@ -43,3 +43,13 @@ The CAN Analyzer supports **one-shot messages**, **cyclic transmission**, **mult
 ## Open decisions
 
 Initial trace log format, send scheduler jitter budgets, trigger expression syntax, export format order and TX authorization defaults.
+
+## v0.6 accepted direct-to-standard recording
+
+| ID | Status | Requirement |
+|---|---|---|
+| REQ-LOG-001 | Accepted | Recording writes directly to an interoperable standard format, without mandatory conversion from a proprietary native format. |
+| REQ-LOG-002 | Proposed | Evaluate MDF4 against CAN/CAN FD data, stream writing, metadata, seek, replay, independent-reader compatibility and future network support. |
+| REQ-LOG-003 | Proposed | Bounded asynchronous recorder buffering reports drops/disk errors and keeps memory bounded across long recordings. |
+
+Acceptance: record sustained synthetic CAN FD traffic directly to the selected standard; reopen in CANexus and independent compatible software; compare IDs, payloads, flags and timestamps; interrupt recording and verify explicit recovery/error status; filtering only the display does not filter recorded frames. The specific standard and recovery strategy are still open.
