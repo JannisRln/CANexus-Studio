@@ -1,6 +1,6 @@
 # Scripting and Automation
 
-**Revision:** 0.5 · **Status:** Proposed architecture, confirmed need for a scripting system
+**Revision:** 0.6 · **Status:** Proposed architecture, confirmed need for a scripting system
 
 ## Purpose
 
@@ -68,3 +68,13 @@ await canexus.uds.read_did("ecu_1", 0xF190)  # namespace and syntax TBD
 ## Open decisions
 
 Python version/runtime packaging, host API versioning, tracing/debugger, scheduling determinism, permission persistence and OS-level isolation.
+
+## v0.6 accepted scripting decisions
+
+| ID | Status | Requirement |
+|---|---|---|
+| REQ-SCR-019 | Accepted | Python is the primary scripting language. |
+| REQ-SCR-020 | Accepted | Test automation supports both GUI execution and a headless CLI using the same core capabilities. |
+| REQ-SCR-021 | Proposed | CLI returns deterministic exit codes, machine-readable results and uses virtual hardware without opening Slint. |
+
+Acceptance: equivalent virtual-CAN script tests run in GUI and CLI with comparable outputs and matching pass/fail; slow Python callbacks cannot delay recording; opening an ECU project never executes untrusted scripts automatically. Python runtime version, dependencies, subprocess isolation and distribution remain design decisions.
