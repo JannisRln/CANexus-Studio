@@ -50,6 +50,8 @@
 
 Propose in discussion → write/update Markdown → review contradictions, feasibility and tests → mark `Accepted` → implement → mark `Verified` with test evidence. 
 
+12. [Accepted Decisions and Conflict Register](11-decisions-v0.6.md)
+
 ## v0.6 accepted decisions
 
 - DBC collision resolution: ordered default interpretation plus toggleable concurrent interpretations.
