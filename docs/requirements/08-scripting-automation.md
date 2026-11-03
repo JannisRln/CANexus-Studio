@@ -1,6 +1,6 @@
 # Scripting and Automation
 
-**Revision:** 0.6 · **Status:** Proposed architecture, confirmed need for a scripting system
+**Revision:** 0.7 · **Status:** Proposed architecture, confirmed need for a scripting system
 
 ## Purpose
 
@@ -8,7 +8,7 @@ A scripting system complements the native **plugin system**. Native plugins prov
 
 **Confirmed:** CANexus-Studio needs scripting and plugins; module-specific APIs must be possible.
 
-**Accepted:** Python is the primary scripting language. **Proposed implementation:** out-of-process workers, subject to isolation, startup, IPC and packaging benchmarks. A lighter embedded DSL may be added for deterministic filtering/expressions.
+**Accepted:** Python is the primary scripting language. **Accepted execution model:** isolated Python worker process per script session, with startup, IPC and packaging choices still open. A lighter embedded DSL may be added for deterministic filtering/expressions.
 
 ## Requirements
 
@@ -29,7 +29,7 @@ A scripting system complements the native **plugin system**. Native plugins prov
 | REQ-SCR-013 | P1 | Proposed | Scripts use portable logical channel names, not machine-specific hardware paths. |
 | REQ-SCR-014 | P2 | Proposed | Scripts can run against virtual adapters/replay for deterministic regression tests without hardware. |
 | REQ-SCR-015 | P2 | Proposed | Test scripts can emit assertions, structured results and CI-compatible reports with source trace references. |
-| REQ-SCR-016 | P2 | Proposed | Optional in-app editor offers syntax diagnostics, auto-completion, navigation and a documentation explorer. |
+| REQ-SCR-016 | P2 | Superseded | An optional full in-app editor was proposed but is superseded by external editor integration (REQ-SCR-023); only external editing is required. |
 | REQ-SCR-017 | P2 | Proposed | User scripts can subscribe to decoded signal updates and create user-defined signal calculations or triggers. |
 | REQ-SCR-018 | P2 | Proposed | A script API can register scoped commands/context menu actions; full custom UI widgets remain governed by the plugin SDK. |
 
@@ -67,7 +67,7 @@ await canexus.uds.read_did("ecu_1", 0xF190)  # namespace and syntax TBD
 
 ## Open decisions
 
-Python version/runtime packaging, host API versioning, tracing/debugger, scheduling determinism, permission persistence and OS-level isolation.
+Python version/runtime packaging, worker startup cost, IPC contracts, host API versioning, tracing/debugger integration with external editors, scheduling determinism, permission persistence and OS-level isolation.
 
 ## v0.6 accepted scripting decisions
 
@@ -78,3 +78,9 @@ Python version/runtime packaging, host API versioning, tracing/debugger, schedul
 | REQ-SCR-021 | Proposed | CLI returns deterministic exit codes, machine-readable results and uses virtual hardware without opening Slint. |
 
 Acceptance: equivalent virtual-CAN script tests run in GUI and CLI with comparable outputs and matching pass/fail; slow Python callbacks cannot delay recording; opening an ECU project never executes untrusted scripts automatically. Python runtime version, dependencies, subprocess isolation and distribution remain design decisions.
+
+## v0.7 implementation links
+
+- [Python workers, external editor and function-based tests](15-python-tests-editor.md) are the canonical v0.7 requirements. REQ-SCR-022/023 and REQ-TEST-001 are Accepted.
+- No full integrated Python editing environment is required; opening scripts in VS Code or another external editor is sufficient.
+- No graphical test-case editor is required. GUI and CLI run test functions from Python files using the same execution service.
