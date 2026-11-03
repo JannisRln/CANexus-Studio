@@ -1,6 +1,6 @@
 # Product Vision & Scope
 
-**Status:** Mixed · **Revision:** 0.5
+**Status:** Mixed · **Revision:** 0.7
 
 ## Vision
 
@@ -55,3 +55,9 @@ Full parity with commercial suites, simultaneous worktree management, mandated c
 ## Open decisions
 
 MVP boundaries, minimum operating system versions, license and distribution model, minimum tool integrations; scripting runtime; packet/event abstractions. See [Trace](06-trace-viewer.md), [Signals](07-signal-workspace.md), [Scripting](08-scripting-automation.md), [Networks](09-network-extensibility.md), [TX and Triggers](10-transmission-trigger-replay.md).
+
+## v0.7 scope decisions
+
+Long-term features now explicitly accepted: unified live/replay/offline plotter with basic statistics, programmable custom dashboard widgets, hardware timestamp preference, UDS forms plus raw mode, ODX/PDX/CDD/vendor description import, extensible flashing, stateful virtual UDS ECU, automated XCP calibration with A2L/ECU checks, graphical CANopen management, per-session isolated Python workers, external Python editor, Python test files, public dockable Slint UI panels and fully customizable command system.
+
+These are **product-scope commitments**, not guarantees of all features in the initial MVP. See [v0.7 decision register](17-decisions-v0.7.md).
