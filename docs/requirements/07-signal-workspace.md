@@ -1,6 +1,6 @@
 # Unified Signal Explorer and Module-Specific Views
 
-**Revision:** 0.6 · **Status:** Mixed
+**Revision:** 0.7 · **Status:** Mixed
 
 ## Confirmed interaction model
 
@@ -60,3 +60,7 @@ Mandatory module-specific widgets for MVP; polling rate controls; derived signal
 Acceptance: plot DBC/XCP values on separate axes, use two cursors to read delta time and values; calculate a derived signal; a slow Python calculation never blocks acquisition; cyclic dependencies and invalid units show errors; zooming millions of samples remains responsive.
 
 
+
+## v0.7 plotter/statistics and time model
+
+The shared professional plotter is used for **live, replay and offline** input, with consistent navigation. Built-in math includes **basic** min, max, mean and differences, not mandatory FFT, RMS or calculus operations. External dashboard modules can provide programmable widgets. Hardware timestamps take precedence where available but different unsynchronized clock domains remain explicitly marked. See [Measurement, Dashboards and Time](12-measurement-dashboard-time.md) for accepted requirements REQ-PLOT-004/005, REQ-DASH-001 and REQ-TIME-001 and their test fixtures.
