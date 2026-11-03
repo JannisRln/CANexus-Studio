@@ -1,6 +1,6 @@
 # Hardware Abstraction & Plugin System
 
-**Status:** Proposed · **Revision:** 0.6
+**Status:** Proposed · **Revision:** 0.7
 
 **Architecture direction:** Separate network-agnostic lifecycle, event routing, timing and UI/query services from typed CAN-specific adapters and future Ethernet adapters. See [Network Extensibility](09-network-extensibility.md). The extension ecosystem contains two complementary layers: native plugins and a scripting runtime, specified in [Scripting & Automation](08-scripting-automation.md).
 
@@ -54,3 +54,9 @@ Native dynamic ABI choice; plugin discovery locations; signed/verified plugin po
 | REQ-PLG-011 | Proposed | Publish example plugins, compatibility diagnostics, SDK migration guidance and a test harness. |
 
 Acceptance: an external developer builds a protocol or device plugin without modifying CANexus source; incompatible plugin fails with clear diagnostics; the same project maps logical CAN1 to different physical adapters on Windows/Linux; unresolved mapping cannot silently transmit.
+
+## v0.7 UI extension model
+
+**Accepted REQ-PLG-012:** Public plugin SDK must allow external plugins to contribute their own dockable Slint panels. The panel lifecycle and ABI, trust model, state persistence, and limitations of dynamic Slint components require a Windows/Linux proof of concept before SDK freeze. See [Dockable UI Plugins and Commands](16-ui-plugins-commands.md).
+
+**Accepted REQ-CMD-001:** A fully customizable command system shall expose built-in and plugin commands, shortcuts, macros, context menus, and toolbar actions through one permission-aware dispatcher. Command and macro definitions must not bypass TX/flash authorization.
