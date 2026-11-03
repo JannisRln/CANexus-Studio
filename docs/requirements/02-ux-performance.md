@@ -1,6 +1,6 @@
 # User Experience & Performance
 
-**Status:** Proposed · **Revision:** 0.6
+**Status:** Proposed · **Revision:** 0.7
 
 ## Principle
 
@@ -37,7 +37,7 @@ These are measurement hypotheses, not current guarantees. Define reference syste
 
 ## Open decisions
 
-Command palette, global search, keyboard-first workflow, plugin-owned UI panels, layout persistence defaults, accessibility, light/dark themes, high-DPI behavior.
+Command palette presentation, global search, keyboard-first details, plugin-panel ABI/lifecycle, layout persistence rules, accessibility, light/dark themes and high-DPI behavior. The configurable command system and dockable external Slint panels are now accepted product requirements.
 
 ## v0.6 accepted decisions
 
@@ -46,3 +46,7 @@ Command palette, global search, keyboard-first workflow, plugin-owned UI panels,
 | REQ-UX-011 | Accepted | Opening large ECU projects shows an interactive UI immediately and loads resources asynchronously, exposing per-resource status. |
 
 Acceptance: opening a large DBC/A2L project never blocks UI interactions; unrelated trace panels remain usable; cancellation and switching projects cannot apply stale background results; no new files appear inside the ECU checkout.
+
+## v0.7 commands and extension UX
+
+A fully configurable command dispatcher and third-party Slint dock panels are Accepted. Their lifecycle, keyboard conflict resolution and persistent local/shared configuration remain open design tasks. See [UI Plugins and Commands](16-ui-plugins-commands.md). Actions requiring transmit or flash permissions must be validated by the same dispatcher irrespective of whether invoked by a button, hotkey, macro or Python.
