@@ -1,6 +1,6 @@
 # Protocols & Description Formats
 
-**Status:** Proposed · **Revision:** 0.6
+**Status:** Proposed · **Revision:** 0.7
 
 ## Shared principles
 
@@ -65,3 +65,11 @@ Precise supported UDS service list, addressing modes and diagnostic database for
 Acceptance: load two DBCs defining CAN 0x123 differently; first wins as default and both interpretations remain available; disable the first to select the next enabled one; reverse order to change default; neither activity alters original frames or DBC files.
 
 
+
+## v0.7 protocol feature extensions
+
+- **UDS:** structured service browser with raw mode, long-term ODX/PDX/CDD/vendor descriptions, extensible flashing framework and stateful virtual UDS ECU.
+- **XCP:** automated calibration workflows; multiple A2Ls and ECU sessions with explicit identity/version compatibility results.
+- **CANopen:** graphical node discovery and network-management workspace.
+
+These product features are Accepted; their details and milestone allocations are defined in [Diagnostics/Flashing/Simulation](13-diagnostics-flashing-simulation.md) and [XCP/CANopen](14-xcp-canopen.md). The existing base protocol requirements remain applicable. No unvalidated claim of complete support for arbitrary vendor file versions or ECU flashing recovery is made.
