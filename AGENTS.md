@@ -16,3 +16,8 @@ This repository uses Markdown specifications under `docs/requirements/` as the s
 - Trace must support chronological/fixed modes, column sorting/filtering, and independent per-view state.
 - The unified Signal Explorer supports module-specific details; native plugins and scripts are distinct extension mechanisms.
 - Prefer verifiable acceptance criteria and explicit failure handling.
+
+- v0.7 Accepted decisions live in `docs/requirements/17-decisions-v0.7.md`; the canonical domain files are 12–16.
+- Python tests live in user-referenced Python files, editable through external editors, and run through GUI/CLI using isolated per-script-session worker processes.
+- Third-party Slint dockable panels and a fully configurable command dispatcher are product goals; prototype dynamic UI lifecycle/SDK stability before implementation.
+- Do not claim generic flashing recovery, unrestricted vendor diagnostics support, or cross-device precise synchronization without evidence.
