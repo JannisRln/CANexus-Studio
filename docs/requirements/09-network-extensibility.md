@@ -1,6 +1,6 @@
 # Multi-Network and Protocol Extensibility
 
-**Revision:** 0.5 · **Status:** Mixed: extension goal confirmed, implementation design proposed
+**Revision:** 0.7 · **Status:** Mixed: extension goal confirmed, implementation design proposed
 
 ## Confirmed direction
 
@@ -54,3 +54,7 @@ Core services own time correlation, session lifecycle, event routing, backpressu
 ## Open decisions
 
 Generic event storage/index format, plugin discovery security, priority/order of network types, hardware timestamp sync strategies and future Ethernet licensing dependencies.
+
+## v0.7 timestamp decision
+
+**Accepted REQ-TIME-001:** Use hardware timestamp information when available, with explicit clock-domain and quality metadata. Time correlation must not fabricate a common accurate timeline across unrelated clocks. This governs CAN now and future Ethernet. See [Measurement, Dashboards and Time](12-measurement-dashboard-time.md).
