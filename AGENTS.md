@@ -26,7 +26,9 @@ This repository uses Markdown specifications under `docs/requirements/` as the s
 
 - Before any implementation, read docs/development/README.md, STATUS.md, BACKLOG.md, DECISIONS.md and relevant requirements; inspect the current main commit and code.
 - The repository is the only durable progress record across chats; never rely on previous chat memory as the implementation source of truth.
-- Implement the earliest Ready task with satisfied dependencies, update task status and STATUS.md, and commit the result directly to main. Do not create pull requests or GitHub Issues unless explicitly requested.
+- Choose a Ready task with satisfied dependencies; independent tasks may run in parallel. Check active branches, open PRs and task ownership before starting to avoid duplicate work.
+- Use task branches and pull requests for substantial, risky or parallel changes; direct pushes to main are allowed for small isolated changes. Do not use GitHub Issues for task tracking.
+- Mark tasks Done only after integration into main and recorded verification. Coordinate STATUS.md and BACKLOG.md updates to avoid overwriting parallel work; never force-push main.
 - Every delivery must report commit SHA, actual tests/CI results, failures, remaining tasks and next action. Do not claim CI passed unless a run confirms it.
 - Add tests and maintain Windows/Linux CI; Rust checks become active after Cargo.toml exists.
 - CAN Signal Generator and XCP-driven generation are not part of v1; retain extension points only.
