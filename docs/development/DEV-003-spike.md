@@ -1,6 +1,6 @@
 # DEV-003: Slint + pbSlintDock feasibility
 
-**Stage:** Feature PR verification completed; unmerged until review.
+**Stage:** Spike merged to main as `bef8513d`; feasibility acceptance remains blocked pending native float/re-dock and interactive Windows/Linux proof (DEV-016).
 
 ## Scope
 
@@ -30,6 +30,18 @@
 - [ ] Persistent state across float/re-dock demonstrated in the host.
 - [ ] Follow-up decision: choose supported integration strategy and document
       which parts remain prototypes.
+- [ ] Disk-backed layout persistence across process restart verified on both OSes.
+- [ ] Interactive tabs, docking, splitters and close/reopen verified on both OSes.
 
 **Known limitation:** the first CANexus UI sample is single-window; tests
-cover float transitions only at the pbSlintDock engine level.
+cover float transitions only at the pbSlintDock engine level. Layout snapshots
+are process-local memory, not persisted to disk. Prior successful PR CI confirms
+compilation and automated unit tests only, not a GUI interaction scenario.
+
+**Follow-up DEV-016:** implement native Slint float-window creation/closure,
+transfer the logical panel between MAIN_WINDOW and floating windows and back,
+restore layout and panel state after process restart, and demonstrate docking,
+tabs, splitter drag, close/reopen and float/re-dock on both Windows and Linux.
+Document a reproducible test procedure with results, screenshots or recordings,
+and any platform-specific caveats. Choose and record the integration strategy
+before marking DEV-003 Done. See `DEV-003-004-ACCEPTANCE.md`.
