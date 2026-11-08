@@ -34,6 +34,7 @@
 16. [Python Workers & Tests](15-python-tests-editor.md)
 17. [Dockable UI Plugins & Commands](16-ui-plugins-commands.md)
 18. [v0.7 Decisions & Architecture Conflict Register](17-decisions-v0.7.md)
+19. [ADR-006 — Project Configuration & Path Resolution (Proposed)](18-project-configuration-path-resolution.md)
 
 ## Confirmed requirements since v0.5
 
