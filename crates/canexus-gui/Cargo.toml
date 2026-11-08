@@ -13,5 +13,10 @@ pbslintdock = { git = "https://github.com/pbtechlab/pbSlintDock", rev = "059418b
 [build-dependencies]
 slint-build = "=1.17.1"
 
-[lints]
-workspace = true
+# Slint's generated Rust includes unsafe-backed vtables; this exception is
+# limited to the GUI crate. The core and CLI retain workspace unsafe_code=forbid.
+[lints.rust]
+unsafe_code = "allow"
+
+[lints.clippy]
+all = { level = "warn", priority = -1 }
