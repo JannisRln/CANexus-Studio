@@ -157,9 +157,15 @@ CANexusWindow [AppShell]
 
 **Logical component model (proposal):** `ThemeTokens`, `AppShell`, `DockPanelChrome`, `CommandBar`, `StatusIndicator`, `VirtualDataGrid`, `FilterBar`, `ObjectTree`, `ProtocolInspector`, `PlotCanvas`, `CalDraftEditor`, `LogTable`. Eine Slint-Komponente soll gebundene View-Model-Slices konsumieren, keine eigenen Hardwarehandles verwalten.
 
-## 9. Decisions needed for v0.2
+## 9. Fluent theme implementation direction (2026-11-08)
 
-1. Theme-Strategie: Dark default? Light verfügbar? User-preference oder System.
+The selected design direction is Slint **Fluent** with a runtime theme preference **System / Light / Dark**, implemented via `Palette.color-scheme` and the Fluent-backed global `CxTheme` in [`slint/theme.slint`](slint/theme.slint). In System mode use `ColorScheme.unknown`; Light and Dark apply explicit overrides. Slint `Palette` / `StyleMetrics` are the base for custom components, not an independent full replacement palette.
+
+User preference persistence belongs in application-local settings outside ECU repositories and remains a Rust host integration task. The stand-alone theme preview demonstrates the intended API, not a tested production implementation. Former JSON/HTML prototypes are visual references, not the native Slint source of truth.
+
+## 10. Decisions needed for v0.2
+
+1. Theme: Fluent + System/Light/Dark selected; host persistence, contrast tests and OS change handling pending.
 2. Layout: Mindestauflösung und gewünschte Compact/Comfortable-Voreinstellung.
 3. Globales Command-System: Palette `Ctrl+K` vs `Ctrl+Shift+P`; Priorität von Tastaturkonflikten.
 4. Trace: Raw primary vs mixed hierarchical Event-Row; Storage policy für Disk-Backed History (separates ADR-Thema).
@@ -170,7 +176,7 @@ CANexusWindow [AppShell]
 9. Light theme Kontraste und Farbsinn-Farbpaletten mit automatisiertem Screenshot-/A11y-Test.
 10. Plugin-Leitplanken: Host-Vertrauen, Versionierung, Theme-Token-Namensräume, Missing Panel und Permission UI.
 
-## 10. Traceability (ausgewählte Quellen)
+## 11. Traceability (ausgewählte Quellen)
 
 **Accepted product requirements:** `REQ-TRACE-001/002/027`, `REQ-SIG-001/002`, `REQ-UX-011`, `REQ-PROJ-011/012`, `REQ-PLG-012`, `REQ-CMD-001`, v0.7 decisions. **Detailed but Proposed:** ADR-009 and ADR-010, majority of performance targets and token choices in this document. This document does not alter requirement status.
 

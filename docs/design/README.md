@@ -6,6 +6,8 @@ This folder contains the initial visual and interaction design for the Windows/L
 
 ## Contents
 
+- [slint/](slint/README.md) — Native Fluent-based Slint theme foundation with runtime System/Light/Dark switching and reusable components (prototype; not yet compiler-validated).
+
 - [DESIGN-SYSTEM.md](DESIGN-SYSTEM.md) — UX principles, components, patterns, implementation constraints and open decisions.
 - [tokens.json](tokens.json) — machine-readable proposed theme and spacing tokens.
 - [PROTOTYPE.html](PROTOTYPE.html) — standalone interactive HTML/CSS/JavaScript concept with synthetic data; open directly in a modern browser.
@@ -26,5 +28,8 @@ UX decisions in this package do not silently supersede requirements. In particul
 - User-local UI state must not generate extra files in ECU source repositories.
 
 ## Next
+
+The native Slint theme contract is ready for integration after the Rust workspace and docking proof of concept. The legacy HTML/JSON files remain design references, not runtime theme definitions.
+
 
 Validate the main-shell, table and dock interactions using an actual Slint + pbSlintDock proof of concept; agree on theme, high-DPI/accessibility and keyboard conventions; decide whether to accept individual UI requirements in the canonical requirements files.

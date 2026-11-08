@@ -1,0 +1,67 @@
+// Standalone visual proof of concept for runtime Fluent theme switching.
+// Compile with style "fluent", not a fixed fluent-light/fluent-dark variant.
+import { Button, Palette } from "std-widgets.slint";
+import { CxTheme } from "theme.slint";
+import { CxPanel } from "components/cx-panel.slint";
+import { CxStatus } from "components/cx-status.slint";
+
+export component ThemePreview inherits Window {
+    title: "CANexus Studio — Fluent Theme Preview";
+    width: 900px;
+    height: 520px;
+    background: CxTheme.canvas;
+
+    VerticalLayout {
+        padding: 20px;
+        spacing: 12px;
+
+        Text {
+            text: "CANexus Studio";
+            color: CxTheme.canvas-foreground;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        Text {
+            text: "Fluent base · theme follows system or a manual override";
+            color: CxTheme.canvas-foreground;
+            font-size: 13px;
+        }
+
+        HorizontalLayout {
+            spacing: 8px;
+            Button { text: "System"; clicked => { CxTheme.set-preference(0); } }
+            Button { text: "Light"; clicked => { CxTheme.set-preference(1); } }
+            Button { text: "Dark"; clicked => { CxTheme.set-preference(2); } }
+            Rectangle { horizontal-stretch: 1; }
+        }
+
+        Text {
+            color: CxTheme.canvas-foreground;
+            text: CxTheme.preference == 0 ? "Selected: System" :
+                  CxTheme.preference == 1 ? "Selected: Light" : "Selected: Dark";
+        }
+
+        CxPanel {
+            title: "CAN Trace";
+            description: "View filter: Powertrain · Chronological · Capturing and recording are independent of this view";
+            height: 112px;
+        }
+
+        CxPanel {
+            title: "Measurement";
+            description: "The same tokens are shared by plot, numeric and calibration panels.";
+            height: 112px;
+        }
+
+        HorizontalLayout {
+            spacing: 8px;
+            CxStatus { label: "CAN1 online"; state: "success"; width: 135px; }
+            CxStatus { label: "Data stale"; state: "warning"; width: 135px; }
+            CxStatus { label: "Write blocked"; state: "danger"; width: 145px; }
+            Rectangle { horizontal-stretch: 1; }
+        }
+
+        Rectangle { vertical-stretch: 1; }
+    }
+}

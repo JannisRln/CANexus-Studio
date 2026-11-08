@@ -1,0 +1,39 @@
+// Proposed CANexus design tokens layered on Slint Fluent's native Palette.
+// Theme preference: 0 = system, 1 = light, 2 = dark.
+// Keep application settings and hardware sessions outside this UI global.
+import { Palette, StyleMetrics } from "std-widgets.slint";
+
+export global CxTheme {
+    in-out property <int> preference: 0;
+    out property <brush> canvas: Palette.background;
+    out property <brush> canvas-foreground: Palette.foreground;
+    out property <brush> surface: Palette.alternate-background;
+    out property <brush> surface-foreground: Palette.alternate-foreground;
+    out property <brush> border: Palette.border;
+    out property <length> spacing: StyleMetrics.layout-spacing;
+    out property <length> padding: StyleMetrics.layout-padding;
+
+    // Domain status colors complement text labels; do not rely on color alone.
+    out property <color> accent: #148f86;
+    out property <color> success: #17835c;
+    out property <color> warning: #bf7b14;
+    out property <color> danger: #c74854;
+
+    callback preference-changed(int);
+
+    public function set-preference(next: int) {
+        if (next == 1) {
+            Palette.color-scheme = ColorScheme.light;
+            preference = 1;
+            preference-changed(1);
+        } else if (next == 2) {
+            Palette.color-scheme = ColorScheme.dark;
+            preference = 2;
+            preference-changed(2);
+        } else {
+            Palette.color-scheme = ColorScheme.unknown;
+            preference = 0;
+            preference-changed(0);
+        }
+    }
+}
