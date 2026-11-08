@@ -7,7 +7,11 @@ fn main() {
             .expect("PBSLINTDOCK_ROOT must point to a checkout of pbtechlab/pbSlintDock"),
     );
     let library = root.join("ui/pbslintdock.slint");
-    assert!(library.is_file(), "pbSlintDock UI not found: {}", library.display());
+    assert!(
+        library.is_file(),
+        "pbSlintDock UI not found: {}",
+        library.display()
+    );
     let mut paths = HashMap::new();
     paths.insert("pbslintdock".into(), library);
     slint_build::compile_with_config(
