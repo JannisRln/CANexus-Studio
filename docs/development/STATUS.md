@@ -12,14 +12,18 @@
 - MIT license.
 - Chat-driven implementation planning and status tracking.
 - Minimal Rust workspace (`canexus-core`, `canexus-cli`), pinned toolchain and cross-platform Rust CI.
+- DEV-004 typed CAN/CAN-FD frame and timestamp model (PR #11).
+- DEV-003 Slint/pbSlintDock feasibility spike (PR #12); production trace UI remains future work.
 
 ## Not implemented
 
-No Slint GUI, virtual CAN, HAL, trace viewer or protocol implementation yet. The CLI is only a bootstrap entry point.
+No production trace GUI, virtual CAN, HAL, trace viewer or protocol implementation yet. The CLI is only a bootstrap entry point; DEV-003 is a feasibility spike.
 
 ## Verification evidence
 
-DEV-002 PR #10 CI completed successfully on Windows and Linux (four jobs): https://github.com/JannisRln/CANexus-Studio/actions/runs/42499919323 . PR #10 was squash-merged to main at `d3ee9e87`. This verifies the PR head; post-merge main CI should be checked separately. No Slint or hardware tests were performed.
+DEV-002 PR #10 CI completed successfully on Windows and Linux (four jobs): https://github.com/JannisRln/CANexus-Studio/actions/runs/42499919323 . PR #10 was squash-merged to main at `d3ee9e87`. This verifies the PR head; post-merge main CI should be checked separately. No hardware tests were performed.
+
+DEV-004 PR #11 CI succeeded at head `489f620b`, squash-merged as `e9090748`. DEV-003 PR #12 CI succeeded at head `8f42d11d`, squash-merged as `bef8513d`. Post-merge combined main CI has not yet been confirmed.
 
 ## Risks and blockers
 
