@@ -61,3 +61,9 @@ Every future implementation chat must update this file with completed tasks, cur
 - Additional DEV-004 unit tests cover DLC and payload boundaries, zero-padding, time-domain isolation, typed generic envelopes and event identity. **Acceptance-branch verification pending** until GitHub Actions executes the new commits.
 - Requirement evidence and truthful classifications: [DEV-003-004-ACCEPTANCE.md](DEV-003-004-ACCEPTANCE.md).
 - There is no native Windows/Linux GUI interaction evidence; DEV-003 remains Blocked and native float lifecycle remains DEV-016.
+
+## PR #13 verification after initial acceptance commits
+
+- PR #13 head `cd014897272836e58912fd8066464c0e03ce1724`, GitHub Actions [run 42511275998](https://github.com/JannisRln/CANexus-Studio/actions/runs/42511275998): project-state, formatting, Clippy, build and all-target tests **passed on Windows and Linux** (four successful jobs).
+- This confirms automated compilation/unit tests for the acceptance changes; it does **not** verify native interactive GUI floating-window behavior, hardware timestamps, actual per-frame allocator measurements, or any post-merge main run.
+- A documentation-only evidence update after this run requires its own final PR CI confirmation.
