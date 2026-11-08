@@ -12,7 +12,7 @@ This folder contains the initial visual and interaction design for the Windows/L
 
 ### Mockups
 
-Four 1600×960 prototype screenshots were produced: **CAN Analyzer**, **Measurement & Calibration**, **UDS Diagnostics**, and **Design System gallery**. They are available in the original UX design package, but the PNG binary assets have **not yet been committed** to this repository. To reproduce screenshots from the committed HTML prototype, open it in a browser at 1600×960, select the corresponding view and capture a screenshot. Do not mistake concept screenshots for product implementation evidence.
+Four 1600×960 prototype screenshots were produced: **CAN Analyzer**, **Measurement & Calibration**, **UDS Diagnostics**, and **Design System gallery**. They are available in the original UX design package, but the PNG binary assets have **not yet been committed** to this repository. To reproduce screenshots, run `python -m pip install playwright`, `python -m playwright install chromium`, then `python docs/design/render_mockups.py` from the repository root. The script generates all four PNGs locally from the committed prototype at 1600×960. Do not mistake concept screenshots for product implementation evidence.
 
 ## Interaction boundaries
 
