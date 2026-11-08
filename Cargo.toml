@@ -1,5 +1,5 @@
 [workspace]
-members = ["crates/canexus-core", "crates/canexus-cli"]
+members = ["crates/canexus-core", "crates/canexus-cli", "crates/canexus-gui"]
 resolver = "2"
 
 [workspace.package]
