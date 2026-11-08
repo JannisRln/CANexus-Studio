@@ -6,6 +6,7 @@
 
 - Add an optional Rust `canexus-gui` executable in the main workspace.
 - Use Slint 1.17.1 and the pinned pbSlintDock Rust binding for panel layout.
+- Raise pinned Rust toolchain from 1.85 to 1.92: the Slint 1.17.1 dependency explicitly requires rustc 1.92; the prior toolchain fails dependency resolution.
 - Demonstrate docking, tab and splitter input forwarding, close/reopen and
   snapshot-based layout restore with a sample three-panel workspace.
 - Add engine-level persistence/floating tests and Windows/Linux CI builds.
