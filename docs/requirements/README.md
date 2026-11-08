@@ -36,6 +36,7 @@
 18. [v0.7 Decisions & Architecture Conflict Register](17-decisions-v0.7.md)
 19. [ADR-006 — Project Configuration & Path Resolution (Proposed)](18-project-configuration-path-resolution.md)
 20. [ADR-007 — ELF/DWARF Symbols, Metadata, Dashboards & XCP](19-adr-007-elf-dwarf-symbol-calibration.md)
+21. [ADR-009 — High-Performance CAN Trace Viewer (Proposed detail)](20-adr-009-high-performance-can-trace.md)
 
 ## Confirmed requirements since v0.5
 
