@@ -10,7 +10,7 @@ persistence and floating layout transitions (engine only).
 
 ## Build and run
 
-Requires Rust 1.85.0, a working C++20 compiler and platform Slint native
+Requires Rust 1.92.0, a working C++20 compiler and platform Slint native
 dependencies. Use the **pinned** pbSlintDock checkout:
 
 ```sh
