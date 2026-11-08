@@ -14,7 +14,7 @@ use std::{
 };
 
 use crate::{
-    event::{Observed, RawEventId},
+    event::Observed,
     SourceId,
 };
 
@@ -467,7 +467,7 @@ mod tests {
     use super::*;
     use crate::{
         can::{CanFrame, CanFrameFlags, CanId},
-        event::{ChannelId, EventDirection},
+        event::{ChannelId, EventDirection, RawEventId},
         time::{ClockDomainId, EventTimestamp, TimestampOrigin, TimestampQuality, TimestampResolution},
         virtual_can::{fixtures, VirtualCanAdapter},
     };
