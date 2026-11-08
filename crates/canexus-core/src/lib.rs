@@ -6,6 +6,7 @@
 pub mod can;
 pub mod event;
 pub mod time;
+pub mod virtual_can;
 
 /// Identifies a logical data source within a running application.
 #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
