@@ -348,6 +348,52 @@ mod tests {
     }
 
     #[test]
+    fn reject_illegal_dlc_values_and_remote_payloads() {
+        let id = CanId::extended(MAX_EXTENDED_ID).unwrap();
+        for dlc in 9..=u8::MAX {
+            assert_eq!(
+                CanFrame::new(id, CanFrameFlags::CLASSIC, dlc, &[]),
+                Err(CanFrameError::InvalidDlc)
+            );
+        }
+        assert_eq!(
+            CanFrame::new(id, CanFrameFlags::FD, 16, &[]),
+            Err(CanFrameError::InvalidDlc)
+        );
+        let remote = CanFrameFlags {
+            remote: true,
+            ..CanFrameFlags::CLASSIC
+        };
+        assert_eq!(
+            CanFrame::new(id, remote, 0, &[1]),
+            Err(CanFrameError::RemoteFrameWithData)
+        );
+    }
+
+    #[test]
+    fn fd_payload_boundaries_and_unused_capacity_are_preserved() {
+        let id = CanId::extended(MAX_EXTENDED_ID).unwrap();
+        let payload = [0xa5; 64];
+        let frame = CanFrame::new(id, CanFrameFlags::FD, 15, &payload).unwrap();
+        assert_eq!(frame.id(), id);
+        assert_eq!(frame.data_len(), 64);
+        assert_eq!(frame.data(), &payload);
+        let short = CanFrame::new(id, CanFrameFlags::FD, 9, &[0x11; 12]).unwrap();
+        assert_eq!(short.data(), &[0x11; 12]);
+        assert!(short.data[12..].iter().all(|byte| *byte == 0));
+        assert_eq!(
+            CanFrame::new(id, CanFrameFlags::FD, 15, &[0; 63]),
+            Err(CanFrameError::PayloadLengthMismatch)
+        );
+    }
+
+    #[test]
+    fn frame_uses_inline_storage_without_drop_glue() {
+        assert!(!std::mem::needs_drop::<CanFrame>());
+        assert!(std::mem::size_of::<CanFrame>() <= 80);
+    }
+
+    #[test]
     fn flags_and_payload_are_owned_and_copyable() {
         let flags = CanFrameFlags {
             bit_rate_switch: true,
@@ -357,6 +403,7 @@ mod tests {
         let mut input = [1, 2, 3, 4];
         let frame = CanFrame::new(CanId::extended(0x123).unwrap(), flags, 4, &input).unwrap();
         input[0] = 99;
+        assert_eq!(input[0], 99);
         assert_eq!(frame.data(), &[1, 2, 3, 4]);
         assert_eq!(frame.flags(), flags);
         assert_eq!(frame.id(), CanId::extended(0x123).unwrap());
