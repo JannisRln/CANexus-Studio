@@ -1,6 +1,6 @@
 # DEV-003: Slint + pbSlintDock feasibility
 
-**Stage:** Implementation proposed in PR; no platform verification recorded yet.
+**Stage:** Feature PR verification completed; unmerged until review.
 
 ## Scope
 
@@ -24,8 +24,8 @@
 
 ## Exit criteria and evidence
 
-- [ ] Windows `cargo fmt`, Clippy, build and tests green in a specific CI run.
-- [ ] Linux `cargo fmt`, Clippy, build and tests green in a specific CI run.
+- [x] Windows `cargo fmt`, Clippy, build and tests green in GitHub Actions run [42501580558](https://github.com/JannisRln/CANexus-Studio/actions/runs/42501580558).
+- [x] Linux `cargo fmt`, Clippy, build and tests green in GitHub Actions run [42501580558](https://github.com/JannisRln/CANexus-Studio/actions/runs/42501580558).
 - [ ] Native floating-window roundtrip exercised in the CANexus GUI on both OSes.
 - [ ] Persistent state across float/re-dock demonstrated in the host.
 - [ ] Follow-up decision: choose supported integration strategy and document
