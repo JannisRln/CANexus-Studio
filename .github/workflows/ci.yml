@@ -21,6 +21,9 @@ jobs:
           python-version: '3.12'
       - name: Validate project state
         run: python scripts/check_project_state.py
+      - name: Test Rust pre-commit hook
+        if: runner.os == 'Linux'
+        run: python -m unittest discover -s tests -p 'test_git_hooks.py' -v
   rust:
     env:
       PBSLINTDOCK_ROOT: ${{ github.workspace }}/third_party/pbSlintDock

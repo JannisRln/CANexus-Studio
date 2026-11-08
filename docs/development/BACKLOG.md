@@ -19,5 +19,6 @@ Canonical implementation tasks. Statuses: Planned, Ready, In Progress, Blocked, 
 | DEV-013 | M2 | P1 | Planned | DEV-009 | Recording format decision and failure-tested recorder prototype |
 | DEV-014 | Later | P2 | Planned | DEV-011, DEV-012 | CAN Signal Generator, not v1 |
 | DEV-015 | Later | P2 | Planned | XCP prerequisites | XCP-driven signal generation, not v1 |
+| DEV-016 | M0 | P1 | In Progress | DEV-002 | Optional rustfmt pre-commit hook, safe handling of staged files, documented installation and hook tests in CI |
 
 Start with the earliest Ready task whose dependencies are satisfied. Update this backlog and STATUS.md after every delivery. M0/M1 are an initial vertical slice, not the entire v1 feature matrix. Do not silently remove existing product requirements.

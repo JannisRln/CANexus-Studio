@@ -357,6 +357,7 @@ mod tests {
         let mut input = [1, 2, 3, 4];
         let frame = CanFrame::new(CanId::extended(0x123).unwrap(), flags, 4, &input).unwrap();
         input[0] = 99;
+        assert_eq!(input[0], 99);
         assert_eq!(frame.data(), &[1, 2, 3, 4]);
         assert_eq!(frame.flags(), flags);
         assert_eq!(frame.id(), CanId::extended(0x123).unwrap());
