@@ -27,13 +27,7 @@ fn mixed_fixture() -> [VirtualCanRecord; 4] {
         error_state_indicator: true,
         ..CanFrameFlags::FD
     };
-    let fd = CanFrame::new(
-        CanId::extended(0x1abcde).unwrap(),
-        fd_flags,
-        9,
-        &[0x55; 12],
-    )
-    .unwrap();
+    let fd = CanFrame::new(CanId::extended(0x1abcde).unwrap(), fd_flags, 9, &[0x55; 12]).unwrap();
     let remote = CanFrame::new(
         CanId::standard(0x321).unwrap(),
         CanFrameFlags {
@@ -44,13 +38,7 @@ fn mixed_fixture() -> [VirtualCanRecord; 4] {
         &[],
     )
     .unwrap();
-    let empty = CanFrame::new(
-        CanId::standard(0).unwrap(),
-        CanFrameFlags::CLASSIC,
-        0,
-        &[],
-    )
-    .unwrap();
+    let empty = CanFrame::new(CanId::standard(0).unwrap(), CanFrameFlags::CLASSIC, 0, &[]).unwrap();
 
     [
         VirtualCanRecord {
