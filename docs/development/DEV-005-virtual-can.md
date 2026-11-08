@@ -35,3 +35,9 @@
 - PR #13 separately fixes a pre-existing Clippy failure on `main`. Until that PR integrates, a DEV-005 PR based on `main` can fail checks unrelated to DEV-005. No GUI/CI files or PR #13-owned paths are changed here.
 
 Do not mark DEV-005 Done in the shared backlog before merge and verified main CI. Reconcile shared STATUS/BACKLOG after integration to avoid overwriting concurrent updates.
+
+## Parallel DEV-005 work and integration
+
+On 2026-11-08 a second, independently authored DEV-005 implementation appeared in [PR #14](https://github.com/JannisRln/CANexus-Studio/pull/14). Its `VirtualCanAdapter` is an immediately draining `Iterator`, while this branch exposes explicit `start / advance_to / next_due / stop` virtual-clock control. Both alter `virtual_can.rs`, `lib.rs`, and DEV-005 documentation and **must not be merged together unchanged**. Choose one public contract, transfer any valuable non-overlapping tests, and resolve task ownership before integration.
+
+This branch was rebuilt from `main` at `27921f7e`, which already includes the pre-existing Clippy fix in `can.rs` and the development hook/CI updates. Its PR has no dependency on the unmerged PR #13; no GUI files or other PR branches were modified. Cross-platform CI must be evaluated on this final branch head before claiming readiness.
