@@ -31,6 +31,20 @@ Appropriate tests, documented errors/limitations, relevant platform builds where
 
 Run project-state validation on Windows and Linux now. Rust fmt, Clippy, build and test are conditional on Cargo.toml until the workspace is created. Native GUI and hardware verification need separate evidence.
 
+## Rust formatting pre-commit hook
+
+Git does not activate version-controlled hooks automatically. After cloning, enable this repository's hook once per clone from the repository root:
+
+```sh
+git config --local core.hooksPath .githooks
+```
+
+This setting also applies to linked Git worktrees. The hook requires Git with POSIX shell support (provided by Git for Windows), Rust, and the pinned rustfmt component from `rust-toolchain.toml`.
+
+Before each commit, the hook runs `cargo fmt --all` followed by the same formatting check as CI. If rustfmt modifies files or there are unstaged Rust edits (including partially staged changes), the hook stops the commit. Review and stage the intended files with `git add`, then commit again. The hook **never stages files automatically**. CI continues to enforce formatting even when hooks are disabled or bypassed.
+
+To run the hook integration tests manually on Linux: `python -m unittest discover -s tests -p 'test_git_hooks.py' -v`.
+
 ## Branching, PRs and parallel work
 
 - **Direct main:** documentation, CI fixes and small isolated changes with low merge risk. Verify applicable checks; do not bypass failing CI silently.

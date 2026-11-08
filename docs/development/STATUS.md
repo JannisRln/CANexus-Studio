@@ -51,3 +51,10 @@ Every future implementation chat must update this file with completed tasks, cur
 - CI: **passed** on Windows and Linux in PR #12 run [42501580558](https://github.com/JannisRln/CANexus-Studio/actions/runs/42501580558): project-state validation, `cargo fmt --all -- --check`, Clippy with `-D warnings`, workspace build and all-target tests. This is CI compilation/test evidence, not a native interactive GUI or floating-window test.
 - Native floating-window lifecycle in CANexus: not implemented; engine-only float transition tests added.
 - DEV-003 remains In Progress until integration and recorded verification, not Done merely because a PR exists.
+
+## DEV-016 branch work (not yet integrated)
+
+- Branch: `chore/DEV-016-rustfmt-pre-commit`.
+- Scope: opt-in rustfmt pre-commit hook, safe index behavior, setup guidance and Linux CI hook tests.
+- Local verification: five Git-hook integration tests passed on Linux with a stubbed cargo; real rustfmt, Windows hook execution and PR CI not yet verified.
+- DEV-016 remains In Progress until merged to main with verification evidence.
