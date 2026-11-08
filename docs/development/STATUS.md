@@ -1,8 +1,8 @@
 # Implementation status
 
-**Phase:** M0 — development workflow and CI preparation
-**Active task:** DEV-002 (In Progress on `chore/DEV-002-rust-workspace`, PR #10)
-**Latest verified implementation milestone:** M0 repository bootstrap (DEV-001)
+**Phase:** M0 — Rust workspace completed; GUI feasibility next
+**Active task:** None; DEV-003 and DEV-004 are Ready and can proceed independently
+**Latest verified implementation milestone:** DEV-002 Rust workspace merged to main (`d3ee9e87`)
 **Last updated:** 2026-11-08
 **Branch policy:** Hybrid: PRs for substantial/risky/parallel tasks; direct main pushes allowed for small isolated changes
 
@@ -11,14 +11,15 @@
 - Product requirements and architecture documentation.
 - MIT license.
 - Chat-driven implementation planning and status tracking.
+- Minimal Rust workspace (`canexus-core`, `canexus-cli`), pinned toolchain and cross-platform Rust CI.
 
 ## Not implemented
 
-No Rust workspace, application, Slint GUI, virtual CAN, HAL, trace viewer or protocol implementation yet.
+No Slint GUI, virtual CAN, HAL, trace viewer or protocol implementation yet. The CLI is only a bootstrap entry point.
 
 ## Verification evidence
 
-GitHub Actions CI run #3 completed successfully on Windows and Linux: https://github.com/JannisRln/CANexus-Studio/actions/runs/42493034408 . Project-state checks passed. Rust jobs succeeded by skipping conditional Rust steps because Cargo.toml does not exist; no Rust build or tests were executed. Subsequent commits trigger new runs whose results must be checked independently.
+DEV-002 PR #10 CI completed successfully on Windows and Linux (four jobs): https://github.com/JannisRln/CANexus-Studio/actions/runs/42499919323 . PR #10 was squash-merged to main at `d3ee9e87`. This verifies the PR head; post-merge main CI should be checked separately. No Slint or hardware tests were performed.
 
 ## Risks and blockers
 
@@ -28,12 +29,12 @@ GitHub Actions CI run #3 completed successfully on Windows and Linux: https://gi
 
 ## Parallel work coordination
 
-DEV-002 is active in `chore/DEV-002-rust-workspace` (PR #10: https://github.com/JannisRln/CANexus-Studio/pull/10). Initial core and CLI files are on the branch, **not yet on main**. Await Windows/Linux Rust CI verification before merge. Avoid duplicating DEV-002 or creating conflicting workspace scaffolding.
+DEV-002 is merged and Done. DEV-003 (Slint/pbSlintDock spike) and DEV-004 (typed CAN frame model) are both Ready and can run in parallel on separate task branches, with shared interfaces coordinated before integration.
 
 ## Next action
 
-1. Implement DEV-002: minimal Rust workspace and toolchain.
-2. Verify Rust CI checks on Windows and Linux.
-3. Prototype Slint/pbSlintDock for DEV-003.
+1. Verify post-merge CI on main.
+2. Implement DEV-003: Slint/pbSlintDock feasibility.
+3. Implement DEV-004: typed CAN/CAN FD frame and timestamp model (parallel-compatible).
 
 Every future implementation chat must update this file with completed tasks, current commit, actual tests, failures and next action.
