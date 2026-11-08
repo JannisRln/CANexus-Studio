@@ -1,8 +1,8 @@
 # Implementation status
 
 **Phase:** M0 — development workflow and CI preparation
-**Active task:** DEV-001 (In Progress pending CI run verification)
-**Latest verified implementation milestone:** None
+**Active task:** None; DEV-002 is next Ready task
+**Latest verified implementation milestone:** M0 repository bootstrap (DEV-001)
 **Last updated:** 2026-11-08
 **Branch policy:** Direct commits to main, no routine PRs
 
@@ -18,7 +18,7 @@ No Rust workspace, application, Slint GUI, virtual CAN, HAL, trace viewer or pro
 
 ## Verification evidence
 
-GitHub Actions CI run #3: https://github.com/JannisRln/CANexus-Studio/actions/runs/42493034408 . At inspection, Ubuntu project-state and Rust jobs succeeded; Windows jobs were still in progress. Rust steps are conditional and skipped because Cargo.toml does not exist; successful Rust job status is not a Rust build/test result. Recheck final run conclusion before closing DEV-001.
+GitHub Actions CI run #3 completed successfully on Windows and Linux: https://github.com/JannisRln/CANexus-Studio/actions/runs/42493034408 . Project-state checks passed. Rust jobs succeeded by skipping conditional Rust steps because Cargo.toml does not exist; no Rust build or tests were executed. Subsequent commits trigger new runs whose results must be checked independently.
 
 ## Risks and blockers
 
@@ -28,8 +28,8 @@ GitHub Actions CI run #3: https://github.com/JannisRln/CANexus-Studio/actions/ru
 
 ## Next action
 
-1. Verify GitHub Actions project-state checks and mark DEV-001 Done with run evidence.
-2. Implement DEV-002: minimal Rust workspace and toolchain.
+1. Implement DEV-002: minimal Rust workspace and toolchain.
+2. Verify Rust CI checks on Windows and Linux.
 3. Prototype Slint/pbSlintDock for DEV-003.
 
 Every future implementation chat must update this file with completed tasks, current commit, actual tests, failures and next action.
