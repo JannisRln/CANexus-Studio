@@ -18,7 +18,7 @@ No Rust workspace, application, Slint GUI, virtual CAN, HAL, trace viewer or pro
 
 ## Verification evidence
 
-CI configuration and documentation validation are being prepared. GitHub Actions execution is not yet confirmed. No Rust tests can run until Cargo.toml exists.
+GitHub Actions CI run #3: https://github.com/JannisRln/CANexus-Studio/actions/runs/42493034408 . At inspection, Ubuntu project-state and Rust jobs succeeded; Windows jobs were still in progress. Rust steps are conditional and skipped because Cargo.toml does not exist; successful Rust job status is not a Rust build/test result. Recheck final run conclusion before closing DEV-001.
 
 ## Risks and blockers
 
