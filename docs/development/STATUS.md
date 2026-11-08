@@ -52,9 +52,9 @@ Every future implementation chat must update this file with completed tasks, cur
 - Native floating-window lifecycle in CANexus: not implemented; engine-only float transition tests added.
 - DEV-003 remains In Progress until integration and recorded verification, not Done merely because a PR exists.
 
-## DEV-016 branch work (not yet integrated)
+## DEV-016 integrated — rustfmt pre-commit hook
 
-- Branch: `chore/DEV-016-rustfmt-pre-commit`.
-- Scope: opt-in rustfmt pre-commit hook, safe index behavior, setup guidance and Linux CI hook tests.
-- Local verification: five Git-hook integration tests passed on Linux with a stubbed cargo; real rustfmt, Windows hook execution and PR CI not yet verified.
-- DEV-016 remains In Progress until merged to main with verification evidence.
+- Status: **Done**. PR [#16](https://github.com/JannisRln/CANexus-Studio/pull/16) squash-merged into main as `878dc7bff2e4c3c6091ad2f29351e23a94691758` on 2026-11-08.
+- Scope: optional Git `.githooks/pre-commit` runs `cargo fmt --all` and checks formatting, refuses unstaged or partially staged Rust edits, does not silently stage; documented one-time hook activation and Linux integration tests.
+- Verification: PR-head CI [run 42516618789](https://github.com/JannisRln/CANexus-Studio/actions/runs/42516618789) **passed** all four Windows/Linux jobs: project-state checks, formatting, Clippy, workspace build and tests; five hook integration tests passed on Linux. The initial PR run failed due to an existing Core test Clippy warning, fixed by a one-line assertion before merge.
+- Post-merge main CI: not yet verified in this record. Manual Git-for-Windows hook execution not performed; the hook test is Linux-only. Rust binaries and automated tests were exercised in CI, not locally.
