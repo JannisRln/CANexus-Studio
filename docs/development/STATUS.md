@@ -1,7 +1,7 @@
 # Implementation status
 
 **Phase:** M0 — development workflow and CI preparation
-**Active task:** None; DEV-002 is next Ready task
+**Active task:** DEV-002 (In Progress on `chore/DEV-002-rust-workspace`, PR #10)
 **Latest verified implementation milestone:** M0 repository bootstrap (DEV-001)
 **Last updated:** 2026-11-08
 **Branch policy:** Hybrid: PRs for substantial/risky/parallel tasks; direct main pushes allowed for small isolated changes
@@ -28,7 +28,7 @@ GitHub Actions CI run #3 completed successfully on Windows and Linux: https://gi
 
 ## Parallel work coordination
 
-No implementation task branches or active parallel implementation sessions recorded yet. Before starting work, inspect open PRs and branches and record any concurrent task ownership here. DEV-002 establishes the shared Rust workspace and should precede overlapping crate/UI work.
+DEV-002 is active in `chore/DEV-002-rust-workspace` (PR #10: https://github.com/JannisRln/CANexus-Studio/pull/10). Initial core and CLI files are on the branch, **not yet on main**. Await Windows/Linux Rust CI verification before merge. Avoid duplicating DEV-002 or creating conflicting workspace scaffolding.
 
 ## Next action
 
