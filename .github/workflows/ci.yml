@@ -1,0 +1,55 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  project-state:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate project state
+        run: python scripts/check_project_state.py
+  rust:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Detect Rust workspace
+        id: workspace
+        shell: bash
+        run: |
+          if [ -f Cargo.toml ]; then
+            echo 'present=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'present=false' >> "$GITHUB_OUTPUT"
+            echo 'Rust checks skipped: Cargo.toml not yet present'
+          fi
+      - uses: dtolnay/rust-toolchain@stable
+        if: steps.workspace.outputs.present == 'true'
+        with:
+          components: rustfmt, clippy
+      - name: Formatting
+        if: steps.workspace.outputs.present == 'true'
+        run: cargo fmt --all -- --check
+      - name: Clippy
+        if: steps.workspace.outputs.present == 'true'
+        run: cargo clippy --workspace --all-targets -- -D warnings
+      - name: Build
+        if: steps.workspace.outputs.present == 'true'
+        run: cargo build --workspace --all-targets
+      - name: Test
+        if: steps.workspace.outputs.present == 'true'
+        run: cargo test --workspace --all-targets
