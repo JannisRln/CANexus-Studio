@@ -253,8 +253,13 @@ mod tests {
                 Some(*length)
             );
             let data = vec![0x5a; usize::from(*length)];
-            let frame = CanFrame::new(CanId::standard(1).unwrap(), CanFrameFlags::FD, dlc as u8, &data)
-                .expect("valid DLC and payload");
+            let frame = CanFrame::new(
+                CanId::standard(1).unwrap(),
+                CanFrameFlags::FD,
+                dlc as u8,
+                &data,
+            )
+            .expect("valid DLC and payload");
             assert_eq!(frame.dlc(), dlc as u8);
             assert_eq!(frame.data_len(), *length);
             assert_eq!(frame.data(), data);
@@ -266,7 +271,13 @@ mod tests {
     fn classic_lengths_and_empty_payload() {
         for dlc in 0..=8 {
             let data = vec![0xaa; dlc as usize];
-            assert!(CanFrame::new(CanId::standard(0).unwrap(), CanFrameFlags::CLASSIC, dlc, &data).is_ok());
+            assert!(CanFrame::new(
+                CanId::standard(0).unwrap(),
+                CanFrameFlags::CLASSIC,
+                dlc,
+                &data
+            )
+            .is_ok());
         }
         assert_eq!(payload_len_from_dlc(CanFormat::Classic, 9), None);
     }
