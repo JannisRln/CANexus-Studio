@@ -117,7 +117,11 @@ pub enum CanFrameError {
 pub const fn payload_len_from_dlc(format: CanFormat, dlc: u8) -> Option<u8> {
     match format {
         CanFormat::Classic => {
-            if dlc <= 8 { Some(dlc) } else { None }
+            if dlc <= 8 {
+                Some(dlc)
+            } else {
+                None
+            }
         }
         CanFormat::Fd => match dlc {
             0..=8 => Some(dlc),
@@ -190,23 +194,33 @@ impl CanFrame {
 
     /// Returns the ID including standard/extended representation.
     #[must_use]
-    pub const fn id(&self) -> CanId { self.id }
+    pub const fn id(&self) -> CanId {
+        self.id
+    }
 
     /// Returns frame format and wire flags.
     #[must_use]
-    pub const fn flags(&self) -> CanFrameFlags { self.flags }
+    pub const fn flags(&self) -> CanFrameFlags {
+        self.flags
+    }
 
     /// Returns the unmodified on-wire DLC.
     #[must_use]
-    pub const fn dlc(&self) -> u8 { self.dlc }
+    pub const fn dlc(&self) -> u8 {
+        self.dlc
+    }
 
     /// Returns the number of stored data bytes (zero for remote frames).
     #[must_use]
-    pub const fn data_len(&self) -> u8 { self.data_len }
+    pub const fn data_len(&self) -> u8 {
+        self.data_len
+    }
 
     /// Returns only the meaningful payload bytes.
     #[must_use]
-    pub fn data(&self) -> &[u8] { &self.data[..usize::from(self.data_len)] }
+    pub fn data(&self) -> &[u8] {
+        &self.data[..usize::from(self.data_len)]
+    }
 }
 
 #[cfg(test)]
@@ -218,7 +232,10 @@ mod tests {
         assert_eq!(CanId::standard(0), Some(CanId::Standard(0)));
         assert_eq!(CanId::standard(0x7ff).unwrap().raw(), 0x7ff);
         assert_eq!(CanId::standard(0x800), None);
-        assert_eq!(CanId::extended(0x1fff_ffff), Some(CanId::Extended(0x1fff_ffff)));
+        assert_eq!(
+            CanId::extended(0x1fff_ffff),
+            Some(CanId::Extended(0x1fff_ffff))
+        );
         assert_eq!(CanId::extended(0x2000_0000), None);
         assert_ne!(CanId::Standard(42), CanId::Extended(42));
         assert!(CanId::Extended(42).is_extended());
@@ -228,7 +245,10 @@ mod tests {
     fn all_fd_dlc_values_map_to_exact_payload_lengths() {
         let lengths = [0, 1, 2, 3, 4, 5, 6, 7, 8, 12, 16, 20, 24, 32, 48, 64];
         for (dlc, length) in lengths.iter().enumerate() {
-            assert_eq!(payload_len_from_dlc(CanFormat::Fd, dlc as u8), Some(*length));
+            assert_eq!(
+                payload_len_from_dlc(CanFormat::Fd, dlc as u8),
+                Some(*length)
+            );
             let data = vec![0x5a; usize::from(*length)];
             let frame = CanFrame::new(CanId::Standard(1), CanFrameFlags::FD, dlc as u8, &data)
                 .expect("valid DLC and payload");
@@ -260,22 +280,49 @@ mod tests {
             Err(CanFrameError::InvalidDlc)
         );
         assert_eq!(
-            CanFrame::new(id, CanFrameFlags { bit_rate_switch: true, ..CanFrameFlags::CLASSIC }, 0, &[]),
+            CanFrame::new(
+                id,
+                CanFrameFlags {
+                    bit_rate_switch: true,
+                    ..CanFrameFlags::CLASSIC
+                },
+                0,
+                &[]
+            ),
             Err(CanFrameError::ClassicFdFlags)
         );
         assert_eq!(
-            CanFrame::new(id, CanFrameFlags { error_state_indicator: true, ..CanFrameFlags::CLASSIC }, 0, &[]),
+            CanFrame::new(
+                id,
+                CanFrameFlags {
+                    error_state_indicator: true,
+                    ..CanFrameFlags::CLASSIC
+                },
+                0,
+                &[]
+            ),
             Err(CanFrameError::ClassicFdFlags)
         );
         assert_eq!(
-            CanFrame::new(id, CanFrameFlags { remote: true, ..CanFrameFlags::FD }, 0, &[]),
+            CanFrame::new(
+                id,
+                CanFrameFlags {
+                    remote: true,
+                    ..CanFrameFlags::FD
+                },
+                0,
+                &[]
+            ),
             Err(CanFrameError::FdRemoteFrame)
         );
     }
 
     #[test]
     fn remote_classic_frame_preserves_requested_dlc_without_data() {
-        let flags = CanFrameFlags { remote: true, ..CanFrameFlags::CLASSIC };
+        let flags = CanFrameFlags {
+            remote: true,
+            ..CanFrameFlags::CLASSIC
+        };
         let frame = CanFrame::new(CanId::Standard(5), flags, 8, &[]).unwrap();
         assert_eq!(frame.dlc(), 8);
         assert_eq!(frame.data_len(), 0);
