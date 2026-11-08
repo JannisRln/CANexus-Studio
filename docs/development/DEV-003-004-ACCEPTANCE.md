@@ -27,3 +27,8 @@ CI passing a PR never establishes end-to-end requirement fulfillment.
 - DLC legality and bytes are represented; remote frame DLC denotes requested length while the payload is empty. Error and bus-state event variants are outside DEV-004.
 - No physical device, native GUI roundtrip, or performance benchmark has been executed.
 - Completion evidence for the acceptance branch must refer to its own Windows/Linux GitHub Actions run; do not reuse earlier successful PR checks to assert acceptance-branch success.
+
+## Automated CI verification
+
+- Initial acceptance-branch head `cd014897272836e58912fd8066464c0e03ce1724` passed all four Windows/Linux GitHub Actions jobs in [run 42511275998](https://github.com/JannisRln/CANexus-Studio/actions/runs/42511275998): project-state, `cargo fmt --all -- --check`, Clippy with `-D warnings`, workspace build and all-target tests.
+- That is executable test evidence for the unit cases above, **not** proof of native GUI interaction or allocation instrumentation. Final documentation-only PR head should also receive its own CI check.
