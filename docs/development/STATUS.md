@@ -4,7 +4,7 @@
 **Active task:** None; DEV-002 is next Ready task
 **Latest verified implementation milestone:** M0 repository bootstrap (DEV-001)
 **Last updated:** 2026-11-08
-**Branch policy:** Direct commits to main, no routine PRs
+**Branch policy:** Hybrid: PRs for substantial/risky/parallel tasks; direct main pushes allowed for small isolated changes
 
 ## Implemented
 
@@ -25,6 +25,10 @@ GitHub Actions CI run #3 completed successfully on Windows and Linux: https://gi
 - Slint/pbSlintDock Windows/Linux integration needs proof of concept.
 - Hardware support and recording format are later decisions, not blockers for virtual CAN.
 - Confirm first CI run after workflow commit.
+
+## Parallel work coordination
+
+No implementation task branches or active parallel implementation sessions recorded yet. Before starting work, inspect open PRs and branches and record any concurrent task ownership here. DEV-002 establishes the shared Rust workspace and should precede overlapping crate/UI work.
 
 ## Next action
 
