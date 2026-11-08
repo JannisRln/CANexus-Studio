@@ -9,10 +9,14 @@ pub struct ClockDomainId(u64);
 impl ClockDomainId {
     /// Creates a clock domain identifier.
     #[must_use]
-    pub const fn new(value: u64) -> Self { Self(value) }
+    pub const fn new(value: u64) -> Self {
+        Self(value)
+    }
     /// Returns the underlying identifier.
     #[must_use]
-    pub const fn get(self) -> u64 { self.0 }
+    pub const fn get(self) -> u64 {
+        self.0
+    }
 }
 
 /// Tick resolution expressed as an exact rational number of nanoseconds.
@@ -32,17 +36,24 @@ impl TimestampResolution {
         if numerator_ns == 0 || denominator == 0 {
             None
         } else {
-            Some(Self { numerator_ns, denominator })
+            Some(Self {
+                numerator_ns,
+                denominator,
+            })
         }
     }
 
     /// Number of nanoseconds in the numerator.
     #[must_use]
-    pub const fn numerator_ns(self) -> u64 { self.numerator_ns }
+    pub const fn numerator_ns(self) -> u64 {
+        self.numerator_ns
+    }
 
     /// Tick resolution denominator.
     #[must_use]
-    pub const fn denominator(self) -> u64 { self.denominator }
+    pub const fn denominator(self) -> u64 {
+        self.denominator
+    }
 }
 
 /// Where a timestamp was measured or generated.
@@ -94,7 +105,13 @@ impl EventTimestamp {
         origin: TimestampOrigin,
         quality: TimestampQuality,
     ) -> Self {
-        Self { ticks, domain, resolution, origin, quality }
+        Self {
+            ticks,
+            domain,
+            resolution,
+            origin,
+            quality,
+        }
     }
 
     /// Computes elapsed nanoseconds from the domain's zero tick, if representable.
@@ -103,15 +120,16 @@ impl EventTimestamp {
     /// independent clock domains without a separate clock-correlation model.
     #[must_use]
     pub fn elapsed_ns(self) -> Option<u64> {
-        let product = u128::from(self.ticks)
-            .checked_mul(u128::from(self.resolution.numerator_ns))?;
+        let product =
+            u128::from(self.ticks).checked_mul(u128::from(self.resolution.numerator_ns))?;
         u64::try_from(product / u128::from(self.resolution.denominator)).ok()
     }
 
     /// Returns a signed tick delta only within the same clock domain and resolution.
     #[must_use]
     pub fn delta_ticks(self, earlier: Self) -> Option<i128> {
-        if self.domain != earlier.domain || self.resolution != earlier.resolution
+        if self.domain != earlier.domain
+            || self.resolution != earlier.resolution
             || self.quality == TimestampQuality::Discontinuous
             || earlier.quality == TimestampQuality::Discontinuous
         {
@@ -129,15 +147,23 @@ mod tests {
     fn rejects_zero_resolution() {
         assert!(TimestampResolution::new(0, 1).is_none());
         assert!(TimestampResolution::new(1, 0).is_none());
-        assert_eq!(TimestampResolution::new(1, 1_000_000).unwrap().denominator(), 1_000_000);
+        assert_eq!(
+            TimestampResolution::new(1, 1_000_000)
+                .unwrap()
+                .denominator(),
+            1_000_000
+        );
     }
 
     #[test]
     fn preserves_hardware_provenance_and_precise_scaling() {
         let resolution = TimestampResolution::new(125, 2).unwrap();
         let timestamp = EventTimestamp::new(
-            4, ClockDomainId::new(3), resolution,
-            TimestampOrigin::Hardware, TimestampQuality::Uncorrelated
+            4,
+            ClockDomainId::new(3),
+            resolution,
+            TimestampOrigin::Hardware,
+            TimestampQuality::Uncorrelated,
         );
         assert_eq!(timestamp.elapsed_ns(), Some(250));
         assert_eq!(timestamp.domain.get(), 3);
@@ -150,18 +176,28 @@ mod tests {
     fn refuses_cross_domain_deltas_and_discontinuities() {
         let res = TimestampResolution::new(1, 1).unwrap();
         let base = EventTimestamp::new(
-            10, ClockDomainId::new(1), res,
-            TimestampOrigin::Host, TimestampQuality::Uncorrelated
+            10,
+            ClockDomainId::new(1),
+            res,
+            TimestampOrigin::Host,
+            TimestampQuality::Uncorrelated,
         );
         let later = EventTimestamp::new(20, ClockDomainId::new(1), res, base.origin, base.quality);
         assert_eq!(later.delta_ticks(base), Some(10));
         assert_eq!(base.delta_ticks(later), Some(-10));
-        let other = EventTimestamp { domain: ClockDomainId::new(2), ..later };
+        let other = EventTimestamp {
+            domain: ClockDomainId::new(2),
+            ..later
+        };
         assert_eq!(other.delta_ticks(base), None);
-        let reset = EventTimestamp { quality: TimestampQuality::Discontinuous, ..later };
+        let reset = EventTimestamp {
+            quality: TimestampQuality::Discontinuous,
+            ..later
+        };
         assert_eq!(reset.delta_ticks(base), None);
         let incompatible = EventTimestamp {
-            resolution: TimestampResolution::new(2, 1).unwrap(), ..later
+            resolution: TimestampResolution::new(2, 1).unwrap(),
+            ..later
         };
         assert_eq!(incompatible.delta_ticks(base), None);
     }
@@ -170,8 +206,11 @@ mod tests {
     fn overflow_is_explicit_not_wrapped() {
         let res = TimestampResolution::new(u64::MAX, 1).unwrap();
         let stamp = EventTimestamp::new(
-            u64::MAX, ClockDomainId::new(0), res,
-            TimestampOrigin::Synthetic, TimestampQuality::Estimated
+            u64::MAX,
+            ClockDomainId::new(0),
+            res,
+            TimestampOrigin::Synthetic,
+            TimestampQuality::Estimated,
         );
         assert_eq!(stamp.elapsed_ns(), None);
     }
