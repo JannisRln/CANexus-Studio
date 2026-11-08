@@ -21,3 +21,12 @@ This repository uses Markdown specifications under `docs/requirements/` as the s
 - Python tests live in user-referenced Python files, editable through external editors, and run through GUI/CLI using isolated per-script-session worker processes.
 - Third-party Slint dockable panels and a fully configurable command dispatcher are product goals; prototype dynamic UI lifecycle/SDK stability before implementation.
 - Do not claim generic flashing recovery, unrestricted vendor diagnostics support, or cross-device precise synchronization without evidence.
+
+## Chat-only implementation workflow (mandatory)
+
+- Before any implementation, read docs/development/README.md, STATUS.md, BACKLOG.md, DECISIONS.md and relevant requirements; inspect the current main commit and code.
+- The repository is the only durable progress record across chats; never rely on previous chat memory as the implementation source of truth.
+- Implement the earliest Ready task with satisfied dependencies, update task status and STATUS.md, and commit the result directly to main. Do not create pull requests or GitHub Issues unless explicitly requested.
+- Every delivery must report commit SHA, actual tests/CI results, failures, remaining tasks and next action. Do not claim CI passed unless a run confirms it.
+- Add tests and maintain Windows/Linux CI; Rust checks become active after Cargo.toml exists.
+- CAN Signal Generator and XCP-driven generation are not part of v1; retain extension points only.
