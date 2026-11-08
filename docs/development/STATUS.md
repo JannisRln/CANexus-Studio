@@ -2,7 +2,7 @@
 
 **Phase:** M0 — Rust workspace completed; DEV-003 GUI feasibility in progress
 **Active task:** DEV-003 In Progress on `feat/DEV-003-slint-docking-spike`; DEV-004 remains independently Ready
-**Latest verified implementation milestone:** DEV-002 Rust workspace merged to main (`d3ee9e87`)
+**Latest verified implementation milestone:** DEV-002 merged to main (`d3ee9e87`); DEV-003 PR #12 CI passed (not merged)
 **Last updated:** 2026-11-08
 **Branch policy:** Hybrid: PRs for substantial/risky/parallel tasks; direct main pushes allowed for small isolated changes
 
@@ -44,6 +44,6 @@ Every future implementation chat must update this file with completed tasks, cur
 - Branch: `feat/DEV-003-slint-docking-spike`; owner: this implementation session (2026-11-08).
 - Scope: sample Slint GUI using pbSlintDock Rust engine, workspace wiring, tests and cross-platform CI preparation.
 - Local Rust builds/tests: not run (Cargo/rustc and external git clone are unavailable in the execution environment).
-- CI: pending a run for the feature PR. Do not infer success from workflow configuration.
+- CI: **passed** on Windows and Linux in PR #12 run [42501580558](https://github.com/JannisRln/CANexus-Studio/actions/runs/42501580558): project-state validation, `cargo fmt --all -- --check`, Clippy with `-D warnings`, workspace build and all-target tests. This is CI compilation/test evidence, not a native interactive GUI or floating-window test.
 - Native floating-window lifecycle in CANexus: not implemented; engine-only float transition tests added.
 - DEV-003 remains In Progress until integration and recorded verification, not Done merely because a PR exists.
