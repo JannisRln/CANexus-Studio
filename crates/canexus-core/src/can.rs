@@ -299,6 +299,5 @@ mod tests {
         assert_eq!(frame.data(), &[1, 2, 3, 4]);
         assert_eq!(frame.flags(), flags);
         assert_eq!(frame.id(), CanId::Extended(0x123));
-        assert_eq!(frame, frame);
     }
 }
