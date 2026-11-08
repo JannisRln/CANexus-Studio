@@ -40,6 +40,7 @@
 22. [ADR-010 — Unified Measurement & Calibration Workspace UX (Proposed detail)](21-adr-010-measurement-calibration-workspace-ux.md)
 23. [ADR-011 — High-Performance Core Architecture & Data Flow (Proposed detail)](22-adr-011-high-performance-core-architecture.md)
 24. [ADR-008 — Central Measurement Engine (Proposed detail)](23-adr-008-central-measurement-engine.md)
+25. [CAN Signal Generator & XCP-Ready Architecture (Post-v1)](24-can-signal-generator-xcp-readiness.md)
 
 ## Confirmed requirements since v0.5
 
@@ -55,7 +56,8 @@
 - Exact project-shared vs user-local preference schemas and override precedence.
 - MVP hardware adapters and benchmark reference systems.
 - Select verified interoperable direct-recording standard format (MDF4 candidate).
-- Required CANopen, UDS, XCP profiles for the first usable release.
+- Exact CANopen and UDS profiles for the first usable release; XCP readiness boundaries and the later XCP delivery milestone.
+- CAN Signal Generator waveform set, conflict handling and later XCP target semantics (explicitly excluded from v1).
 - Security model for plugins, scripts and transmit permissions.
 - Python runtime distribution, worker process lifecycle, dependency management, permission isolation.
 - Generic event representation, timestamp correlation and Ethernet integration milestones.
