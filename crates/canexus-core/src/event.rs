@@ -82,7 +82,13 @@ mod tests {
         };
         assert_ne!(a, same_sequence_other_source);
         assert_ne!(a, same_source_next);
-        assert_eq!(a, RawEventId { ..a });
+        assert_eq!(
+            a,
+            RawEventId {
+                source: SourceId::new(1),
+                sequence: 7,
+            }
+        );
     }
 
     #[test]
