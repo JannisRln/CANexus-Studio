@@ -11,10 +11,14 @@ pub struct ChannelId(u32);
 impl ChannelId {
     /// Creates a channel identifier.
     #[must_use]
-    pub const fn new(value: u32) -> Self { Self(value) }
+    pub const fn new(value: u32) -> Self {
+        Self(value)
+    }
     /// Returns the channel identifier.
     #[must_use]
-    pub const fn get(self) -> u32 { self.0 }
+    pub const fn get(self) -> u32 {
+        self.0
+    }
 }
 
 /// Captured ordering is local to a source, not a universal clock order.
@@ -65,15 +69,24 @@ mod tests {
     #[test]
     fn observed_can_frame_retains_identity_and_time() {
         let frame = CanFrame::new(
-            CanId::standard(0x123).unwrap(), CanFrameFlags::CLASSIC, 2, &[0xab, 0xcd]
-        ).unwrap();
+            CanId::standard(0x123).unwrap(),
+            CanFrameFlags::CLASSIC,
+            2,
+            &[0xab, 0xcd],
+        )
+        .unwrap();
         let observation = Observed {
-            id: RawEventId { source: SourceId::new(7), sequence: 21 },
+            id: RawEventId {
+                source: SourceId::new(7),
+                sequence: 21,
+            },
             channel: ChannelId::new(2),
             timestamp: EventTimestamp::new(
-                1000, ClockDomainId::new(9),
+                1000,
+                ClockDomainId::new(9),
                 TimestampResolution::new(1, 1).unwrap(),
-                TimestampOrigin::Hardware, TimestampQuality::Uncorrelated
+                TimestampOrigin::Hardware,
+                TimestampQuality::Uncorrelated,
             ),
             direction: EventDirection::Rx,
             value: frame,
