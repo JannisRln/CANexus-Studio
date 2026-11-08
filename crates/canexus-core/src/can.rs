@@ -8,13 +8,13 @@ pub const MAX_STANDARD_ID: u16 = 0x7ff;
 /// Maximum identifier for a 29-bit CAN frame.
 pub const MAX_EXTENDED_ID: u32 = 0x1fff_ffff;
 
-/// An identifier whose encoding (11-bit or 29-bit) is preserved.
+/// A validated CAN arbitration ID with a preserved 11/29-bit representation.
+///
+/// Private fields prevent callers from constructing out-of-range IDs.
 #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
-pub enum CanId {
-    /// An 11-bit identifier.
-    Standard(u16),
-    /// A 29-bit identifier, including values that also fit in 11 bits.
-    Extended(u32),
+pub struct CanId {
+    raw: u32,
+    extended: bool,
 }
 
 impl CanId {
@@ -22,7 +22,10 @@ impl CanId {
     #[must_use]
     pub const fn standard(value: u16) -> Option<Self> {
         if value <= MAX_STANDARD_ID {
-            Some(Self::Standard(value))
+            Some(Self {
+                raw: value as u32,
+                extended: false,
+            })
         } else {
             None
         }
@@ -32,7 +35,10 @@ impl CanId {
     #[must_use]
     pub const fn extended(value: u32) -> Option<Self> {
         if value <= MAX_EXTENDED_ID {
-            Some(Self::Extended(value))
+            Some(Self {
+                raw: value,
+                extended: true,
+            })
         } else {
             None
         }
@@ -41,16 +47,13 @@ impl CanId {
     /// Returns the numeric arbitration identifier.
     #[must_use]
     pub const fn raw(self) -> u32 {
-        match self {
-            Self::Standard(value) => value as u32,
-            Self::Extended(value) => value,
-        }
+        self.raw
     }
 
     /// Reports whether this ID uses the 29-bit wire representation.
     #[must_use]
     pub const fn is_extended(self) -> bool {
-        matches!(self, Self::Extended(_))
+        self.extended
     }
 }
 
@@ -229,16 +232,16 @@ mod tests {
 
     #[test]
     fn identifier_boundaries_and_format_are_preserved() {
-        assert_eq!(CanId::standard(0), Some(CanId::Standard(0)));
+        assert_eq!(CanId::standard(0), Some(CanId::standard(0).unwrap()));
         assert_eq!(CanId::standard(0x7ff).unwrap().raw(), 0x7ff);
         assert_eq!(CanId::standard(0x800), None);
         assert_eq!(
             CanId::extended(0x1fff_ffff),
-            Some(CanId::Extended(0x1fff_ffff))
+            Some(CanId::extended(0x1fff_ffff).unwrap())
         );
         assert_eq!(CanId::extended(0x2000_0000), None);
-        assert_ne!(CanId::Standard(42), CanId::Extended(42));
-        assert!(CanId::Extended(42).is_extended());
+        assert_ne!(CanId::standard(42).unwrap(), CanId::extended(42).unwrap());
+        assert!(CanId::extended(42).unwrap().is_extended());
     }
 
     #[test]
@@ -250,7 +253,7 @@ mod tests {
                 Some(*length)
             );
             let data = vec![0x5a; usize::from(*length)];
-            let frame = CanFrame::new(CanId::Standard(1), CanFrameFlags::FD, dlc as u8, &data)
+            let frame = CanFrame::new(CanId::standard(1).unwrap(), CanFrameFlags::FD, dlc as u8, &data)
                 .expect("valid DLC and payload");
             assert_eq!(frame.dlc(), dlc as u8);
             assert_eq!(frame.data_len(), *length);
@@ -263,14 +266,14 @@ mod tests {
     fn classic_lengths_and_empty_payload() {
         for dlc in 0..=8 {
             let data = vec![0xaa; dlc as usize];
-            assert!(CanFrame::new(CanId::Standard(0), CanFrameFlags::CLASSIC, dlc, &data).is_ok());
+            assert!(CanFrame::new(CanId::standard(0).unwrap(), CanFrameFlags::CLASSIC, dlc, &data).is_ok());
         }
         assert_eq!(payload_len_from_dlc(CanFormat::Classic, 9), None);
     }
 
     #[test]
     fn reject_mismatched_dlc_and_illegal_flag_combinations() {
-        let id = CanId::Standard(0);
+        let id = CanId::standard(0).unwrap();
         assert_eq!(
             CanFrame::new(id, CanFrameFlags::FD, 9, &[0; 9]),
             Err(CanFrameError::PayloadLengthMismatch)
@@ -323,12 +326,12 @@ mod tests {
             remote: true,
             ..CanFrameFlags::CLASSIC
         };
-        let frame = CanFrame::new(CanId::Standard(5), flags, 8, &[]).unwrap();
+        let frame = CanFrame::new(CanId::standard(5).unwrap(), flags, 8, &[]).unwrap();
         assert_eq!(frame.dlc(), 8);
         assert_eq!(frame.data_len(), 0);
         assert!(frame.data().is_empty());
         assert_eq!(
-            CanFrame::new(CanId::Standard(5), flags, 1, &[1]),
+            CanFrame::new(CanId::standard(5).unwrap(), flags, 1, &[1]),
             Err(CanFrameError::RemoteFrameWithData)
         );
     }
@@ -341,10 +344,10 @@ mod tests {
             ..CanFrameFlags::FD
         };
         let mut input = [1, 2, 3, 4];
-        let frame = CanFrame::new(CanId::Extended(0x123), flags, 4, &input).unwrap();
+        let frame = CanFrame::new(CanId::extended(0x123).unwrap(), flags, 4, &input).unwrap();
         input[0] = 99;
         assert_eq!(frame.data(), &[1, 2, 3, 4]);
         assert_eq!(frame.flags(), flags);
-        assert_eq!(frame.id(), CanId::Extended(0x123));
+        assert_eq!(frame.id(), CanId::extended(0x123).unwrap());
     }
 }
