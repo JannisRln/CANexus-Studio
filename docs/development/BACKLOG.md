@@ -6,7 +6,7 @@ Canonical implementation tasks. Statuses: Planned, Ready, In Progress, Blocked, 
 |---|---|---|---|---|---|
 | DEV-001 | M0 | P0 | Done | None | Workflow docs and CI committed; first CI run verified |
 | DEV-002 | M0 | P0 | Done | DEV-001 scaffolding | Rust workspace, pinned toolchain, formatting, Clippy, build and tests in CI |
-| DEV-003 | M0 | P0 | Ready | DEV-002 | Slint and pbSlintDock minimal integration with Windows/Linux evidence |
+| DEV-003 | M0 | P0 | In Progress | DEV-002 | Slint and pbSlintDock minimal integration with Windows/Linux evidence |
 | DEV-004 | M1 | P0 | Ready | DEV-002 | Tested typed CAN/CAN FD frame and timestamp model |
 | DEV-005 | M1 | P0 | Planned | DEV-004 | Deterministic virtual CAN adapter and fixtures |
 | DEV-006 | M1 | P0 | Planned | DEV-005 | Bounded event ingestion and shared batches, overload/shutdown tests |
