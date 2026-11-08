@@ -22,6 +22,8 @@ jobs:
       - name: Validate project state
         run: python scripts/check_project_state.py
   rust:
+    env:
+      PBSLINTDOCK_ROOT: ${{ github.workspace }}/third_party/pbSlintDock
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -29,6 +31,16 @@ jobs:
         os: [ubuntu-latest, windows-latest]
     steps:
       - uses: actions/checkout@v4
+      - name: Checkout pinned pbSlintDock (DEV-003)
+        uses: actions/checkout@v4
+        with:
+          repository: pbtechlab/pbSlintDock
+          ref: 059418b3704bbe0b4699e89341a4567a37904fc9
+          path: third_party/pbSlintDock
+          persist-credentials: false
+      - name: Install native Linux GUI prerequisites
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y libfontconfig1-dev libxkbcommon-dev libwayland-dev libx11-dev libxcb1-dev libxcb-render0-dev libxcb-shape0-dev libxcb-xfixes0-dev
       - name: Detect Rust workspace
         id: workspace
         shell: bash
