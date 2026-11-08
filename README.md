@@ -14,6 +14,10 @@ See [Requirements](docs/requirements/README.md). Requirements are maintained as 
 
 This repository and its specifications are in an early design phase. Items marked `Proposed` have not yet been accepted.
 
+## UX/UI design concept
+
+The proposed [UX design system and interactive desktop prototype](docs/design/README.md) cover the CAN Analyzer, Measurement/Calibration, and UDS Diagnostics workflows. The concepts are **not yet accepted UI requirements or an implemented Slint application**.
+
 ## License
 
 CANexus-Studio is licensed under the [MIT License](LICENSE).
