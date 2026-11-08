@@ -13,3 +13,7 @@ An ECU repository needs only one CANexus project configuration file, provisional
 See [Requirements](docs/requirements/README.md). Requirements are maintained as Markdown files in this repository, **not** GitHub Issues.
 
 This repository and its specifications are in an early design phase. Items marked `Proposed` have not yet been accepted.
+
+## License
+
+CANexus-Studio is licensed under the [MIT License](LICENSE).
