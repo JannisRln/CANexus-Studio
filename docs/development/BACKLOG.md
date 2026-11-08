@@ -8,7 +8,7 @@ Canonical implementation tasks. Statuses: Planned, Ready, In Progress, Blocked, 
 | DEV-002 | M0 | P0 | Done | DEV-001 scaffolding | Rust workspace, pinned toolchain, formatting, Clippy, build and tests in CI |
 | DEV-003 | M0 | P0 | Blocked | DEV-002 | Slint/pbSlintDock feasibility: native floating lifecycle, persisted float/re-dock, interactive Windows/Linux proof and documented decision; see DEV-016 |
 | DEV-004 | M1 | P0 | Done | DEV-002 | Tested typed CAN/CAN FD frame and timestamp model |
-| DEV-005 | M1 | P0 | Ready | DEV-004 | Deterministic virtual CAN adapter and fixtures |
+| DEV-005 | M1 | P0 | In Progress | DEV-004 | Deterministic virtual CAN adapter and fixtures |
 | DEV-006 | M1 | P0 | Planned | DEV-005 | Bounded event ingestion and shared batches, overload/shutdown tests |
 | DEV-007 | M1 | P0 | Planned | DEV-006 | Bounded trace history, query API and loss provenance tests |
 | DEV-008 | M1 | P0 | Planned | DEV-003, DEV-007 | Slint Trace panel showing virtual frames with virtualized rendering |

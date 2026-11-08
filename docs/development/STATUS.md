@@ -1,7 +1,7 @@
 # Implementation status
 
 **Phase:** M0/M1 — typed CAN foundation merged; CI regression and DEV-003 GUI acceptance pending
-**Active task:** DEV-003 Blocked on native floating-window lifecycle/interactive verification (DEV-016); DEV-004 merged; CI/acceptance fix proposed on `fix/ci-and-dev-003-004-acceptance`
+**Active task:** DEV-003 Blocked pending DEV-016; DEV-005 In Progress on `feat/DEV-005-virtual-can-adapter` (PR #14, stacked on CI/acceptance fix PR #13); DEV-004 merged
 **Latest verified implementation milestone:** DEV-004 merged as `e9090748`; DEV-003 merged as `bef8513d` but not GUI-accepted; main `10e1bd5` CI failed in Clippy
 **Last updated:** 2026-11-08
 **Branch policy:** Hybrid: PRs for substantial/risky/parallel tasks; direct main pushes allowed for small isolated changes
@@ -17,7 +17,7 @@
 
 ## Not implemented
 
-No production trace GUI, virtual CAN, HAL, trace viewer or protocol implementation yet. The CLI is only a bootstrap entry point; DEV-003 is a feasibility spike.
+No production trace GUI, virtual CAN adapter on `main`, hardware HAL, trace viewer or protocol implementation yet. DEV-005 virtual CAN fixture implementation exists only on the unmerged PR #14 branch. The CLI is only a bootstrap entry point; DEV-003 is a feasibility spike.
 
 ## Verification evidence
 
@@ -67,3 +67,11 @@ Every future implementation chat must update this file with completed tasks, cur
 - PR #13 head `cd014897272836e58912fd8066464c0e03ce1724`, GitHub Actions [run 42511275998](https://github.com/JannisRln/CANexus-Studio/actions/runs/42511275998): project-state, formatting, Clippy, build and all-target tests **passed on Windows and Linux** (four successful jobs).
 - This confirms automated compilation/unit tests for the acceptance changes; it does **not** verify native interactive GUI floating-window behavior, hardware timestamps, actual per-frame allocator measurements, or any post-merge main run.
 - A documentation-only evidence update after this run requires its own final PR CI confirmation.
+
+## DEV-005 branch work (not yet integrated)
+
+- Scope: deterministic, pull-based virtual CAN Classic/CAN FD fixtures in `crates/canexus-core/src/virtual_can.rs`, with `tests/virtual_can.rs`, no GUI or hardware SDK changes.
+- Branch: `feat/DEV-005-virtual-can-adapter`; PR #14 is stacked on reviewed PR #13 until its pre-existing Clippy fix is merged into `main`.
+- Formatting and project-state checks passed on the initial isolated PR #14; Rust Clippy on the original main baseline failed because of the existing `unused_assignments` warning in `can.rs`, independently fixed with successful Windows/Linux CI in PR #13 (run 42511916434).
+- Combined DEV-005 + PR #13 validation: GitHub Actions run 42516671266 started on merge commit `15763435`; **final result pending at this documentation revision**. Local Rust execution was not available. Do not claim successful tests before run completion.
+- DEV-005 remains In Progress until #13 is integrated, #14 CI passes against up-to-date main, PR #14 is integrated, and main/STATUS/BACKLOG verification is recorded.
