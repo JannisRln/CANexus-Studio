@@ -17,3 +17,7 @@ This repository and its specifications are in an early design phase. Items marke
 ## License
 
 CANexus-Studio is licensed under the [MIT License](LICENSE).
+
+## Development through ChatGPT
+
+Implementation progress, task planning, decisions and chat-to-chat handoffs are stored in [development documentation](docs/development/README.md). Start with [current status](docs/development/STATUS.md) and [backlog](docs/development/BACKLOG.md). Changes are committed directly to main; CI is configured for Windows and Linux. The initial code milestone is a virtual-CAN-to-Trace vertical slice.
