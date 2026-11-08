@@ -5,6 +5,7 @@
 
 pub mod can;
 pub mod event;
+pub mod ingest;
 pub mod time;
 pub mod virtual_can;
 
