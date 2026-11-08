@@ -13,10 +13,7 @@ use std::{
     },
 };
 
-use crate::{
-    event::Observed,
-    SourceId,
-};
+use crate::{event::Observed, SourceId};
 
 /// Limits for a capture producer and its consumers.
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -380,7 +377,7 @@ impl<T> BoundedIngest<T> {
         }
         self.state = IngestState::Stopped;
         for consumer in &mut self.consumers {
-            consumer.sender.take();
+            let _ = consumer.sender.take();
             if consumer.state == ConsumerState::Active {
                 consumer.state = ConsumerState::Closed;
             }
@@ -430,13 +427,13 @@ impl<T> BoundedIngest<T> {
                         Err(TrySendError::Full(_)) => {
                             if consumer.policy == OverflowPolicy::FailConsumer {
                                 consumer.state = ConsumerState::Failed;
-                                consumer.sender.take();
+                                let _ = consumer.sender.take();
                             }
                             Some(LossReason::QueueFull)
                         }
                         Err(TrySendError::Disconnected(_)) => {
                             consumer.state = ConsumerState::Disconnected;
-                            consumer.sender.take();
+                            let _ = consumer.sender.take();
                             Some(LossReason::ConsumerDisconnected)
                         }
                     }
@@ -446,8 +443,7 @@ impl<T> BoundedIngest<T> {
                 ConsumerState::Closed => None,
             };
             if let Some(reason) = reason {
-                consumer.stats.dropped_batches =
-                    consumer.stats.dropped_batches.saturating_add(1);
+                consumer.stats.dropped_batches = consumer.stats.dropped_batches.saturating_add(1);
                 consumer.stats.dropped_events =
                     consumer.stats.dropped_events.saturating_add(count as u64);
                 consumer.stats.last_loss = Some(BatchLoss {
@@ -468,7 +464,9 @@ mod tests {
     use crate::{
         can::{CanFrame, CanFrameFlags, CanId},
         event::{ChannelId, EventDirection, RawEventId},
-        time::{ClockDomainId, EventTimestamp, TimestampOrigin, TimestampQuality, TimestampResolution},
+        time::{
+            ClockDomainId, EventTimestamp, TimestampOrigin, TimestampQuality, TimestampResolution,
+        },
         virtual_can::{fixtures, VirtualCanAdapter},
     };
 
@@ -559,8 +557,14 @@ mod tests {
         assert_eq!(first.events()[0].id.sequence, 10);
         assert_eq!(first.events()[1].id.sequence, 12);
         assert_eq!(first.events()[1].value.data(), &[0x12, 0x34]);
-        assert_eq!(ingest.consumer_snapshot(a_id).unwrap().stats.queued_events, 2);
-        assert_eq!(ingest.consumer_snapshot(b_id).unwrap().stats.queued_events, 2);
+        assert_eq!(
+            ingest.consumer_snapshot(a_id).unwrap().stats.queued_events,
+            2
+        );
+        assert_eq!(
+            ingest.consumer_snapshot(b_id).unwrap().stats.queued_events,
+            2
+        );
         assert_eq!(ingest.stats().published_batches, 1);
     }
 
@@ -615,10 +619,20 @@ mod tests {
         assert_eq!(rec_info.state, ConsumerState::Failed);
         assert_eq!(rec_info.stats.queued_events, 2);
         assert_eq!(rec_info.stats.dropped_events, 4);
-        assert_eq!(rec_info.stats.last_loss.unwrap().reason, LossReason::ConsumerFailed);
+        assert_eq!(
+            rec_info.stats.last_loss.unwrap().reason,
+            LossReason::ConsumerFailed
+        );
         assert_eq!(recording.recv().unwrap().events()[0].id.sequence, 0);
         assert!(recording.recv().is_err());
-        assert_eq!(ingest.consumer_snapshot(trace_id).unwrap().stats.queued_events, 6);
+        assert_eq!(
+            ingest
+                .consumer_snapshot(trace_id)
+                .unwrap()
+                .stats
+                .queued_events,
+            6
+        );
         assert_eq!(trace.try_iter().map(|batch| batch.len()).sum::<usize>(), 6);
         assert_eq!(ingest.stats().accepted_events, 6);
     }
@@ -632,9 +646,18 @@ mod tests {
         ingest.push(frame_event(4)).unwrap();
         drop(receiver);
         assert!(ingest.flush().unwrap());
-        assert_eq!(ingest.consumer_snapshot(id).unwrap().state, ConsumerState::Disconnected);
         assert_eq!(
-            ingest.consumer_snapshot(id).unwrap().stats.last_loss.unwrap().reason,
+            ingest.consumer_snapshot(id).unwrap().state,
+            ConsumerState::Disconnected
+        );
+        assert_eq!(
+            ingest
+                .consumer_snapshot(id)
+                .unwrap()
+                .stats
+                .last_loss
+                .unwrap()
+                .reason,
             LossReason::ConsumerDisconnected
         );
         assert!(!ingest.flush().unwrap());
@@ -642,7 +665,10 @@ mod tests {
         ingest.shutdown().unwrap();
         assert_eq!(ingest.state(), IngestState::Stopped);
         assert_eq!(ingest.stats().accepted_events, 3);
-        assert_eq!(ingest.consumer_snapshot(id).unwrap().stats.dropped_events, 3);
+        assert_eq!(
+            ingest.consumer_snapshot(id).unwrap().stats.dropped_events,
+            3
+        );
     }
 
     #[test]
@@ -653,7 +679,10 @@ mod tests {
         ingest.push(frame_event(1)).unwrap();
         ingest.push(frame_event(2)).unwrap();
         ingest.shutdown().unwrap();
-        assert_eq!(ingest.consumer_snapshot(id).unwrap().state, ConsumerState::Closed);
+        assert_eq!(
+            ingest.consumer_snapshot(id).unwrap().state,
+            ConsumerState::Closed
+        );
         assert_eq!(receiver.recv().unwrap().len(), 2);
         assert!(receiver.recv().is_err());
         assert_eq!(ingest.staged_events(), 0);
