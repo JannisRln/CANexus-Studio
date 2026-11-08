@@ -3,6 +3,10 @@
 //! Transport-specific event representations will live in dedicated modules;
 //! the core must not assume that every future transport is CAN.
 
+pub mod can;
+pub mod event;
+pub mod time;
+
 /// Identifies a logical data source within a running application.
 #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
 pub struct SourceId(u64);
