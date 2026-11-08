@@ -67,6 +67,54 @@ mod tests {
     };
 
     #[test]
+    fn raw_identity_is_scoped_to_source_and_sequence() {
+        let a = RawEventId {
+            source: SourceId::new(1),
+            sequence: 7,
+        };
+        let same_sequence_other_source = RawEventId {
+            source: SourceId::new(2),
+            sequence: 7,
+        };
+        let same_source_next = RawEventId {
+            source: SourceId::new(1),
+            sequence: 8,
+        };
+        assert_ne!(a, same_sequence_other_source);
+        assert_ne!(a, same_source_next);
+        assert_eq!(
+            a,
+            RawEventId {
+                source: SourceId::new(1),
+                sequence: 7,
+            }
+        );
+    }
+
+    #[test]
+    fn envelope_can_hold_non_can_payload_without_allocation() {
+        let timestamp = EventTimestamp::new(
+            0,
+            ClockDomainId::new(1),
+            TimestampResolution::new(1, 1).unwrap(),
+            TimestampOrigin::Synthetic,
+            TimestampQuality::Uncorrelated,
+        );
+        let observed = Observed {
+            id: RawEventId {
+                source: SourceId::new(1),
+                sequence: 0,
+            },
+            channel: ChannelId::new(0),
+            timestamp,
+            direction: EventDirection::Tx,
+            value: 0xdead_beefu32,
+        };
+        assert_eq!(observed.value, 0xdead_beef);
+        assert!(!std::mem::needs_drop::<Observed<u32>>());
+    }
+
+    #[test]
     fn observed_can_frame_retains_identity_and_time() {
         let frame = CanFrame::new(
             CanId::standard(0x123).unwrap(),

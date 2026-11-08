@@ -203,6 +203,42 @@ mod tests {
     }
 
     #[test]
+    fn same_ticks_in_different_domains_are_not_comparable() {
+        let resolution = TimestampResolution::new(1, 1).unwrap();
+        let hardware = EventTimestamp::new(
+            42,
+            ClockDomainId::new(1),
+            resolution,
+            TimestampOrigin::Hardware,
+            TimestampQuality::Uncorrelated,
+        );
+        let host = EventTimestamp::new(
+            42,
+            ClockDomainId::new(2),
+            resolution,
+            TimestampOrigin::Host,
+            TimestampQuality::Estimated,
+        );
+        assert_ne!(hardware, host);
+        assert_eq!(hardware.delta_ticks(host), None);
+        assert_eq!(host.delta_ticks(hardware), None);
+    }
+
+    #[test]
+    fn elapsed_nanoseconds_truncate_fractional_ticks_without_overflow() {
+        let resolution = TimestampResolution::new(1, 3).unwrap();
+        let stamp = EventTimestamp::new(
+            5,
+            ClockDomainId::new(3),
+            resolution,
+            TimestampOrigin::Synthetic,
+            TimestampQuality::Uncorrelated,
+        );
+        assert_eq!(stamp.elapsed_ns(), Some(1));
+        assert_eq!(stamp.resolution.denominator(), 3);
+    }
+
+    #[test]
     fn overflow_is_explicit_not_wrapped() {
         let res = TimestampResolution::new(u64::MAX, 1).unwrap();
         let stamp = EventTimestamp::new(
