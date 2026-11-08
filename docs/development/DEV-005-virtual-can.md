@@ -23,3 +23,7 @@
 ## Deferred boundaries
 
 DEV-006 will supply bounded ingestion/batching and overload/shutdown tests. This increment does not select a stable native plugin ABI, implement a physical CAN driver, schedule TX, inject driver faults, or establish correlation to wall-clock/other adapters. No benchmark claims are made. Mark DEV-005 Done only after PR integration, CI verification, and shared development status reconciliation.
+
+## CI and integration dependency
+
+The repository CI workflow currently runs for pull requests targeting `main`. PR #14 therefore keeps `main` as its target while carrying the reviewed CI/acceptance corrections from PR #13 in a merge commit. Merge PR #13 first; then recheck PR #14's diff, base and Windows/Linux CI before integration. A passing branch job does not establish that post-merge `main` is green.
