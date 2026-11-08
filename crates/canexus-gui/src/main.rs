@@ -35,19 +35,64 @@ impl ViewModels {
 
     fn refresh(&self, window: &MainWindow, manager: &DockManager) {
         let layout = manager.output(MAIN_WINDOW);
-        update(&self.panels, layout.panels.iter().map(|p| PanelVm {
-            x: p.rect.x, y: p.rect.y, w: p.rect.w, h: p.rect.h, visible: p.visible,
-        }).collect());
-        update(&self.tabs, layout.tabs.iter().map(|t| TabVm {
-            x: t.rect.x, y: t.rect.y, w: t.rect.w, h: t.rect.h,
-            title: SharedString::from(&t.title), active: t.active, closable: t.closable,
-        }).collect());
-        update(&self.groups, layout.groups.iter().map(|g| GroupVm {
-            x: g.rect.x, y: g.rect.y, w: g.rect.w, h: g.rect.h, bar_h: g.tabbar.h,
-        }).collect());
-        update(&self.splitters, layout.splitters.iter().map(|s| SplitterVm {
-            x: s.rect.x, y: s.rect.y, w: s.rect.w, h: s.rect.h, vertical: s.vertical,
-        }).collect());
+        update(
+            &self.panels,
+            layout
+                .panels
+                .iter()
+                .map(|p| PanelVm {
+                    x: p.rect.x,
+                    y: p.rect.y,
+                    w: p.rect.w,
+                    h: p.rect.h,
+                    visible: p.visible,
+                })
+                .collect(),
+        );
+        update(
+            &self.tabs,
+            layout
+                .tabs
+                .iter()
+                .map(|t| TabVm {
+                    x: t.rect.x,
+                    y: t.rect.y,
+                    w: t.rect.w,
+                    h: t.rect.h,
+                    title: SharedString::from(&t.title),
+                    active: t.active,
+                    closable: t.closable,
+                })
+                .collect(),
+        );
+        update(
+            &self.groups,
+            layout
+                .groups
+                .iter()
+                .map(|g| GroupVm {
+                    x: g.rect.x,
+                    y: g.rect.y,
+                    w: g.rect.w,
+                    h: g.rect.h,
+                    bar_h: g.tabbar.h,
+                })
+                .collect(),
+        );
+        update(
+            &self.splitters,
+            layout
+                .splitters
+                .iter()
+                .map(|s| SplitterVm {
+                    x: s.rect.x,
+                    y: s.rect.y,
+                    w: s.rect.w,
+                    h: s.rect.h,
+                    vertical: s.vertical,
+                })
+                .collect(),
+        );
         set_overlay(window, manager, &layout);
     }
 }
