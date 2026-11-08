@@ -54,7 +54,7 @@ jobs:
       - uses: dtolnay/rust-toolchain@master
         if: steps.workspace.outputs.present == 'true'
         with:
-          toolchain: '1.85.0'
+          toolchain: '1.92.0'
           components: rustfmt, clippy
       - name: Formatting
         if: steps.workspace.outputs.present == 'true'
