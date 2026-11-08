@@ -1,0 +1,15 @@
+[workspace]
+members = ["crates/canexus-core", "crates/canexus-cli"]
+resolver = "2"
+
+[workspace.package]
+edition = "2021"
+license = "MIT"
+repository = "https://github.com/JannisRln/CANexus-Studio"
+rust-version = "1.85"
+
+[workspace.lints.rust]
+unsafe_code = "forbid"
+
+[workspace.lints.clippy]
+all = { level = "warn", priority = -1 }
