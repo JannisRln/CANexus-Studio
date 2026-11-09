@@ -20,7 +20,7 @@ Canonical implementation tasks. Statuses: Planned, Ready, In Progress, Blocked, 
 | DEV-014 | Later | P2 | Planned | DEV-011, DEV-012 | CAN Signal Generator, not v1 |
 | DEV-015 | Later | P2 | Planned | XCP prerequisites | XCP-driven signal generation, not v1 |
 | DEV-016 | M0 | P1 | Done | DEV-002 | Optional rustfmt pre-commit hook, safe handling of staged files, documented installation and hook tests in CI |
-| DEV-017 | M1 | P1 | Ready | DEV-003 | Isolated native Slint floating-window/dock-back feasibility example; preserve Rust-owned panel state; automated lifecycle tests and Windows/Linux native interaction evidence or explicit unverified blockers. Must not edit DEV-008 GUI host files in parallel. |
+| DEV-017 | M1 | P1 | Ready | DEV-003 | Isolated native Slint floating-window/dock-back feasibility example; preserve Rust-owned panel state; automated lifecycle tests plus actual Windows/Linux native interaction evidence; if that evidence is unavailable, remain Blocked rather than Done. Must not edit DEV-008 GUI host files in parallel. |
 | DEV-018 | M1 | P1 | Ready | DEV-006, DEV-007 | Prototype bounded global pinned shared-batch byte accounting and deterministic admission/overload/shutdown tests; preserve typed no-copy delivery and nonblocking capture. |
 
 
