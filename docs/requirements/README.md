@@ -40,6 +40,7 @@
 22. [ADR-010 — Unified Measurement & Calibration Workspace UX (Proposed detail)](21-adr-010-measurement-calibration-workspace-ux.md)
 23. [ADR-011 — High-Performance Core Architecture & Data Flow (Proposed detail)](22-adr-011-high-performance-core-architecture.md)
 24. [ADR-008 — Central Measurement Engine (Proposed detail)](23-adr-008-central-measurement-engine.md)
+25. [AI-Native Integration, MCP & Agent-Driven Engineering Workflows (Proposed)](24-ai-native-mcp-integration.md)
 
 ## Confirmed requirements since v0.5
 
@@ -59,6 +60,7 @@
 - Security model for plugins, scripts and transmit permissions.
 - Python runtime distribution, worker process lifecycle, dependency management, permission isolation.
 - Generic event representation, timestamp correlation and Ethernet integration milestones.
+- AI/MCP authorization and human approval model, protocol/version selection, project/dashboard authoring schema and model-provider privacy boundary.
 
 ## Process
 
