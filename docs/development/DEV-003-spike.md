@@ -1,6 +1,6 @@
 # DEV-003: Slint + pbSlintDock feasibility
 
-**Stage:** Feature PR verification completed; unmerged until review.
+**Stage:** Feasibility spike integrated in main; task DEV-003 Done (scope-only closure, 2026-11-09).
 
 ## Scope
 
@@ -22,14 +22,21 @@
 - This spike is not evidence of third-party compiled Slint plugin loading.
   Do not freeze the plugin SDK or claim REQ-PLG-012 verified.
 
-## Exit criteria and evidence
+## Verified DEV-003 exit criteria (minimal integration only)
 
 - [x] Windows `cargo fmt`, Clippy, build and tests green in GitHub Actions run [42501580558](https://github.com/JannisRln/CANexus-Studio/actions/runs/42501580558).
 - [x] Linux `cargo fmt`, Clippy, build and tests green in GitHub Actions run [42501580558](https://github.com/JannisRln/CANexus-Studio/actions/runs/42501580558).
-- [ ] Native floating-window roundtrip exercised in the CANexus GUI on both OSes.
-- [ ] Persistent state across float/re-dock demonstrated in the host.
-- [ ] Follow-up decision: choose supported integration strategy and document
-      which parts remain prototypes.
+- [x] GitHub PR [#12](https://github.com/JannisRln/CANexus-Studio/pull/12) squash-merged to main as `bef8513d8aeb56d4bd1144be21fdfd4f9a73cb17`.
+- [x] Single Slint window contains a pbSlintDock host with three fixed built-in panel types, callback forwarding and in-memory layout snapshot restore (`crates/canexus-gui/src/main.rs`, `ui/main.slint`).
+- [x] Engine-level Rust unit tests cover layout restore and the `DockManager` float/redock state transition (`layout_survives_close_and_restore`, `can_float_and_redock_without_losing_panel_registration`).
+- [x] Follow-up architecture decision: native floating windows require a separate host-owned window lifecycle and shared state and are tracked under DEV-017, not silently accepted as tested by this spike (DEV-DEC-009).
 
-**Known limitation:** the first CANexus UI sample is single-window; tests
-cover float transitions only at the pbSlintDock engine level.
+## Explicitly not accepted by DEV-003 closure
+
+- [ ] A real native floating Slint window is created, moved and docked back inside CANexus (DEV-017). The current GUI is **single-window only** and has no native float window factory.
+- [ ] Window close/restore, focus, DPI, geometry, multi-monitor behavior and retained panel state are interaction-tested on both Windows and Linux (DEV-017).
+- [ ] Persistent layout on disk, versioned workspaces and third-party dynamically compiled Slint dock panels / plugin placeholders work (later tasks; REQ-PLG-012..014 not verified).
+- [ ] A production trace UI is present (DEV-008); the current Trace panel is a placeholder.
+
+DEV-003's **original minimal-integration backlog acceptance** is supported by verified build/test evidence. Earlier broader checkboxes in this document are **deferred, not passed**. This is an explicit task split requested on 2026-11-09, not a claim that floating behavior was secretly tested. The spike demonstrates toolkit integration and engine-level lifecycle, not native graphical UX. REQ-UX-004/009 and REQ-PLG-012..014 retain their separate product-level statuses.
+
