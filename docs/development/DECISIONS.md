@@ -13,6 +13,8 @@ Product architecture ADRs remain in docs/requirements. Append superseding decisi
 
 | DEV-DEC-007 | 2026-11-08 | Accepted | Use PRs and parallel branches when useful; allow direct pushes to main for small isolated changes. | Parallel development without unnecessary PR overhead; supersedes DEV-DEC-002. |
 
+| DEV-DEC-008 | 2026-11-09 | Accepted | DEV-007 retains shared immutable source-local batches with inline-event-byte and batch-slot limits, evicts complete oldest batches, and pages in capture sequence order rather than assuming correlated wall-clock time. | Preserves raw provenance and typed zero-copy fan-out, makes RAM eviction deterministic and keeps ingress loss distinct; global pinned-Arc accounting and multi-clock correlation remain separate follow-ups. |
+
 ## Pending
 
 - Precise v1 release feature matrix.
