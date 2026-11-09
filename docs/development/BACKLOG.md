@@ -10,7 +10,7 @@ Canonical implementation tasks. Statuses: Planned, Ready, In Progress, Blocked, 
 | DEV-004 | M1 | P0 | Done | DEV-002 | Tested typed CAN/CAN FD frame and timestamp model |
 | DEV-005 | M1 | P0 | Done | DEV-004 | Deterministic virtual CAN adapter and fixtures |
 | DEV-006 | M1 | P0 | Done | DEV-005 | Bounded event ingestion and shared batches, overload/shutdown tests |
-| DEV-007 | M1 | P0 | In Progress | DEV-006 | Bounded trace history, query API and loss provenance tests |
+| DEV-007 | M1 | P0 | Done | DEV-006 | Bounded trace history, query API and loss provenance tests |
 | DEV-008 | M1 | P0 | Planned | DEV-003, DEV-007 | Slint Trace panel showing virtual frames with virtualized rendering |
 | DEV-009 | M1 | P0 | Planned | DEV-008 | End-to-end smoke test and repeatable benchmark harness |
 | DEV-010 | M2 | P1 | Planned | DEV-009 | First hardware adapter behind HAL, documented platform support |
