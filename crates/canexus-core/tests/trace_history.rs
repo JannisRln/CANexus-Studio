@@ -8,8 +8,8 @@ use canexus_core::{
     ingest::{BatchLoss, BoundedIngest, IngestConfig, LossReason, OverflowPolicy, SharedBatch},
     time::{ClockDomainId, EventTimestamp, TimestampOrigin, TimestampQuality, TimestampResolution},
     trace_history::{
-        CanIdMask, CanTraceFilter, EventFilter, HistoryError, HistoryLimits, PageError, PageRequest,
-        TraceHistory,
+        CanIdMask, CanTraceFilter, EventFilter, HistoryError, HistoryLimits, PageError,
+        PageRequest, TraceHistory,
     },
     virtual_can::{fixtures, VirtualCanAdapter},
     SourceId,
@@ -76,8 +76,20 @@ fn budgets_reject_zeros_and_evict_oldest_complete_batches() {
     assert_eq!(history.oldest(), None);
     assert_eq!(history.newest(), None);
     assert_eq!(history.version(), 0);
-    assert_eq!(history.append(batch_of((0..2).map(can_event))).unwrap().evicted_events, 0);
-    assert_eq!(history.append(batch_of((2..4).map(can_event))).unwrap().evicted_batches, 0);
+    assert_eq!(
+        history
+            .append(batch_of((0..2).map(can_event)))
+            .unwrap()
+            .evicted_events,
+        0
+    );
+    assert_eq!(
+        history
+            .append(batch_of((2..4).map(can_event)))
+            .unwrap()
+            .evicted_batches,
+        0
+    );
     let admitted = history.append(batch_of((4..6).map(can_event))).unwrap();
     assert_eq!(admitted.evicted_batches, 1);
     assert_eq!(admitted.evicted_events, 2);
@@ -148,31 +160,67 @@ fn page_size_bounds_and_stale_cursors_are_explicit() {
     history.append(batch_of((2..4).map(can_event))).unwrap();
     let filter = CanTraceFilter::default();
     assert!(matches!(
-        history.can_page(&filter, PageRequest { cursor: None, limit: 0 }),
+        history.can_page(
+            &filter,
+            PageRequest {
+                cursor: None,
+                limit: 0
+            }
+        ),
         Err(PageError::PageLimitExceeded)
     ));
     assert!(matches!(
-        history.can_page(&filter, PageRequest { cursor: None, limit: 3 }),
+        history.can_page(
+            &filter,
+            PageRequest {
+                cursor: None,
+                limit: 3
+            }
+        ),
         Err(PageError::PageLimitExceeded)
     ));
     let first = history
-        .can_page(&filter, PageRequest { cursor: None, limit: 2 })
+        .can_page(
+            &filter,
+            PageRequest {
+                cursor: None,
+                limit: 2,
+            },
+        )
         .unwrap();
     assert_eq!(sequences(&first.rows), [0, 1]);
     let cursor = first.next.unwrap();
     let second = history
-        .can_page(&filter, PageRequest { cursor: Some(cursor), limit: 2 })
+        .can_page(
+            &filter,
+            PageRequest {
+                cursor: Some(cursor),
+                limit: 2,
+            },
+        )
         .unwrap();
     assert_eq!(sequences(&second.rows), [2, 3]);
     assert_eq!(second.next, None);
     history.append(batch_of([can_event(4)])).unwrap();
     assert!(matches!(
-        history.can_page(&filter, PageRequest { cursor: Some(cursor), limit: 2 }),
+        history.can_page(
+            &filter,
+            PageRequest {
+                cursor: Some(cursor),
+                limit: 2
+            }
+        ),
         Err(PageError::StaleCursor)
     ));
     let other = TraceHistory::<CanFrame>::new(SourceId::new(9), limits(4, 2, 2));
     assert!(matches!(
-        other.can_page(&filter, PageRequest { cursor: Some(cursor), limit: 1 }),
+        other.can_page(
+            &filter,
+            PageRequest {
+                cursor: Some(cursor),
+                limit: 1
+            }
+        ),
         Err(PageError::StaleCursor)
     ));
 }
@@ -183,7 +231,11 @@ fn can_filter_preserves_format_mask_direction_and_capture_sequence_order() {
     for seq in 0..6 {
         let mut event = can_event(seq);
         event.channel = ChannelId::new(if seq == 4 { 2 } else { 1 });
-        event.direction = if seq == 3 { EventDirection::Tx } else { EventDirection::Rx };
+        event.direction = if seq == 3 {
+            EventDirection::Tx
+        } else {
+            EventDirection::Rx
+        };
         let id = if seq == 5 {
             CanId::extended(0x123).unwrap()
         } else {
@@ -199,10 +251,7 @@ fn can_filter_preserves_format_mask_direction_and_capture_sequence_order() {
     }
     let mut history = TraceHistory::new(SourceId::new(7), limits(10, 5, 2));
     history.append(batch_of(observations)).unwrap();
-    assert_eq!(
-        CanIdMask::new(CanId::standard(0).unwrap(), 0x800),
-        None
-    );
+    assert_eq!(CanIdMask::new(CanId::standard(0).unwrap(), 0x800), None);
     assert_eq!(
         CanIdMask::new(CanId::extended(0).unwrap(), 0x2000_0000),
         None
@@ -217,7 +266,13 @@ fn can_filter_preserves_format_mask_direction_and_capture_sequence_order() {
         format: Some(CanFormat::Classic),
     };
     let page = history
-        .can_page(&filter, PageRequest { cursor: None, limit: 2 })
+        .can_page(
+            &filter,
+            PageRequest {
+                cursor: None,
+                limit: 2,
+            },
+        )
         .unwrap();
     assert_eq!(sequences(&page.rows), [0, 1]);
     assert!(page.next.is_some());
@@ -238,7 +293,10 @@ fn can_filter_preserves_format_mask_direction_and_capture_sequence_order() {
         arbitration: Some(extended_mask),
         ..CanTraceFilter::default()
     };
-    assert_eq!(history.count_matches(|event| extended_filter.matches(event)), 1);
+    assert_eq!(
+        history.count_matches(|event| extended_filter.matches(event)),
+        1
+    );
     assert_eq!(
         history.count_matches(|event| EventFilter {
             first_sequence: Some(2),
@@ -252,10 +310,7 @@ fn can_filter_preserves_format_mask_direction_and_capture_sequence_order() {
 
 #[test]
 fn history_eviction_is_not_source_or_consumer_capture_loss() {
-    let mut ingest = BoundedIngest::new(
-        SourceId::new(7),
-        IngestConfig::new(2, 1, 1).unwrap(),
-    );
+    let mut ingest = BoundedIngest::new(SourceId::new(7), IngestConfig::new(2, 1, 1).unwrap());
     let (subscriber, receiver) = ingest.subscribe(OverflowPolicy::DropNewest, 1).unwrap();
     ingest.start().unwrap();
     for seq in 0..6 {
@@ -308,10 +363,7 @@ fn history_eviction_is_not_source_or_consumer_capture_loss() {
 
 #[test]
 fn shared_batches_can_feed_recorder_and_history_without_frame_copy() {
-    let mut ingest = BoundedIngest::new(
-        SourceId::new(7),
-        IngestConfig::new(2, 1, 2).unwrap(),
-    );
+    let mut ingest = BoundedIngest::new(SourceId::new(7), IngestConfig::new(2, 1, 2).unwrap());
     let (_trace_id, trace) = ingest.subscribe(OverflowPolicy::DropNewest, 1).unwrap();
     let (_recorder_id, recorder) = ingest.subscribe(OverflowPolicy::FailConsumer, 1).unwrap();
     ingest.start().unwrap();
@@ -326,7 +378,13 @@ fn shared_batches_can_feed_recorder_and_history_without_frame_copy() {
     history.append(history_batch).unwrap();
     drop(recorder_batch);
     let page = history
-        .can_page(&CanTraceFilter::default(), PageRequest { cursor: None, limit: 4 })
+        .can_page(
+            &CanTraceFilter::default(),
+            PageRequest {
+                cursor: None,
+                limit: 4,
+            },
+        )
         .unwrap();
     assert_eq!(sequences(&page.rows), [0, 1]);
     assert_eq!(page.rows[0].value.data(), &[0xa1, 0xb2]);
@@ -342,10 +400,7 @@ fn virtual_can_observations_preserve_time_payload_and_channel() {
         &fixtures,
     )
     .unwrap();
-    let mut ingest = BoundedIngest::new(
-        SourceId::new(7),
-        IngestConfig::new(2, 2, 1).unwrap(),
-    );
+    let mut ingest = BoundedIngest::new(SourceId::new(7), IngestConfig::new(2, 2, 1).unwrap());
     let (_id, receiver) = ingest.subscribe(OverflowPolicy::DropNewest, 2).unwrap();
     virtual_can.start().unwrap();
     ingest.start().unwrap();
@@ -359,7 +414,13 @@ fn virtual_can_observations_preserve_time_payload_and_channel() {
         history.append(batch).unwrap();
     }
     let page = history
-        .can_page(&CanTraceFilter::default(), PageRequest { cursor: None, limit: 4 })
+        .can_page(
+            &CanTraceFilter::default(),
+            PageRequest {
+                cursor: None,
+                limit: 4,
+            },
+        )
         .unwrap();
     assert_eq!(sequences(&page.rows), [0, 1, 2, 3]);
     assert_eq!(page.rows[1].timestamp.ticks, 10);
@@ -376,10 +437,7 @@ fn virtual_can_observations_preserve_time_payload_and_channel() {
 fn generic_non_can_observations_use_same_history_and_paging() {
     #[derive(Debug, Eq, PartialEq)]
     struct EthernetFixture([u8; 4]);
-    let mut ingest = BoundedIngest::new(
-        SourceId::new(7),
-        IngestConfig::new(2, 1, 1).unwrap(),
-    );
+    let mut ingest = BoundedIngest::new(SourceId::new(7), IngestConfig::new(2, 1, 1).unwrap());
     let (_id, rx) = ingest.subscribe(OverflowPolicy::DropNewest, 1).unwrap();
     ingest.start().unwrap();
     for seq in 0..2 {
@@ -403,11 +461,23 @@ fn generic_non_can_observations_use_same_history_and_paging() {
     history.append(rx.recv().unwrap()).unwrap();
     assert_eq!(history.count_matches(|event| event.value.0[0] == 1), 1);
     let first = history
-        .page_with(PageRequest { cursor: None, limit: 1 }, |_| true)
+        .page_with(
+            PageRequest {
+                cursor: None,
+                limit: 1,
+            },
+            |_| true,
+        )
         .unwrap();
     assert_eq!(first.rows[0].value.0, [0, 1, 2, 3]);
     let second = history
-        .page_with(PageRequest { cursor: first.next, limit: 1 }, |_| true)
+        .page_with(
+            PageRequest {
+                cursor: first.next,
+                limit: 1,
+            },
+            |_| true,
+        )
         .unwrap();
     assert_eq!(second.rows[0].value.0, [1, 1, 2, 3]);
     assert_eq!(second.next, None);
@@ -415,10 +485,7 @@ fn generic_non_can_observations_use_same_history_and_paging() {
 
 #[test]
 fn large_stream_stays_within_retained_byte_and_batch_budgets() {
-    let mut ingest = BoundedIngest::new(
-        SourceId::new(7),
-        IngestConfig::new(32, 1, 1).unwrap(),
-    );
+    let mut ingest = BoundedIngest::new(SourceId::new(7), IngestConfig::new(32, 1, 1).unwrap());
     let (_id, rx) = ingest.subscribe(OverflowPolicy::DropNewest, 1).unwrap();
     let mut history = TraceHistory::new(SourceId::new(7), limits(128, 4, 16));
     ingest.start().unwrap();
@@ -441,7 +508,10 @@ fn large_stream_stays_within_retained_byte_and_batch_budgets() {
     let page = history
         .can_page(
             &CanTraceFilter::default(),
-            PageRequest { cursor: None, limit: 16 },
+            PageRequest {
+                cursor: None,
+                limit: 16,
+            },
         )
         .unwrap();
     assert_eq!(page.rows.len(), 16);
