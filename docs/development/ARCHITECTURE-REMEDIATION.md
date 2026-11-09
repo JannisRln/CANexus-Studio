@@ -1,7 +1,7 @@
 # CANexus-Studio — Architecture Risk Register and Remediation Plan
 
 **Status:** Proposed implementation planning and source audit; no product requirement status change.  
-**Audited baseline:** `main` commit `5e801ec5e395657d4998f3ce795a1ce16393b64c`, 2026-11-09.  
+**Audited source baseline:** `main` commit `5e801ec5e395657d4998f3ce795a1ce16393b64c`, 2026-11-09. **Coordination rechecked:** `main` at `f6d16e98d95f3c614b81c2b24f252e96eab56756` after PR #19 merged (documentation-only); Core source is unchanged by that merge.  
 **Companion:** [Target architecture](TARGET-ARCHITECTURE.md).  
 **Evidence categories:** *Observed* = explicit current code/metadata behavior; *Missing* = currently absent from inspected workspace; *Integration risk* = active, unmerged branch/PR collision; *Hypothesis* = investigate with benchmarks before optimization.
 
@@ -11,7 +11,7 @@ This is **not** a defect claim against the intentionally limited scope of alread
 
 | ID | Priority / evidence | Current state and consequence | Targeted remediation | Traceability |
 |---|---|---|---|---|
-| AR-01 | **P0 integration risk** | `main` reserves `DEV-017..021` for proposed AI/MCP planning. PR #19 initially reused 017/018 for float and memory work, but its latest inspected diff changed these to **DEV-022/023**. The fix is not in `main` until merge and verification. | Preserve 017–021; merge PR #19 only after final-head project-state CI. Confirm 022/023 names and dependency links after merge; do not create competing task IDs. | DEV-017..023, project-state validation |
+| AR-01 | **Resolved coordination issue** | `main` reserves `DEV-017..021` for AI/MCP planning. PR #19 originally reused 017/018, corrected its IDs to **DEV-022/023**, and was merged to `main` as `f6d16e98`; main Windows/Linux CI run `42575721608` passed. | Keep stable IDs and prevent future collisions through project-state validation and live-branch coordination. No remaining action for the corrected PR #19 ID conflict. | DEV-017..023, project-state validation |
 | AR-02 | **P0 observed** | `SourceId(u64)` and `RawEventId { source, sequence }` in `lib.rs` and `event.rs` are source-local but carry no explicit project instance, runtime session, connection generation or worktree context. This is adequate for current fixtures but insufficient to prove stale asynchronous results cannot cross sessions. | Define runtime-scoped `ProjectInstanceId`, `SessionId`, `Generation` and qualified source handles. Check context at service/query/command boundaries; retain simple typed frame metadata where possible. | REQ-ARCH-003/019, REQ-PROJ-003, REQ-AI-031 (Proposed) |
 | AR-03 | **P0 observed** | `SharedBatch<T>` wraps `Arc<[Observed<T>]>`; queue batch counts are bounded, but a consumer can hold cloned batches after dequeue. `TraceHistory` explicitly counts inline event bytes, not globally pinned allocations. Process-wide memory remains unbounded by these two limits alone. | Prototype one charge per backing batch and bounded global byte credits/retained leases, with independent recorder headroom and external owner/release accounting. Coordinate with **DEV-023** once PR #19 integrates. | REQ-ARCH-007/010, REQ-TRACE-045; DEV-023 proposed in PR #19 |
 | AR-04 | **P0 observed** | `BoundedIngest::push` publishes when staging fills; sparse batches only publish when caller explicitly invokes `flush()` or `shutdown()`. No current capture-worker timed flush exists; a quiet bus may show an old Trace even while events were accepted. | Add a capture-runtime flush deadline independent of UI rendering, plus explicit source shutdown drain. Keep existing `BoundedIngest` behavior deterministic. | REQ-ARCH-006/009/015, REQ-UX-001 |
@@ -35,7 +35,7 @@ This is **not** a defect claim against the intentionally limited scope of alread
 
 | Wave | Work | Dependencies / safe ownership | Exit evidence |
 |---|---|---|---|
-| **W0 — Repo reconciliation** | AR-01, AR-17: finalize nonconflicting DEV IDs; document target and limits | PR #19 controls shared `BACKLOG.md`, `STATUS.md`, `DECISIONS.md`; architecture PR edits neither | Main contains unique IDs, project-state check passes, both docs linked |
+| **W0 — Repo reconciliation** | AR-01 resolved by PR #19; AR-17 updates architecture entry point | PR #19 merged and main CI passed; architecture PR edits neither `BACKLOG.md`, `STATUS.md` nor `DECISIONS.md` | Main retains unique DEV IDs; architecture docs linked after this PR merges |
 | **W1 — Source/session correctness** | AR-02, AR-04, AR-05, AR-06: generation-scoped virtual capture host, timed flush, dynamic consumer broker, gap/health semantics | Core/runtime owner only; coordinate API with DEV-008 GUI owner | Fixtures for reconnect, sparse traffic, late subscriber, repeated overload and stop |
 | **W1 parallel — Memory admission** | AR-03: global allocated-batch credits, retained-owner tracking, overload status | DEV-023 code owner separate from GUI; coordinate ingress API with W1 | Pin batches outside queues, saturate and release; peak accounted bytes stay within contract |
 | **W1 parallel — Trace UI** | AR-07 initial, AR-09 initial: DEV-008 bounded virtual CAN Trace via existing source/history/query APIs and thin service adapter | GUI files owned by DEV-008; DEV-022 native float uses isolated example; agree on page/event contracts | Only bounded rows painted, filter/channel/ID/direction works, capture continues while panel is slow |
@@ -82,10 +82,10 @@ Before increasing scope, write an explicit ADR or accepted technical decision co
 
 ## 5. Recommended immediate action
 
-1. Finish integration review of PR #19 with the corrected DEV-022/023 IDs; preserve the AI/MCP task IDs from main and verify project-state CI at final head.
-2. Merge this documentation-only architecture proposal after review; **do not** treat this as acceptance of unresolved technical choices.
+1. PR #19 is already merged with corrected DEV-022/023 IDs and successful post-merge main CI. Preserve these stable IDs in all subsequent task branches.
+2. Review this documentation-only architecture proposal; **do not** treat it as acceptance of unresolved technical choices.
 3. Deliver DEV-008 in its GUI-owned branch and DEV-023 in a separate core-owned branch, coordinating their shared batch/query contracts.
-4. Add the scoped W1 runtime/session + gap + timer task(s) to the canonical backlog **after** reconciliation so ownership and IDs remain unique.
+4. Add scoped W1 runtime/session + gap + timer task(s) to the canonical backlog in a separate coordinated change, selecting the next unused IDs on current `main`.
 5. Use DEV-009 to establish reproducible failure/performance evidence before real device support or more complex protocols.
 
 The recommended next **core implementation** is the generation-scoped virtual capture/session host with timed batch flush and explicit loss/health delivery. It unlocks reliable GUI consumption and later hardware adapters without forcing a rewrite of the existing frame, ingestion or history primitives.
