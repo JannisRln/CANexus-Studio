@@ -1,6 +1,6 @@
 # CANexus-Studio — Architecture Entry Point
 
-**Current implementation baseline:** inspected `main` at `5e801ec5e395657d4998f3ce795a1ce16393b64c` on 2026-11-09.  
+**Source inspection baseline:** `main` at `5e801ec5e395657d4998f3ce795a1ce16393b64c` on 2026-11-09; PR #19 merged documentation-only changes as `f6d16e98`, with the same inspected Core implementation.  
 **Target state:** technical proposal, not proof of product requirement acceptance or feature completion.
 
 - [Target software architecture](TARGET-ARCHITECTURE.md): responsibility boundaries, typed data flow, runtime sessions, workers, memory ownership, application services, HAL, extensibility and implementation gates.
