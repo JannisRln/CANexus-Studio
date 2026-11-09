@@ -5,11 +5,7 @@
 //! Eviction is **retention loss**, not a claim of capture or recorder loss.
 //! Query pages borrow retained events and become stale when history mutates.
 
-use std::{
-    collections::VecDeque,
-    mem::size_of,
-    num::NonZeroUsize,
-};
+use std::{collections::VecDeque, mem::size_of, num::NonZeroUsize};
 
 use crate::{
     can::{CanFormat, CanFrame, CanId, MAX_EXTENDED_ID, MAX_STANDARD_ID},
@@ -41,8 +37,7 @@ impl HistoryLimits {
             max_event_bytes: NonZeroUsize::new(max_event_bytes)
                 .ok_or(HistoryError::InvalidLimit)?,
             max_batches: NonZeroUsize::new(max_batches).ok_or(HistoryError::InvalidLimit)?,
-            max_page_rows: NonZeroUsize::new(max_page_rows)
-                .ok_or(HistoryError::InvalidLimit)?,
+            max_page_rows: NonZeroUsize::new(max_page_rows).ok_or(HistoryError::InvalidLimit)?,
         })
     }
 
@@ -195,7 +190,9 @@ impl EventFilter {
     #[must_use]
     pub fn matches<T>(&self, event: &Observed<T>) -> bool {
         self.channel.is_none_or(|channel| channel == event.channel)
-            && self.direction.is_none_or(|direction| direction == event.direction)
+            && self
+                .direction
+                .is_none_or(|direction| direction == event.direction)
             && self
                 .first_sequence
                 .is_none_or(|first| event.id.sequence >= first)
@@ -460,12 +457,11 @@ impl<T> TraceHistory<T> {
                 if matches(event) {
                     rows.push(event);
                     if rows.len() == request.limit {
-                        let (next_batch, next_event) =
-                            if event_index + 1 == batch.len() {
-                                (batch_index + 1, 0)
-                            } else {
-                                (batch_index, event_index + 1)
-                            };
+                        let (next_batch, next_event) = if event_index + 1 == batch.len() {
+                            (batch_index + 1, 0)
+                        } else {
+                            (batch_index, event_index + 1)
+                        };
                         let next = (next_batch < self.batches.len()).then_some(PageCursor {
                             source: self.source,
                             version: self.version,
