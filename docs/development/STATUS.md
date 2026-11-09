@@ -1,8 +1,8 @@
 # Implementation status
 
-**Phase:** M1 — DEV-006 integrated; DEV-007 bounded trace RAM history active
-**Active tasks:** DEV-003 native Slint docking validation remains open; DEV-007 on `feat/DEV-007-trace-history` (PR #18)
-**Latest verified implementation milestone:** DEV-006 PR #17 merged as `72dd5f22`; post-merge main CI run 42564374489 passed Windows/Linux
+**Phase:** M1 — DEV-007 integrated; next GUI-dependent vertical slice awaits DEV-003 acceptance
+**Active tasks:** DEV-003 native Slint docking validation remains open; DEV-008 remains Planned until DEV-003 acceptance
+**Latest verified implementation milestone:** DEV-007 PR #18 merged as `3c53f1ee`; post-merge main CI run 42566143742 passed Windows/Linux
 **Last updated:** 2026-11-09
 **Branch policy:** Hybrid: PRs for substantial/risky/parallel tasks; direct main pushes allowed for small isolated changes
 
@@ -15,11 +15,12 @@
 - DEV-004 typed CAN/CAN-FD frame and timestamp model (PR #11).
 - DEV-005 deterministic virtual CAN fixture source with virtual clock (PR #15, merged).
 - DEV-006 bounded, transport-neutral event ingestion with shared immutable batches, explicit overload and shutdown behavior (PR #17, merged).
+- DEV-007 bounded, source-local RAM Trace history with versioned paginated queries, CAN filters and separate eviction/ingress-loss diagnostics (PR #18, merged).
 - DEV-003 Slint/pbSlintDock feasibility spike (PR #12); production trace UI remains future work.
 
 ## Not implemented
 
-No production Trace GUI, physical HAL, retained Trace history on main, real disk recorder, trace viewer or protocol implementation yet. DEV-005 provides a headless virtual fixture source and DEV-006 provides bounded fan-out. The CLI is only a bootstrap entry point; DEV-003 is a feasibility spike.
+No production Trace GUI, physical HAL, disk-backed history, real recorder, GUI trace viewer or protocol implementation yet. DEV-005 provides a headless virtual fixture source and DEV-006 provides bounded fan-out. The CLI is only a bootstrap entry point; DEV-003 is a feasibility spike.
 
 ## Verification evidence
 
@@ -42,6 +43,14 @@ DEV-004 PR #11 CI succeeded at head `489f620b`, squash-merged as `e9090748`. DEV
 - **Scope limit:** Global memory consumed by batches retained by other Arc owners is not bounded by history alone. Separate admission/credit accounting and durable loss notification are still open.
 - **Coordination:** Older PR #14 duplicates DEV-005 and conflicts with already integrated work; PR #13 is stale against the integrated Clippy fix. Do not merge these old branches unchanged.
 
+## DEV-007 verified integration (2026-11-09)
+
+- **DEV-007 Done:** [PR #18](https://github.com/JannisRln/CANexus-Studio/pull/18) squash-merged as `3c53f1eec5956fbee79663e00bfc38622ccbd9fa`. Final PR-head [CI run 42565427749](https://github.com/JannisRln/CANexus-Studio/actions/runs/42565427749), head `28978ae881024684ce4cfb5ee9e4cea6763eaf89`, passed all four Windows/Linux jobs after Rustfmt and Clippy corrections.
+- **Main verification:** [run 42566143742](https://github.com/JannisRln/CANexus-Studio/actions/runs/42566143742) completed **successfully** on the exact merge commit `3c53f1ee`: Rustfmt, Clippy `-D warnings`, workspace build, all-target tests and project-state checks on Windows and Linux; Linux pre-commit hook tests passed. Windows native interactive GUI and hardware checks were not run; no local Cargo/rustfmt were run.
+- **Evidence:** 10 DEV-007 integration tests passed on Linux (PR job logs), alongside existing workspace tests; Windows all-target tests also passed. Includes bounded whole-batch eviction, source ordering guards, cursor invalidation, CAN filters, input-loss versus RAM-eviction accounting, shared-batch fan-out and virtual CAN replay.
+- **Scope boundaries:** `max_event_bytes` counts inline retained observations; external `Arc` pinning, allocator overhead, asynchronous query cancellation, sort indexes, fixed-mode projection and disk history are not covered. `report_input_loss` requires discrete upstream loss reports; the current DEV-006 snapshot only exposes counters and the latest loss report.
+- **Requirements remain partial:** DEV-007 task Done does **not** mean REQ-TRACE-045/047/050 or REQ-ARCH-007 fully verified at product level. GUI-dependent DEV-008 remains gated by DEV-003 native Slint dock/float behavior and manual Windows/Linux acceptance.
+
 ## Risks and blockers
 
 - DEV-003 native floating-window lifecycle and manual Windows/Linux GUI interactions still need validation.
@@ -50,13 +59,14 @@ DEV-004 PR #11 CI succeeded at head `489f620b`, squash-merged as `e9090748`. DEV
 
 ## Parallel work coordination
 
-DEV-002, DEV-004, DEV-005 and DEV-006 are integrated. DEV-003 GUI acceptance is incomplete despite the merged feasibility spike. DEV-007 is independently active in PR #18 and does not edit GUI files. PR #13 remains open but its original Clippy fix already exists on main; reconcile rather than blindly merge old document revisions.
+DEV-002, DEV-004, DEV-005, DEV-006 and DEV-007 are integrated. DEV-003 GUI acceptance is incomplete despite the merged feasibility spike. DEV-008 is still Planned and depends on DEV-003 acceptance; no GUI files were touched by DEV-007. PR #13 remains open but its original Clippy fix already exists on main; reconcile rather than blindly merge old document revisions.
 
 ## Next action
 
-1. Resolve PR #18 Rustfmt/Clippy/build/test findings, verify final-head Windows/Linux CI, then merge DEV-007 and verify post-merge main.
-2. Mark DEV-007 Done only after integration and acceptance evidence, not merely PR creation.
-3. Continue DEV-003 native Slint floating window / GUI interaction validation before GUI-dependent DEV-008, while preparing query-worker and globally pinned batch accounting follow-ups.
+1. Validate native Slint/pbSlintDock floating-window and re-dock behavior on Windows and Linux for DEV-003; resolve any technical gaps before claiming full feasibility.
+2. Once DEV-003 acceptance is established, mark DEV-008 Ready and connect DEV-005 virtual CAN → DEV-006 ingestion → DEV-007 history to a bounded virtualized Slint Trace model.
+3. Schedule independently scoped follow-up for global pinned-batch memory accounting and a durable upstream loss-notification channel; neither is provided by the DEV-007 RAM budget alone.
+4. Keep proposed product requirement statuses separate from DEV task completion, and do not merge stale conflicting PR #13/#14 unchanged.
 
 Every future implementation chat must update this file with completed tasks, current commit, actual tests, failures and next action.
 
