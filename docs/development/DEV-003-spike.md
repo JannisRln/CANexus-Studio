@@ -40,3 +40,7 @@
 
 DEV-003's **original minimal-integration backlog acceptance** is supported by verified build/test evidence. Earlier broader checkboxes in this document are **deferred, not passed**. This is an explicit task split requested on 2026-11-09, not a claim that floating behavior was secretly tested. The spike demonstrates toolkit integration and engine-level lifecycle, not native graphical UX. REQ-UX-004/009 and REQ-PLG-012..014 retain their separate product-level statuses.
 
+
+## CI reliability note for DEV-003 scope reconciliation
+
+The documentation-only PR #19 first validation attempt [42573490846](https://github.com/JannisRln/CANexus-Studio/actions/runs/42573490846) passed project-state checks and rustfmt/Clippy on both operating systems; Linux build and tests passed. Its Windows `cargo build` encountered MSVC `link.exe` fatal `LNK1000` (`ExceptionCode C0000006`) while linking the existing Slint GUI; Windows `cargo test` was consequently skipped. This is a **failed CI attempt**, not evidence of a passing Windows build or a new GUI implementation defect. The same GUI had passed earlier main CI. A separate final-head CI success is required before merging this reconciliation; no Rust, Slint or CI workflow source files were changed.
