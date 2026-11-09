@@ -29,12 +29,12 @@
 - [x] GitHub PR [#12](https://github.com/JannisRln/CANexus-Studio/pull/12) squash-merged to main as `bef8513d8aeb56d4bd1144be21fdfd4f9a73cb17`.
 - [x] Single Slint window contains a pbSlintDock host with three fixed built-in panel types, callback forwarding and in-memory layout snapshot restore (`crates/canexus-gui/src/main.rs`, `ui/main.slint`).
 - [x] Engine-level Rust unit tests cover layout restore and the `DockManager` float/redock state transition (`layout_survives_close_and_restore`, `can_float_and_redock_without_losing_panel_registration`).
-- [x] Follow-up architecture decision: native floating windows require a separate host-owned window lifecycle and shared state and are tracked under DEV-017, not silently accepted as tested by this spike (DEV-DEC-009).
+- [x] Follow-up architecture decision: native floating windows require a separate host-owned window lifecycle and shared state and are tracked under DEV-022, not silently accepted as tested by this spike (DEV-DEC-009).
 
 ## Explicitly not accepted by DEV-003 closure
 
-- [ ] A real native floating Slint window is created, moved and docked back inside CANexus (DEV-017). The current GUI is **single-window only** and has no native float window factory.
-- [ ] Window close/restore, focus, DPI, geometry, multi-monitor behavior and retained panel state are interaction-tested on both Windows and Linux (DEV-017).
+- [ ] A real native floating Slint window is created, moved and docked back inside CANexus (DEV-022). The current GUI is **single-window only** and has no native float window factory.
+- [ ] Window close/restore, focus, DPI, geometry, multi-monitor behavior and retained panel state are interaction-tested on both Windows and Linux (DEV-022).
 - [ ] Persistent layout on disk, versioned workspaces and third-party dynamically compiled Slint dock panels / plugin placeholders work (later tasks; REQ-PLG-012..014 not verified).
 - [ ] A production trace UI is present (DEV-008); the current Trace panel is a placeholder.
 

@@ -15,11 +15,11 @@ Product architecture ADRs remain in docs/requirements. Append superseding decisi
 
 | DEV-DEC-008 | 2026-11-09 | Accepted | DEV-007 retains shared immutable source-local batches with inline-event-byte and batch-slot limits, evicts complete oldest batches, and pages in capture sequence order rather than assuming correlated wall-clock time. | Preserves raw provenance and typed zero-copy fan-out, makes RAM eviction deterministic and keeps ingress loss distinct; global pinned-Arc accounting and multi-clock correlation remain separate follow-ups. |
 
-| DEV-DEC-009 | 2026-11-09 | Accepted | Close DEV-003 as the **single-window Slint/pbSlintDock feasibility spike** when its pinned dependencies compile/test on both Windows/Linux and docking/layout/engine float tests pass; move unimplemented native floating-window lifecycle/OS interaction evidence to DEV-017. DEV-008 depends on the verified spike, not native floating. | This records actual PR #12 evidence without claiming native windows or hiding the gap; unblocks independently testable Trace GUI work. Native floating remains a separate deliverable and may be developed in parallel in an isolated example. |
+| DEV-DEC-009 | 2026-11-09 | Accepted | Close DEV-003 as the **single-window Slint/pbSlintDock feasibility spike** when its pinned dependencies compile/test on both Windows/Linux and docking/layout/engine float tests pass; move unimplemented native floating-window lifecycle/OS interaction evidence to DEV-022. DEV-008 depends on the verified spike, not native floating. | This records actual PR #12 evidence without claiming native windows or hiding the gap; unblocks independently testable Trace GUI work. Native floating remains a separate deliverable and may be developed in parallel in an isolated example. |
 
 ## Pending
 
 - Precise v1 release feature matrix.
 - Rust crate topology and version pinning (DEV-002).
-- Native Slint floating-window lifecycle and cross-platform interaction evidence (DEV-017); third-party UI panel/plugin ABI proof remains open.
+- Native Slint floating-window lifecycle and cross-platform interaction evidence (DEV-022); third-party UI panel/plugin ABI proof remains open.
 - Hardware adapter and recording format for later milestones.
