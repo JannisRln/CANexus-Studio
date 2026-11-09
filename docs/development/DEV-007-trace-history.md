@@ -41,3 +41,10 @@
 ## Next step
 
 On successful CI, merge and verify new `main`, update `BACKLOG.md` / `STATUS.md` to mark DEV-007 Done, then implement DEV-008 Slint Trace panel only after DEV-003 native docking acceptance is resolved. Independently address shared-batch pinned-memory accounting and durable loss notification semantics.
+
+## Integration verification — completed 2026-11-09
+
+- PR [#18](https://github.com/JannisRln/CANexus-Studio/pull/18), final head `28978ae881024684ce4cfb5ee9e4cea6763eaf89`; final-head [CI run 42565427749](https://github.com/JannisRln/CANexus-Studio/actions/runs/42565427749) passed Windows/Linux project-state validation, `cargo fmt --all -- --check`, Clippy `-D warnings`, workspace build and all-target tests.
+- Squash merge `3c53f1eec5956fbee79663e00bfc38622ccbd9fa`; post-merge main [CI run 42566143742](https://github.com/JannisRln/CANexus-Studio/actions/runs/42566143742) passed the same checks on both platforms, including Linux Git-hook tests.
+- Linux integration test binary `tests/trace_history.rs`: **10 passed, 0 failed**; Windows all-target tests passed. This is CI evidence, not an assertion of native GUI behavior, hardware throughput or a measured allocation/latency benchmark.
+- Rust/Cargo/rustfmt were unavailable locally, so no local Rust checks were performed. All requirement entries above remain **partial product coverage** unless their broader acceptance scenarios have independent evidence. Task DEV-007 is Done only because merge and Windows/Linux CI were verified.
