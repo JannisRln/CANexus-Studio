@@ -20,5 +20,10 @@ Canonical implementation tasks. Statuses: Planned, Ready, In Progress, Blocked, 
 | DEV-014 | Later | P2 | Planned | DEV-011, DEV-012 | CAN Signal Generator, not v1 |
 | DEV-015 | Later | P2 | Planned | XCP prerequisites | XCP-driven signal generation, not v1 |
 | DEV-016 | M0 | P1 | Done | DEV-002 | Optional rustfmt pre-commit hook, safe handling of staged files, documented installation and hook tests in CI |
+| DEV-017 | M2 | P1 | Planned | DEV-007; AI/MCP architecture and permission decision | Versioned app-service/capability contracts and unified authorization; virtual fixture and stale-handle tests |
+| DEV-018 | M2 | P1 | Planned | DEV-017 | Opt-in local stdio MCP read-only project/trace/health tools; bounded queries and independent-client tests on Windows/Linux |
+| DEV-019 | Later | P1 | Planned | DEV-017; project schema decision | AI/MCP project create/validate/update with preview, atomic single-file persistence and separate-worktree tests |
+| DEV-020 | Later | P1 | Planned | DEV-017, DEV-003; workspace/dashboard model | AI/MCP dashboard/widget/signal-binding CRUD, preview and local/shared persistence with Slint lifecycle tests |
+| DEV-021 | Later | P2 | Planned | DEV-018, DEV-019, DEV-020 | Optional in-app assistant sharing guarded service APIs; provider-choice, privacy, permissions and offline-mode tests |
 
-Start with the earliest Ready task whose dependencies are satisfied. Update this backlog and STATUS.md after every delivery. M0/M1 are an initial vertical slice, not the entire v1 feature matrix. Do not silently remove existing product requirements.
+Start with the earliest Ready task whose dependencies are satisfied. Update this backlog and STATUS.md after every delivery. M0/M1 are an initial vertical slice, not the entire v1 feature matrix. AI/MCP backlog items DEV-017..021 are proposed planning placeholders; they are not Ready until the corresponding requirements, security and schema decisions are accepted. Do not silently remove existing product requirements.

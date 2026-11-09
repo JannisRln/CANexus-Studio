@@ -46,6 +46,7 @@ CANexus-Studio is a standalone engineering desktop application for observing, de
 - Signal plots, automation, tests, and simulation.
 - Extensible adapter, protocol, format and UI plugin system.
 - An independent scripting runtime for users, tests and module automation.
+- Proposed AI-native debugging and artifact authoring via optional MCP tools and a built-in assistant, using the same guarded core services as GUI/CLI; see [AI-Native Integration & MCP](24-ai-native-mcp-integration.md).
 - Future Ethernet/DoIP/SOME-IP integrations (not in the initial CAN MVP).
 
 ## Out of scope for first iterations (proposed)
