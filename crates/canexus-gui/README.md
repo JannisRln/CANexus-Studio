@@ -1,6 +1,6 @@
 # DEV-003 — Slint/pbSlintDock feasibility spike
 
-This is a **prototype**, not the production GUI or public UI plugin SDK.
+DEV-003 is **Done as a verified single-window feasibility spike** (merged PR #12, Windows/Linux Rust CI). This remains a **prototype**, not the production GUI or public UI plugin SDK. The missing native floating-window and interactive host acceptance are explicitly tracked as DEV-022; DEV-008 may proceed on the proven single-window dock host.
 
 The Rust `DockManager` from [pbSlintDock](https://github.com/pbtechlab/pbSlintDock)
 drives the `DockHost` in `ui/main.slint`. The UI includes Explorer, Trace
@@ -37,7 +37,7 @@ Rust bindings.
 
 ## Limits and verification
 
-- The CANexus prototype is **single-window only**. Its Rust tests exercise
+- **DEV-022 (not DEV-003)** owns native floating-window feasibility and Windows/Linux interactive validation. The CANexus prototype is **single-window only**. Its Rust tests exercise
   floating layout transitions, but it **does not create native floating Slint
   windows** or implement float drag/close callbacks. Verify the upstream
   `pbslintdock` Rust demo for that behavior, and implement a CANexus float
