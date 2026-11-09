@@ -230,7 +230,7 @@ fn can_filter_preserves_format_mask_direction_and_capture_sequence_order() {
             },
         )
         .unwrap();
-    assert_eq!(sequences(&page.rows), [3].into_iter().filter(|_| false).collect::<Vec<u64>>());
+    assert!(page.rows.is_empty());
     // Sequence 2 is FD, 3 is TX, 4 uses another channel, 5 is extended.
     assert_eq!(history.count_matches(|event| filter.matches(event)), 2);
     let extended_mask = CanIdMask::new(CanId::extended(0x123).unwrap(), 0x1fff_ffff).unwrap();
