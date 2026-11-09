@@ -7,6 +7,7 @@ pub mod can;
 pub mod event;
 pub mod ingest;
 pub mod time;
+pub mod trace_history;
 pub mod virtual_can;
 
 /// Identifies a logical data source within a running application.
