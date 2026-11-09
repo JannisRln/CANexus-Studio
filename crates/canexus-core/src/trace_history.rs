@@ -332,7 +332,9 @@ impl<T> TraceHistory<T> {
     /// limits. Other owners of evicted `Arc` batches may still retain memory.
     pub fn append(&mut self, batch: SharedBatch<T>) -> Result<AppendResult, HistoryError> {
         let events = batch.events();
-        let first = events.first().ok_or(HistoryError::EmptyBatch)?;
+        if events.is_empty() {
+            return Err(HistoryError::EmptyBatch);
+        }
         let bytes = events
             .len()
             .checked_mul(size_of::<Observed<T>>())
@@ -369,7 +371,7 @@ impl<T> TraceHistory<T> {
             removed.evicted_batches += 1;
             removed.evicted_events += events.len();
             self.stats.retained_events -= events.len();
-            self.stats.retained_event_bytes -= events.len() * size_of::<Observed<T>>();
+            self.stats.retained_event_bytes -= std::mem::size_of_val(events);
         }
 
         if let (Some(first_sequence), Some(last_sequence)) = (first_evicted, last_evicted) {
