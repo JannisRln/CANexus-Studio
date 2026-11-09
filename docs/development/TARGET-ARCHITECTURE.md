@@ -1,7 +1,7 @@
 # CANexus-Studio — Target Software Architecture
 
 **Status:** Proposed technical baseline for review; not a new Accepted product ADR.  
-**Repository baseline:** `main` at `5e801ec5e395657d4998f3ce795a1ce16393b64c`, inspected 2026-11-09.  
+**Source inspection baseline:** `main` at `5e801ec5e395657d4998f3ce795a1ce16393b64c`, 2026-11-09; PR #19 subsequently merged as `f6d16e98` with documentation-only changes. The Core source findings still apply.  
 **Companion:** [Architecture risks and remediation](ARCHITECTURE-REMEDIATION.md).  
 **Primary sources:** `AGENTS.md`, `docs/requirements/README.md`, ADR-006/007/008/009/010/011, `docs/requirements/05-hal-plugins.md`, `16-ui-plugins-commands.md`, `17-decisions-v0.7.md`, `24-ai-native-mcp-integration.md` and `docs/development/STATUS.md`.
 
