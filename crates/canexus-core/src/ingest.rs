@@ -109,6 +109,10 @@ pub enum LossReason {
     ConsumerFailed,
     /// The consumer receiver was disconnected.
     ConsumerDisconnected,
+    /// Session shutdown expired before the receiver took a queued batch.
+    StopTimeout,
+    /// The subscriber detached with a queued batch still pending.
+    ConsumerDetached,
 }
 
 /// The number and identity boundaries of an undelivered batch.

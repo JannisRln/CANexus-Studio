@@ -6,6 +6,7 @@
 pub mod can;
 pub mod event;
 pub mod ingest;
+pub mod session;
 pub mod time;
 pub mod trace_history;
 pub mod virtual_can;
