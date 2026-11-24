@@ -1,6 +1,6 @@
 # DEV-003 — Slint/pbSlintDock feasibility spike
 
-DEV-003 is **Done as a verified single-window feasibility spike** (merged PR #12, Windows/Linux Rust CI). This remains a **prototype**, not the production GUI or public UI plugin SDK. The missing native floating-window and interactive host acceptance are explicitly tracked as DEV-022; DEV-008 may proceed on the proven single-window dock host.
+DEV-003 is **Done as a verified single-window feasibility spike** (merged PR #12, Windows/Linux Rust CI). This remains a **prototype**, not the production GUI or public UI plugin SDK. The missing native floating-window and interactive host acceptance are explicitly tracked as DEV-022; The [migration ADR](../../docs/requirements/26-adr-012-egui-craft-ui.md) records egui/Craft as the target. DEV-024/025 establish the replacement host before DEV-008 implements the production Trace. The instructions here reproduce the verified legacy spike.
 
 The Rust `DockManager` from [pbSlintDock](https://github.com/pbtechlab/pbSlintDock)
 drives the `DockHost` in `ui/main.slint`. The UI includes Explorer, Trace

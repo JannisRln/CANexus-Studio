@@ -4,6 +4,8 @@
 
 > Dies ist eine Designkonzeption. Die normativen Requirements bleiben die Markdown-Dateien in `docs/requirements/` des Projekt-Repositories. Anerkannte Produktentscheidungen werden hier nicht durch neue, stillschweigende Entscheidungen ersetzt.
 
+The [egui workspace specification](EGUI-WORKSPACE.md) carries these interaction principles and semantic tokens into the target desktop host. Toolkit-specific Slint details below document the original concept.
+
 ## 1. Product principles
 
 1. **Engineering first** — Dichte, präzise und anpassbare Arbeitsflächen statt großflächiger Marketing-Kacheln. Informationen sichtbar halten; Randbereiche ein-/ausblendbar.

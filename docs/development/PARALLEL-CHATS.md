@@ -2,7 +2,16 @@
 
 **Updated:** 2026-11-09. IDs DEV-017..021 are already reserved for AI/MCP tasks merged via PR #20; these parallel tracks use DEV-022/023 instead. **Status source of truth:** `docs/development/BACKLOG.md`, `STATUS.md`, `AGENTS.md`; each chat MUST re-check current main, active PRs and branches. The prompts below are independent candidate tasks, not proof they are currently in progress.
 
-## Shared rules for all three chats
+## Current ownership after ADR-012
+
+- DEV-024 owns the isolated egui/Craft prototype and dependency evidence. It keeps the current production GUI and Core intact.
+- DEV-023 owns Core shared batch budgets and can proceed independently.
+- After DEV-024, DEV-025 owns production desktop entry points and coordinated toolchain/CI changes. DEV-022 owns only the standalone native float/redock example.
+- DEV-008 starts after DEV-025 and owns the production Trace UI and its view models. See the [migration plan](GUI-MIGRATION.md) and [roles](IMPLEMENTATION-ROLES.md).
+
+The following Slint prompts are an archive of the previous split. Use the current backlog for all new assignments.
+
+## Historical rules for the three Slint-era chats
 
 - Use `JannisRln/CANexus-Studio`. Before editing, read `AGENTS.md`, `docs/development/README.md`, `STATUS.md`, `BACKLOG.md`, `DECISIONS.md`, related requirements and latest `main`. Check open PRs to prevent duplicate task ownership.
 - Create one feature branch and PR per DEV task, never force-push `main`, do not create GitHub Issues, do not silently promote Proposed product requirements, and keep Rust/Doxygen documentation in **English**.

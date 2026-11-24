@@ -13,7 +13,9 @@ This proposal covers **both**:
 
 AI is not required for normal local operation. AI suggestions are not verified engineering facts, and model output never grants itself permission to perform risky actions. Features absent from CANexus (for example, production UDS/XCP or dashboard editor capabilities) must appear as unavailable, not as functional MCP endpoints.
 
-**Existing constraints remain authoritative:** headless Rust core and bounded queues; Slint/pbSlintDock UI; typed CAN fast path extensible to Ethernet; a single CANexus configuration file inside an ECU checkout; user-local layouts by default; explicit authorized TX/diagnostic/calibration/flash operations; Python worker isolation; reusable command dispatcher; no implicit script auto-run.
+**Existing constraints remain authoritative:** headless Rust core, bounded queues and toolkit-neutral service contracts; typed CAN fast path extensible to Ethernet; a single CANexus configuration file inside an ECU checkout; user-local layouts by default; explicit authorized TX/diagnostic/calibration/flash operations; Python worker isolation; reusable command dispatcher; no implicit script auto-run.
+
+The [desktop migration](26-adr-012-egui-craft-ui.md) separates development-time inspection from this runtime surface. UI test drivers and any optional Craft developer tools operate on synthetic fixtures in explicit development builds, with inspection ports disabled by default. Runtime MCP continues to use application commands, capability checks, budgeted queries and audited authorization. Evaluate a pinned release of `rmcp` for local stdio and optional Craft provider interfaces separately. Normal engineering workflows remain available offline.
 
 ## 2. Proposed architecture
 

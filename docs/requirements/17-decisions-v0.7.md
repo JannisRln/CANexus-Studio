@@ -4,6 +4,8 @@
 **Status:** Accepted product direction, not verification of implementation  
 **Reference:** [v0.6 decisions](11-decisions-v0.6.md)
 
+Historical decision record. [ADR-012](26-adr-012-egui-craft-ui.md) supersedes the Slint delivery mechanism in row 15 and the corresponding toolkit-specific parts of CR-014 and CR-025.
+
 ## Decisions
 
 | # | Decision | Requirement | Domain |

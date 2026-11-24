@@ -6,7 +6,7 @@
 
 | ID | Proposed priority | Status | Requirement |
 |---|---|---|---|
-| REQ-PLG-012 | P1 | Accepted | Public UI plugin SDK enables independent extensions to contribute their own dockable Slint panels to pbSlintDock workspaces. |
+| REQ-PLG-012 | P1 | Accepted | A public UI plugin SDK enables independent extensions to contribute dockable panels to the desktop workspace through versioned host contracts. [ADR-012](26-adr-012-egui-craft-ui.md) supersedes the Slint-specific delivery mechanism. |
 | REQ-CMD-001 | P1 | Accepted | Provide a fully configurable command system: core and plugin commands, keyboard shortcuts, macros, context-menu actions and toolbar customization. |
 
 ## Proposed requirements
@@ -23,7 +23,7 @@
 
 ## Acceptance criteria
 
-- [ ] Build an external Slint example plugin, add its dockable panel, move to floating and back, close and reopen; its persistent state and data subscriptions remain coherent.
+- [ ] Build a separately packaged example panel, add it through the versioned SDK, move to floating and back, close and reopen, and verify that its persistent state and data subscriptions remain coherent.
 - [ ] Disable an installed UI plugin; workspace reload shows a recoverable missing-panel placeholder rather than destroying saved layout.
 - [ ] Bind a shortcut to a built-in command and a plugin command, detect a conflict, resolve it and verify it persists locally without modifying the ECU Git checkout.
 - [ ] Create a macro invoking commands from two modules and verify order, authorization, cancellation and diagnostic output.
@@ -31,7 +31,7 @@
 
 ## Conflicts and open implementation decisions
 
-- Slint dynamic component model and plugin ABI may limit runtime third-party component loading; confirm with a working proof of concept before finalizing SDK contracts.
+- Verify external panel loading and schema compatibility before freezing a public SDK. Host-rendered typed descriptors and isolated extension processes are candidates. Keep immediate-mode toolkit types private to built-in or trusted, statically compiled adapters.
 - Trusted native UI plugins can crash the host; choose isolation/trust policy and document inability to guarantee in-process crash containment.
 - Hotkeys conflict with text input and OS shortcuts; require scoped precedence rules and platform tests.
 - Fully customizable does not mean arbitrary unmanaged code execution; expose controlled command objects and typed UI extensions.

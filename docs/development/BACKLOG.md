@@ -11,7 +11,7 @@ Canonical implementation tasks. Statuses: Planned, Ready, In Progress, Blocked, 
 | DEV-005 | M1 | P0 | Done | DEV-004 | Deterministic virtual CAN adapter and fixtures |
 | DEV-006 | M1 | P0 | Done | DEV-005 | Bounded event ingestion and shared batches, overload/shutdown tests |
 | DEV-007 | M1 | P0 | Done | DEV-006 | Bounded trace history, query API and loss provenance tests |
-| DEV-008 | M1 | P0 | Ready | DEV-003, DEV-007 | Slint Trace panel showing virtual frames with bounded virtualized rendering; independent of DEV-022 native floats |
+| DEV-008 | M1 | P0 | Planned | DEV-007, DEV-025 | egui Trace from virtual CAN with bounded visible rows, independent chronological/Fixed filter and sort state, keyboard and loss evidence |
 | DEV-009 | M1 | P0 | Planned | DEV-008 | End-to-end smoke test and repeatable benchmark harness |
 | DEV-010 | M2 | P1 | Planned | DEV-009 | First hardware adapter behind HAL, documented platform support |
 | DEV-011 | M2 | P1 | Planned | DEV-009 | DBC import and signal decoding with fixtures |
@@ -23,10 +23,15 @@ Canonical implementation tasks. Statuses: Planned, Ready, In Progress, Blocked, 
 | DEV-017 | M2 | P1 | Planned | DEV-007; AI/MCP architecture and permission decision | Versioned app-service/capability contracts and unified authorization; virtual fixture and stale-handle tests |
 | DEV-018 | M2 | P1 | Planned | DEV-017 | Opt-in local stdio MCP read-only project/trace/health tools; bounded queries and independent-client tests on Windows/Linux |
 | DEV-019 | Later | P1 | Planned | DEV-017; project schema decision | AI/MCP project create/validate/update with preview, atomic single-file persistence and separate-worktree tests |
-| DEV-020 | Later | P1 | Planned | DEV-017, DEV-003; workspace/dashboard model | AI/MCP dashboard/widget/signal-binding CRUD, preview and local/shared persistence with Slint lifecycle tests |
+| DEV-020 | Later | P1 | Planned | DEV-017, DEV-025; workspace/dashboard model | AI/MCP dashboard/widget/signal-binding CRUD, preview and local/shared persistence with toolkit-neutral panel lifecycle tests |
 | DEV-021 | Later | P2 | Planned | DEV-018, DEV-019, DEV-020 | Optional in-app assistant sharing guarded service APIs; provider-choice, privacy, permissions and offline-mode tests |
 
-| DEV-022 | M1 | P1 | Ready | DEV-003 | Isolated native Slint floating-window/dock-back feasibility example; preserve Rust-owned panel state; automated lifecycle tests plus actual Windows/Linux native interaction evidence. If evidence is unavailable, remain Blocked rather than Done. Must not edit DEV-008 GUI host files in parallel. |
+| DEV-022 | M1 | P1 | Planned | DEV-024 | Isolated egui/Craft native float/redock proof, stable panel state, actual Windows/Linux interaction, scale/monitor recovery and explicit Wayland capability report. Maintain an independent example. |
 | DEV-023 | M1 | P1 | Ready | DEV-006, DEV-007 | Prototype bounded global pinned shared-batch byte accounting and deterministic admission/overload/shutdown tests; preserve typed no-copy delivery and nonblocking capture. |
+
+| DEV-024 | M1 | P0 | Ready | DEV-003 baseline, ADR-012 | Isolated Rust 1.95/egui/Craft proof with pinned single egui source, dependency/license audit, native launch and representative workspace/Trace/Plot sample on Windows and Linux |
+| DEV-025 | M1 | P0 | Planned | DEV-024 | Native shell and component showcase, verified single-window parity, keyboard/accessibility evidence, locked builds and synchronized GUI/CI cutover |
+| DEV-026 | Later | P1 | Planned | DEV-022, DEV-025 | Independently built dockable panel proof, versioned schema/manifest, state restore, missing/incompatible provider recovery and authorization |
+| DEV-027 | Later | P2 | Planned | DEV-025 | Standalone contributor and build guide, license/asset inventory, Craft upstream candidates and documented affiliation decision path |
 
 Start with the earliest Ready task whose dependencies are satisfied. Update this backlog and STATUS.md after every delivery. M0/M1 are an initial vertical slice, not the entire v1 feature matrix. AI/MCP backlog items DEV-017..021 are proposed planning placeholders; they are not Ready until the corresponding requirements, security and schema decisions are accepted. Do not silently remove existing product requirements.

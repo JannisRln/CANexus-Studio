@@ -4,6 +4,8 @@
 
 This proposal adds acceptance profiles to existing requirements. The [v0.6](11-decisions-v0.6.md) and [v0.7](17-decisions-v0.7.md) decisions govern product scope. The [implementation roles](../development/IMPLEMENTATION-ROLES.md) assign owners and evidence to the proposed increments.
 
+[ADR-012](26-adr-012-egui-craft-ui.md) supersedes the target Slint/pbSlintDock host referenced in this baseline. The analysis workflow, data-path contracts and standard benchmark remain the comparison profile for egui migration. The new host's additional targets are in the [migration plan](../development/GUI-MIGRATION.md#benchmarks-and-measurement).
+
 ## Findings from the repository
 
 | Finding | Design consequence |

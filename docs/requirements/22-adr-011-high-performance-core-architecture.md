@@ -6,6 +6,8 @@
 
 The [analysis release baseline](25-analysis-release-baseline.md#architecture-refinements-proposed-for-adr-009011) proposes refinements for batch memory accounting, query snapshots, display coalescing and extension boundaries, with [quantitative reference profiles](25-analysis-release-baseline.md#proposed-performance-and-memory-acceptance-gates) for validation.
 
+[ADR-012](26-adr-012-egui-craft-ui.md) supersedes Slint and pbSlintDock as the target host. The data-flow, execution, memory and headless contracts below apply to the new UI through the egui application adapter.
+
 ## 1. Context and architectural direction
 
 CANexus-Studio is a **modular in-process Rust monolith** with a headless-capable core, Slint + pbSlintDock GUI and independent bounded capture, recording, protocol, measurement and presentation paths. The architecture targets both high CAN/CAN FD throughput and excellent perceived UI responsiveness. It avoids mandatory IPC between core and GUI, but leaves room for isolated external plugins in future.
