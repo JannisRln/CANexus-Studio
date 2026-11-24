@@ -25,6 +25,10 @@ Performance includes both high-throughput CAN processing **and perceived respons
 
 The Trace must support per-column filter/sort operations and both chronological and fixed-position modes; the corresponding accepted product decisions and proposed measurable detail requirements reside in [Trace Viewer](06-trace-viewer.md). Shared signal browsing and module-specific panels are specified in [Signal Workspace](07-signal-workspace.md).
 
+## Proposed release acceptance profiles
+
+The [analysis release baseline](25-analysis-release-baseline.md#ux-acceptance-profiles) defines first-run, Trace, keyboard, accessibility, layout and offline usability checks for these requirements. Its [reference workload and measurement procedure](25-analysis-release-baseline.md#proposed-performance-and-memory-acceptance-gates) ties the targets below to a repeatable Windows/Linux test.
+
 ## Initial targets (not yet accepted)
 
 - UI visible feedback: p95 < 50 ms.
