@@ -3,6 +3,7 @@
 **Source inspection baseline:** `main` at `5e801ec5e395657d4998f3ce795a1ce16393b64c` on 2026-11-09; PR #19 merged documentation-only changes as `f6d16e98`, with the same inspected Core implementation.  
 **Target state:** technical proposal, not proof of product requirement acceptance or feature completion.
 
+- [Requirements coverage and delivery gates](ARCHITECTURE-COVERAGE.md) maps the requirement families to owners, contracts, open decisions and acceptance evidence.
 - [Target software architecture](TARGET-ARCHITECTURE.md): responsibility boundaries, typed data flow, runtime sessions, workers, memory ownership, application services, HAL, extensibility and implementation gates.
 - [Architecture weaknesses and remediation plan](ARCHITECTURE-REMEDIATION.md): source-backed limitations, severity, planned corrections, dependencies, parallel ownership and acceptance tests.
 - [Implementation status](STATUS.md) and [development backlog](BACKLOG.md): actual merged work, task state and CI evidence.

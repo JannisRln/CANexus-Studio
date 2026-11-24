@@ -82,10 +82,4 @@ Before increasing scope, write an explicit ADR or accepted technical decision co
 
 ## 5. Recommended immediate action
 
-1. PR #19 is already merged with corrected DEV-022/023 IDs and successful post-merge main CI. Preserve these stable IDs in all subsequent task branches.
-2. Review this documentation-only architecture proposal; **do not** treat it as acceptance of unresolved technical choices.
-3. Start DEV-024 and DEV-023 independently. DEV-025 establishes the desktop shell before DEV-008 integrates Trace. Coordinate shared batch/query contracts.
-4. Add scoped W1 runtime/session + gap + timer task(s) to the canonical backlog in a separate coordinated change, selecting the next unused IDs on current `main`.
-5. Use DEV-009 to establish reproducible failure/performance evidence before real device support or more complex protocols.
-
-The recommended next **core implementation** is the generation-scoped virtual capture/session host with timed batch flush and explicit loss/health delivery. It unlocks reliable GUI consumption and later hardware adapters without forcing a rewrite of the existing frame, ingestion or history primitives.
+Start DEV-023 (shared allocation accounting), DEV-028 (virtual capture lifecycle) and DEV-024 (GUI proof) with separate owners. Coordinate the runtime admission API before integration in DEV-008. DEV-009 measures the combined path. DEV-029 through DEV-032 cover project mapping and the physical-to-offline analyzer workflow. See the [coverage review](ARCHITECTURE-COVERAGE.md) for contracts and exit evidence.

@@ -53,6 +53,7 @@ Selection and validation of direct-write standard format, send scheduler jitter 
 | REQ-LOG-003 | Proposed | Bounded asynchronous recorder buffering reports drops/disk errors and keeps memory bounded across long recordings. |
 | REQ-LOG-004 | Proposed | Once started, the recorder writes a continuous stream of format-native chunks to the chosen destination. A recording may exceed the configured RAM budget and span multiple GiB. |
 | REQ-LOG-005 | Proposed | Users select a recording destination and may configure time- or size-based rollover. Recording storage settings are independent of the temporary Trace cache and its eviction policy. |
+| REQ-LOG-006 | Accepted | Starting a measurement supports RAM-only analysis. Temporary disk-backed Trace history and durable file logging are independently optional. Either, both or neither can be enabled. |
 
 Acceptance: record sustained synthetic CAN FD traffic directly to the selected standard; reopen in CANexus and independent compatible software; compare IDs, payloads, flags and timestamps; interrupt recording and verify explicit recovery/error status; filtering only the display does not filter recorded frames. The specific standard and recovery strategy are still open.
 
@@ -63,3 +64,16 @@ Acceptance: record sustained synthetic CAN FD traffic directly to the selected s
 - Keep persisted recordings at the selected destination. A separate optional Trace cache spills evicted recent data to disk in the background, under its own byte quota. Removing cache segments leaves durable recordings intact. Show where data is written and why a range is unavailable.
 - Verify an 8 GiB or larger recording under a smaller RAM profile. Confirm that the destination grows before Stop, accounted pools stay within their configured limits, and an independent reader can recover every expected record from the finalized output. Exercise optional rollover and verify continuity across segment boundaries.
 - Inject destination quota exhaustion, a stalled or failed writer and interrupted finalization. Show the last successfully written range and the incomplete or failed state, preserve completed segments, and keep capture operating within its own limits. Validate recovery against each supported format. Inject temporary cache exhaustion separately and retain bounded RAM history with a visible diagnostic.
+
+## Live capture storage modes (REQ-LOG-006)
+
+Use separate controls for **Trace history** (RAM budget, optional temporary disk quota) and **File logging** (off, manual start/stop, or configured trigger with destination and recording filter). Default a new measurement setup to RAM only with file logging off. Allow multi-GiB RAM budgets. Show the effective settings before Start. An armed trigger waits for its condition before creating output. Keep pre-trigger events in bounded history and report truncation.
+
+| Temporary disk history | File logging | Expected measurement data on disk |
+|---|---|---|
+| Off | Off | None. Older events expire when bounded RAM history fills. |
+| On | Off | Evicted history may spill into the temporary cache. Cache cleanup and quota eviction may discard these ranges. |
+| Off | On | Only the user recording and its required metadata. Recent Trace stays in RAM. |
+| On | On | Cache extends Trace retention. The recorder writes its selected stream at its own destination with its own retention policy. |
+
+Verify all four modes using isolated cache and recording directories, a fixture larger than the RAM retention limit, and an inventory of files, captured IDs and recorded IDs. With only a trigger armed, verify zero log files before firing. With both features on, filter recording to a subset of IDs and verify the Trace still contains other retained IDs. Stop the recorder during capture, clear the cache and confirm the finalized recording remains readable. Inject a failure at each destination independently and expose the affected service's status. An explicit export of available Trace history records the selected range once and leaves ongoing file logging off if it was off.

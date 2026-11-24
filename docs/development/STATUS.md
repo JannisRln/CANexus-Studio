@@ -1,7 +1,7 @@
 # Implementation status
 
 **Phase:** M1 — GUI migration architecture and ecosystem review prepared. DEV-024 is the next GUI task.
-**Active tasks:** This documentation change claims no implementation. DEV-024 (isolated GUI proof) and DEV-023 (Core shared-batch budget) are ready for independent ownership.
+**Active tasks:** This documentation change claims no implementation. DEV-024 (GUI proof), DEV-023 (shared-batch budget) and DEV-028 (session host) are ready. The [architecture review](ARCHITECTURE-COVERAGE.md) records planned contracts and remaining evidence against main at `9f1723b`.
 **Latest verified implementation milestone:** DEV-007 PR #18 merged as `3c53f1ee`; main CI run 42566143742 passed Windows/Linux; DEV-003 spike PR #12 and cross-platform CI previously verified
 **Last updated:** 2026-11-24
 **Branch policy:** Hybrid: PRs for substantial/risky/parallel tasks; direct main pushes allowed for small isolated changes

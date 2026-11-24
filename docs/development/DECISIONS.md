@@ -24,6 +24,6 @@ Product architecture ADRs remain in docs/requirements. Append superseding decisi
 ## Pending
 
 - Precise v1 release feature matrix.
-- Rust crate topology and version pinning (DEV-002).
+- Future crate extraction after dependency boundaries are proven. DEV-002 established the workspace and Rust is pinned to 1.100.0.
 - Native egui/Craft floating lifecycle and per-backend interaction evidence (DEV-022), and third-party panel compatibility proof (DEV-026).
 - Hardware adapter and recording format for later milestones.
