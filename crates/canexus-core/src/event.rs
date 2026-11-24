@@ -67,6 +67,38 @@ mod tests {
     };
 
     #[test]
+    fn non_can_observations_retain_source_scoped_identity() {
+        let id = RawEventId {
+            source: SourceId::new(1),
+            sequence: 7,
+        };
+        let observation = Observed {
+            id,
+            channel: ChannelId::new(2),
+            timestamp: EventTimestamp::new(
+                0,
+                ClockDomainId::new(1),
+                TimestampResolution::new(1, 1).unwrap(),
+                TimestampOrigin::Synthetic,
+                TimestampQuality::Uncorrelated,
+            ),
+            direction: EventDirection::Tx,
+            value: 0xdead_beef_u32,
+        };
+
+        assert_eq!(observation.id, id);
+        assert_eq!(observation.value, 0xdead_beef);
+        assert_ne!(
+            observation.id,
+            RawEventId {
+                source: SourceId::new(2),
+                ..id
+            }
+        );
+        assert_ne!(observation.id, RawEventId { sequence: 8, ..id });
+    }
+
+    #[test]
     fn observed_can_frame_retains_identity_and_time() {
         let frame = CanFrame::new(
             CanId::standard(0x123).unwrap(),

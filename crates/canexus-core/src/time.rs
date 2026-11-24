@@ -203,6 +203,20 @@ mod tests {
     }
 
     #[test]
+    fn elapsed_nanoseconds_truncate_fractional_ticks() {
+        let resolution = TimestampResolution::new(1, 3).unwrap();
+        let timestamp = EventTimestamp::new(
+            5,
+            ClockDomainId::new(3),
+            resolution,
+            TimestampOrigin::Synthetic,
+            TimestampQuality::Uncorrelated,
+        );
+
+        assert_eq!(timestamp.elapsed_ns(), Some(1));
+    }
+
+    #[test]
     fn overflow_is_explicit_not_wrapped() {
         let res = TimestampResolution::new(u64::MAX, 1).unwrap();
         let stamp = EventTimestamp::new(
