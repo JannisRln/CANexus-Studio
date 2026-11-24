@@ -34,7 +34,7 @@ pub enum VirtualCanState {
     Ready,
     /// Virtual time may advance and due events may be polled.
     Running,
-    /// Permanently stopped; create a new adapter with a new source ID to restart.
+    /// Permanently stopped; create a new adapter to restart.
     Stopped,
 }
 
@@ -62,7 +62,8 @@ pub enum VirtualCanError {
 /// an explicit clock domain, and source-scoped sequence numbers.
 ///
 /// This is a capture fixture source, not a hardware TX scheduler. A new
-/// capture session must use a new `SourceId` to avoid reusing event identities.
+/// capture session must scope raw event IDs to a fresh generation or use a
+/// new `SourceId` to avoid reusing event identities.
 #[derive(Debug)]
 pub struct VirtualCanAdapter<'a> {
     source: SourceId,
@@ -100,6 +101,12 @@ impl<'a> VirtualCanAdapter<'a> {
             now_ticks: 0,
             state: VirtualCanState::Ready,
         })
+    }
+
+    /// Returns the source identity of emitted observations.
+    #[must_use]
+    pub const fn source(&self) -> SourceId {
+        self.source
     }
 
     /// Returns the session state.

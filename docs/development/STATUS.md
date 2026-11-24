@@ -1,8 +1,8 @@
 # Implementation status
 
 **Phase:** M1 — GUI migration architecture and ecosystem review prepared. DEV-024 is the next GUI task.
-**Active tasks:** DEV-023 is in progress on `feat/DEV-023-batch-budget`. DEV-024 (GUI proof) and DEV-028 (session host) are ready. The [architecture review](ARCHITECTURE-COVERAGE.md) records planned contracts and remaining evidence against main at `9f1723b`.
-**Latest verified implementation milestone:** DEV-007 PR #18 merged as `3c53f1ee`; main CI run 42566143742 passed Windows/Linux; DEV-003 spike PR #12 and cross-platform CI previously verified
+**Active tasks:** DEV-024 (GUI proof) is ready. The Core implementation session owns DEV-028 on `feat/DEV-028-capture-session` through integration.
+**Latest verified baseline:** DEV-023 [PR #27](https://github.com/JannisRln/CANexus-Studio/pull/27) merged as `0b058dc`. Its [main CI](https://github.com/JannisRln/CANexus-Studio/actions/runs/45429678132) passed all Windows/Linux jobs.
 **Last updated:** 2026-11-24
 **Branch policy:** Hybrid: PRs for substantial/risky/parallel tasks; direct main pushes allowed for small isolated changes
 
@@ -20,7 +20,26 @@ The live baseline for the migration review is `f158f3e`. Its [exact-main CI](htt
 - REQ-ARCH-006/007: `BoundedIngest::with_budget` reserves inline batch storage before staging, transfers it to shared immutable handles without a payload copy, and releases the charge on last-owner drop. Producer admission rejection counts and provenance are readable independently of subscriber queues.
 - Fixtures: concurrent reservations, two producers with pinned handles, Trace eviction with an external owner, sparse flush, rejected admission and resumption, and storage release on producer drop and shutdown.
 - Local verification on Linux with Rust 1.100.0: workspace Rustfmt, Core/CLI Clippy with warnings denied, Core/CLI all-target build, 47 Rust tests and project-state validation passed.
-- Runtime handoff: DEV-028 should pass one shared budget to the configured producers, publish rejection health, and keep room to admit the next batch even when history retains earlier batches. Recorder reservations, profile changes and process memory verification remain open. The prototype accounts for inline batch storage and fixed metadata. Other pools and payload-owned heap memory need separate accounting.
+- Runtime handoff: DEV-028 passes one shared budget to its producers and exposes rejection counters. The budget covers inline batch storage and fixed metadata. Other pools, recorder reservations, live profile changes and process memory verification remain open.
+
+
+## DEV-028 headless virtual capture sessions
+
+- Ownership: Core on `feat/DEV-028-capture-session`, based on DEV-023 merge `0b058dc`.
+- The host orders intake, flush deadlines, subscription changes and stop. Virtual adapters remain caller-driven in synthetic time. The service owns the live flush timer and uses bounded per-source receiver queues with a drop-newest policy. Stop tracks delivery until the batch is taken from the queue.
+- Local Linux verification with Rust 1.100.0 passed workspace Rustfmt, Core/CLI Clippy with warnings denied, Core/CLI all-target build, 58 Core tests, project-state validation and five Git hook tests. Public session acceptance is covered in [capture_session.rs](../../crates/canexus-core/tests/capture_session.rs).
+
+| Acceptance | Integration tests |
+|---|---|
+| RAM-only virtual CAN/CAN-FD, including idle real-time publication and first-frame deadlines | `running_service_publishes_one_fd_frame_without_follow_up_input`, `manual_clock_flushes_from_the_first_frame_and_not_before_its_deadline` |
+| Concurrent timer and stop, receiver drain, idempotent completion and a pinned slow receiver | `timer_and_stop_share_one_publication_and_completion_at_the_deadline`, `stop_allows_a_waiting_receiver_to_drain_the_tail`, `stop_is_bounded_with_a_full_queue_and_a_pinned_external_batch` |
+| Dynamic batch boundaries, independent loss counters and observed sequence bounds | `joining_and_leaving_close_the_partial_batch_at_the_documented_boundary`, `repeated_queue_overflow_is_local_and_reports_only_known_sequence_bounds` |
+| Reconnect with reused source and sequence identity | `reconnect_rejects_old_results_and_keeps_old_deadlines_generation_local` |
+| Shared batch memory, pin lifetime, recovery and 64-bit multi-GiB limits | `shared_budget_accounts_for_two_sources_and_recovers_after_the_last_reference`, `multi_gib_budget_is_representable_without_allocating_it` |
+
+The Core regression test `receiver_winning_the_lock_after_expiry_cannot_take_the_tail` schedules a receiver ahead of the stop waiter at expiry and verifies the frozen loss result.
+
+Latest loss details give the first and last observed sequence plus the actual count. Cumulative counts distinguish budget rejection, per-receiver overflow and queued deliveries discarded during detach or stop. Queue metadata and overall process memory have separate accounting. DEV-009 retains the latency and process-memory benchmark, DEV-010 owns physical adapters, and DEV-013/030 retain optional recording and disk Trace history. No capture latency or process-memory target is claimed here.
 
 ## Implemented
 
