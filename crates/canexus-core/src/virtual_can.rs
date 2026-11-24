@@ -443,6 +443,31 @@ mod tests {
     }
 
     #[test]
+    fn large_same_tick_burst_keeps_contiguous_source_order() {
+        let first = super::fixtures::mixed_classic_fd()[0];
+        let second = super::fixtures::mixed_classic_fd()[1];
+        let fixtures: Vec<_> = (0..32_768)
+            .map(|index| VirtualCanFixture {
+                at_tick: 100,
+                ..[first, second][index % 2]
+            })
+            .collect();
+        let mut adapter = adapter(&fixtures);
+        adapter.start().unwrap();
+        adapter.advance_to(100).unwrap();
+
+        for (sequence, fixture) in fixtures.iter().enumerate() {
+            let observation = adapter.next_due().unwrap().unwrap();
+            assert_eq!(observation.id.sequence, sequence as u64);
+            assert_eq!(observation.timestamp.ticks, 100);
+            assert_eq!(observation.channel, fixture.channel);
+            assert_eq!(observation.value, fixture.frame);
+        }
+        assert_eq!(adapter.remaining(), 0);
+        assert_eq!(adapter.next_due(), Ok(None));
+    }
+
+    #[test]
     fn hot_path_observation_does_not_require_heap_owned_fields() {
         assert!(!std::mem::needs_drop::<VirtualCanFixture>());
         assert!(!std::mem::needs_drop::<Observed<CanFrame>>());

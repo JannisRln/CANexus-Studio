@@ -29,7 +29,7 @@ Canonical implementation tasks. Statuses: Planned, Ready, In Progress, Blocked, 
 | DEV-022 | M1 | P1 | Planned | DEV-024 | Isolated egui/Craft native float/redock proof, stable panel state, actual Windows/Linux interaction, scale/monitor recovery and explicit Wayland capability report. Maintain an independent example. |
 | DEV-023 | M1 | P1 | Ready | DEV-006, DEV-007 | Prototype bounded global pinned shared-batch byte accounting and deterministic admission/overload/shutdown tests; preserve typed no-copy delivery and nonblocking capture. |
 
-| DEV-024 | M1 | P0 | Ready | DEV-003 baseline, ADR-012 | Isolated Rust 1.95/egui/Craft proof with pinned single egui source, dependency/license audit, native launch and representative workspace/Trace/Plot sample on Windows and Linux |
+| DEV-024 | M1 | P0 | Ready | DEV-003 baseline, ADR-012 | Isolated egui/Craft proof on the pinned toolchain with pinned single egui source, dependency/license audit, native launch and representative workspace/Trace/Plot sample on Windows and Linux |
 | DEV-025 | M1 | P0 | Planned | DEV-024 | Native shell and component showcase, verified single-window parity, keyboard/accessibility evidence, locked builds and synchronized GUI/CI cutover |
 | DEV-026 | Later | P1 | Planned | DEV-022, DEV-025 | Independently built dockable panel proof, versioned schema/manifest, state restore, missing/incompatible provider recovery and authorization |
 | DEV-027 | Later | P2 | Planned | DEV-025 | Standalone contributor and build guide, license/asset inventory, Craft upstream candidates and documented affiliation decision path |

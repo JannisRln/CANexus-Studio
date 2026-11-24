@@ -19,6 +19,8 @@ Product architecture ADRs remain in docs/requirements. Append superseding decisi
 
 | DEV-DEC-010 | 2026-11-24 | Accepted direction | Adopt egui with Craft UI as the preferred workspace candidate. Verify dependency and native-platform gates in DEV-024 before production cutover. | [ADR-012](../requirements/26-adr-012-egui-craft-ui.md) records the migration and preservation of the headless Core. The DEV-003 verification history remains valid. |
 
+| DEV-DEC-011 | 2026-11-24 | Accepted | Pin the workspace, development toolchain and CI to stable Rust 1.100.0. | Use the current stable compiler for the egui/Craft evaluation and keep the existing GUI building through cutover. [Rust release notes](https://blog.rust-lang.org/2026/11/12/Rust-1.100.0/) |
+
 ## Pending
 
 - Precise v1 release feature matrix.

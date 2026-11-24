@@ -8,6 +8,12 @@
 
 The live baseline for the migration review is `f158f3e`. Its [exact-main CI](https://github.com/JannisRln/CANexus-Studio/actions/runs/45344406402) completed successfully on Windows and Linux. [ADR-012](../requirements/26-adr-012-egui-craft-ui.md) is the forward GUI direction. Older DEV-008/022 ownership and Slint host notes below are historical.
 
+## Rust 1.100 and legacy PR reconciliation
+
+- The workspace, local pin and CI use Rust 1.100.0. DEV-024 uses the same toolchain to evaluate the GUI dependency graph.
+- The additional coverage from PRs #13 and #14 checks typed non-CAN identity, fractional timestamp conversion and ordered virtual replay of 32,768 frames at one tick. The current timed Virtual CAN adapter and the already integrated DEV-003/004/005 behavior remain the product baseline.
+- Local Linux verification with Rust 1.100.0 passed Rustfmt, Core/CLI Clippy, Core/CLI build and 43 tests. Cross-platform workspace results are recorded by the integration PR and GitHub Actions. Native GUI, hardware and performance verification are separate.
+
 ## Implemented
 
 - Product requirements and architecture documentation.
