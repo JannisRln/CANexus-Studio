@@ -2,6 +2,7 @@
 
 **Status:** Proposed technical baseline for review; not a new Accepted product ADR.  
 **Source inspection baseline:** `main` at `5e801ec5e395657d4998f3ce795a1ce16393b64c`, 2026-11-09; PR #19 subsequently merged as `f6d16e98` with documentation-only changes. The Core source findings still apply.  
+**Delivery contracts:** [Requirements coverage and delivery gates](ARCHITECTURE-COVERAGE.md).
 **Companion:** [Architecture risks and remediation](ARCHITECTURE-REMEDIATION.md).  
 **Primary sources:** `AGENTS.md`, `docs/requirements/README.md`, ADR-006/007/008/009/010/011, `docs/requirements/05-hal-plugins.md`, `16-ui-plugins-commands.md`, `17-decisions-v0.7.md`, `24-ai-native-mcp-integration.md` and `docs/development/STATUS.md`.
 
@@ -99,7 +100,7 @@ Recommended dependency rule: **frontends → application services → domain run
 | Query / resource index | Bounded background jobs, cancellation and generation-checked results; never hold capture/GUI locks across scans |
 | GUI | egui desktop event loop: short snapshot application, visible-row rendering and coalesced repaint requests |
 
-**Budgeting:** Per-consumer queue item limits are necessary but not sufficient. Introduce byte-size admission and a global per-project/session shared-allocation credit/lease model, charging each backing batch **once** and tracking all live references. Account staged buffers, queue slots, external retained pages/handles, indices and independent recorder headroom. Excess demand must produce an explicit reject/drop/failure classification rather than unbounded growth. Measure user-selectable RAM profiles and keep temporary Trace retention separate from streaming durable recording. [Logging requirements](../requirements/10-transmission-trigger-replay.md#configurable-resource-budgets-and-long-recordings)
+**Budgeting:** Per-consumer queue item limits are necessary but not sufficient. Introduce byte-size admission and a process-wide shared-allocation credit/lease model with project and session sub-budgets, charging each backing batch **once** and tracking all live references. Account staged buffers, queue slots, external retained pages/handles, indices and independent recorder headroom. Excess demand must produce an explicit reject/drop/failure classification rather than unbounded growth. Measure user-selectable RAM profiles and keep temporary Trace retention separate from streaming durable recording. [Logging requirements](../requirements/10-transmission-trigger-replay.md#configurable-resource-budgets-and-long-recordings)
 
 **Subscription behavior:** Consumers may arrive/leave while a session runs, but attachment/detachment and ownership must have a well-defined serialization point, generation and per-consumer loss/replay semantics. Current `BoundedIngest::subscribe` is pre-start only; a runtime broker can initially provide dynamic registration without mutating the tested core API unsafely.
 
