@@ -4,6 +4,8 @@
 **Detail status:** Proposed · **Revision:** 1.0  
 **Related:** [HAL and Plugins](05-hal-plugins.md), [UX and Performance](02-ux-performance.md), [Measurement and Time](12-measurement-dashboard-time.md), [UI Plugins and Commands](16-ui-plugins-commands.md), [ADR-007](19-adr-007-elf-dwarf-symbol-calibration.md), [ADR-009](20-adr-009-high-performance-can-trace.md), [ADR-010](21-adr-010-measurement-calibration-workspace-ux.md).
 
+The [analysis release baseline](25-analysis-release-baseline.md#architecture-refinements-proposed-for-adr-009011) proposes refinements for batch memory accounting, query snapshots, display coalescing and extension boundaries, with [quantitative reference profiles](25-analysis-release-baseline.md#proposed-performance-and-memory-acceptance-gates) for validation.
+
 ## 1. Context and architectural direction
 
 CANexus-Studio is a **modular in-process Rust monolith** with a headless-capable core, Slint + pbSlintDock GUI and independent bounded capture, recording, protocol, measurement and presentation paths. The architecture targets both high CAN/CAN FD throughput and excellent perceived UI responsiveness. It avoids mandatory IPC between core and GUI, but leaves room for isolated external plugins in future.

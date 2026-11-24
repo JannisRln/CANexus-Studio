@@ -90,3 +90,7 @@ See [v0.6 decisions and conflict register](11-decisions-v0.6.md).
 - Fully customizable command system and macros shared across modules.
 
 See [v0.7 decision and conflict register](17-decisions-v0.7.md). Accepted product direction does not imply MVP delivery or completed technical validation.
+
+## Proposed delivery baselines
+
+- [Analysis release baseline](25-analysis-release-baseline.md) defines workflow, architecture and measurable release acceptance profiles grounded in CANExplorer and Vector CANoe. It uses the existing requirement IDs and complements the accepted product decisions.
