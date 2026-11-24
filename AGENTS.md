@@ -8,7 +8,7 @@ This repository uses Markdown specifications under `docs/requirements/` as the s
 - Keep requirement IDs stable; document changed/superseded behavior.
 - Separate **confirmed decisions** from **proposals**. Do not silently mark Proposed requirements as Accepted.
 - All code-generated Doxygen comments must be **in English**.
-- Application: Rust core; Slint UI with pbSlintDock; Windows and Linux targets.
+- Application: headless Rust Core and Windows/Linux desktop. egui and eframe are the target with Craft UI as the preferred component and docking candidate. Follow [ADR-012](docs/requirements/26-adr-012-egui-craft-ui.md) and its evidence gates. Current Slint/pbSlintDock code is the comparison baseline through cutover.
 - ECU projects must not be reorganized or populated with CANexus runtime files. They require only a single CANexus project configuration file, provisionally `canexus.toml`.
 - Resolve project resources relative to that project's configuration file; do not require simultaneous worktree management.
 - Keep UI responsive and data acquisition independent of display refresh.
@@ -19,7 +19,7 @@ This repository uses Markdown specifications under `docs/requirements/` as the s
 
 - v0.7 Accepted decisions live in `docs/requirements/17-decisions-v0.7.md`; the canonical domain files are 12–16.
 - Python tests live in user-referenced Python files, editable through external editors, and run through GUI/CLI using isolated per-script-session worker processes.
-- Third-party Slint dockable panels and a fully configurable command dispatcher are product goals; prototype dynamic UI lifecycle/SDK stability before implementation.
+- Third-party dockable panels and a fully configurable command dispatcher are product goals. Keep GUI toolkit types out of public extension contracts and prove lifecycle and versioning before stabilizing the SDK.
 - Do not claim generic flashing recovery, unrestricted vendor diagnostics support, or cross-device precise synchronization without evidence.
 
 ## Chat-only implementation workflow (mandatory)

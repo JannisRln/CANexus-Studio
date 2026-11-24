@@ -4,6 +4,10 @@
 **Detail status:** Proposed · **Revision:** 1.0  
 **Related:** [HAL and Plugins](05-hal-plugins.md), [UX and Performance](02-ux-performance.md), [Measurement and Time](12-measurement-dashboard-time.md), [UI Plugins and Commands](16-ui-plugins-commands.md), [ADR-007](19-adr-007-elf-dwarf-symbol-calibration.md), [ADR-009](20-adr-009-high-performance-can-trace.md), [ADR-010](21-adr-010-measurement-calibration-workspace-ux.md).
 
+The [analysis release baseline](25-analysis-release-baseline.md#architecture-refinements-proposed-for-adr-009011) proposes refinements for batch memory accounting, query snapshots, display coalescing and extension boundaries, with [quantitative reference profiles](25-analysis-release-baseline.md#proposed-performance-and-memory-acceptance-gates) for validation.
+
+[ADR-012](26-adr-012-egui-craft-ui.md) supersedes Slint and pbSlintDock as the target host. The data-flow, execution, memory and headless contracts below apply to the new UI through the egui application adapter.
+
 ## 1. Context and architectural direction
 
 CANexus-Studio is a **modular in-process Rust monolith** with a headless-capable core, Slint + pbSlintDock GUI and independent bounded capture, recording, protocol, measurement and presentation paths. The architecture targets both high CAN/CAN FD throughput and excellent perceived UI responsiveness. It avoids mandatory IPC between core and GUI, but leaves room for isolated external plugins in future.
@@ -179,7 +183,7 @@ Distinct categories include `DriverOverflow`, `IngressOverflow`, `RecorderQueueO
 
 ## 7. Memory budget and admission
 
-Proposed starting configuration for benchmarking only:
+The [analysis release baseline](25-analysis-release-baseline.md#proposed-performance-and-memory-acceptance-gates) defines the standard reference workload and its 350 MiB process-memory target. The larger budgets below illustrate a separate, user-selectable configuration. Recording capacity scales with the destination and recording policy.
 
 | Budget class | Candidate |
 |---|---:|
@@ -191,7 +195,7 @@ Proposed starting configuration for benchmarking only:
 | GUI view caches | 32 MiB |
 | **Subtotal of configured budgets** | **640 MiB** |
 
-This is **not** a whole-process memory limit; binaries, runtime, debug indexes, drivers and plugins add to it. Account shared event batches once in global backing allocation yet enforce each consumer's retained-reference budget. Bound pool allocation, burst admission, cache eviction and pending jobs; instrument pinned batches and memory high-water marks. Reserve independent critical headroom for capture and the recorder.
+This is **not** a whole-process memory limit; binaries, runtime, debug indexes, drivers and plugins add to it. Account shared event batches once in global backing allocation yet enforce each consumer's retained-reference budget. Bound pool allocation, burst admission, cache eviction and pending jobs; instrument pinned batches and memory high-water marks. Reserve independent critical headroom for capture and the recorder. Users select a machine-local RAM profile with effective subsystem limits derived from the chosen budget. Keep distinct disk quotas for disposable Trace history and durable recording, with settings and evidence in [logging and replay](10-transmission-trigger-replay.md#configurable-resource-budgets-and-long-recordings).
 
 ## 8. Measurement integration (ADR-008 boundary)
 
@@ -325,6 +329,7 @@ Preserve existing `REQ-CORE-001..006`, `REQ-HAL-*`, `REQ-PLG-*` and the accepted
 | REQ-ARCH-034 | P1 | Proposed | Virtual providers support deterministic end-to-end and failure-injection testing. |
 | REQ-ARCH-035 | P1 | Proposed | Benchmarks enforce agreed performance targets under documented Windows/Linux reference conditions. |
 | REQ-ARCH-036 | P1 | Proposed | Runtime caches/records and machine-specific state are outside ECU worktrees by default. |
+| REQ-ARCH-037 | P0 | Proposed | Users can configure application-managed RAM budgets independently of disk retention and recording size, and inspect active limits and observed process memory. |
 
 ## 15. Acceptance tests
 

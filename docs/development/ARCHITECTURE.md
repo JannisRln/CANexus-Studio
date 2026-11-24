@@ -25,7 +25,7 @@ The current source code does not include a physical HAL, production recorder, pr
 
 `GUI / CLI / scripts / optional AI adapters` → **application services** → **headless domain/runtime services** → **typed core and HAL contracts** → vendor/device implementations.
 
-The application remains a **modular in-process Rust monolith**. Slint is not part of the capture hot path; external IPC is optional only for isolation or integration. The current three-crate workspace need not be split into many crates before responsibilities have been prototyped and verified.
+The application remains a **modular in-process Rust monolith**. The desktop host consumes bounded projections outside the capture hot path. External IPC is reserved for isolation or integration. [ADR-012](../requirements/26-adr-012-egui-craft-ui.md) defines the move to egui with Craft as the preferred docking candidate. The current three-crate workspace need not be split into many crates before responsibilities have been prototyped and verified.
 
 ## Implementation and verification rules
 

@@ -5,7 +5,7 @@
 **Companion:** [Architecture risks and remediation](ARCHITECTURE-REMEDIATION.md).  
 **Primary sources:** `AGENTS.md`, `docs/requirements/README.md`, ADR-006/007/008/009/010/011, `docs/requirements/05-hal-plugins.md`, `16-ui-plugins-commands.md`, `17-decisions-v0.7.md`, `24-ai-native-mcp-integration.md` and `docs/development/STATUS.md`.
 
-This document describes an **incremental target**, not functionality already present. Product requirement states remain unchanged: a Proposed requirement is not implicitly Accepted or Verified by this document. The v0.7 accepted product decisions and current architecture constraints take precedence over illustrative implementation details here.
+This document describes an **incremental target**, not functionality already present. Product requirement states remain unchanged: a Proposed requirement is not implicitly Accepted or Verified by this document. Use the v0.7 product decisions and [ADR-012](../requirements/26-adr-012-egui-craft-ui.md) for current product direction and GUI constraints.
 
 ## 1. Verified baseline and engineering strategy
 
@@ -15,21 +15,21 @@ Current Rust workspace: `canexus-core`, `canexus-cli` and `canexus-gui`. Core al
 
 ## 2. Non-negotiable boundaries
 
-1. **Headless first:** Capture, record, query, measurements and automated tests work without Slint; the GUI is a client of application-owned services.
-2. **In-process hot path:** No mandatory IPC or network service between capture/core and Slint. No synchronous decode, file/index I/O or GUI callback on a capture worker.
+1. **Headless first:** Capture, record, query, measurements and automated tests work without a desktop toolkit; the GUI is a client of application-owned services.
+2. **In-process hot path:** No mandatory IPC or network service between capture/Core and the desktop. No synchronous decode, file/index I/O or GUI callback on a capture worker.
 3. **Typed data plane:** Keep CAN-specific data compact and validated (`Observed<CanFrame>` today); add other network payload families without routing every event through a CAN-only base type or per-frame `dyn` allocation.
 4. **Independent consumers:** Recorder, history, decoder, measurement and view models have different bounded resources and failure policies. A slow Trace view must not silently affect recording.
 5. **Observable loss and quality:** Capture/driver loss, per-consumer delivery loss, decoder gap, recorder failure, history eviction and UI coalescing have distinct meanings.
 6. **Scoped identity:** An active resource is identified by project instance/worktree context, session generation and source/channel; a source-local sequence is not a globally comparable timestamp or a lifetime-independent identifier.
-7. **One permission boundary:** Equivalent operations from Slint, CLI, scripts, plugins and optional AI/MCP pass through common application services and command/authorization checks. Reading an ECU through an active protocol may itself generate traffic.
+7. **One permission boundary:** Equivalent operations from the GUI, CLI, scripts, plugins and optional AI/MCP pass through common application services and command/authorization checks. Reading an ECU through an active protocol may itself generate traffic.
 8. **Portable ECU projects:** One portable CANexus config file in an existing ECU worktree; resource paths resolve relative to that file. Cache, logs, recordings, layouts and physical channel mappings live outside ECU checkouts by default.
-9. **No premature plugin ABI promise:** Internal Rust traits are not a stable external dynamic-library ABI. Native plugin and Slint panel loading require explicit cross-platform proofs before SDK freeze.
+9. **No premature plugin ABI promise:** Internal Rust traits are not a stable external dynamic-library ABI. Native plugin and external panel loading require explicit cross-platform proofs before SDK freeze.
 10. **Offline by default:** Ordinary local operation never depends on AI services, cloud connectivity or external MCP.
 
 ## 3. Logical component and dependency map
 
 ```text
-Slint + pbSlintDock GUI   Headless CLI   Python workers   Optional MCP / assistant
+egui/Craft desktop     Headless CLI   Python workers   Optional MCP / assistant
           \                   |                |                    /
                        Application Services
                   commands / authorizations / handles
@@ -57,7 +57,7 @@ Slint + pbSlintDock GUI   Headless CLI   Python workers   Optional MCP / assista
                   |
            Bounded View Models
                   |
-                Slint
+             Desktop host
 ```
 
 This diagram shows responsibility and permitted data flow, not one thread per box. Recorder and trace storage consume **the same immutable raw batches** independently. XCP/UDS control and TX use explicit protocol/session/adapter APIs, never the Trace query path. Recorder errors must be observable even if its data queue is full.
@@ -66,16 +66,16 @@ This diagram shows responsibility and permitted data flow, not one thread per bo
 
 | Boundary | Responsibility | Allowed dependencies | Must not depend on |
 |---|---|---|---|
-| `core/types` (current `canexus-core`) | Frame, event, ID, time, errors, typed batch contracts | Standard Rust foundations | Slint, vendor SDKs |
+| `core/types` (current `canexus-core`) | Frame, event, ID, time, errors, typed batch contracts | Standard Rust foundations | desktop toolkits, vendor SDKs |
 | `runtime/session` (future) | Project instance, generation, service lifecycle, cancellation, worker ownership | Core contracts | GUI widgets |
 | `hal` (future) | Discovery, capabilities, RX/TX, timestamps, bus state, reconnect | Core, platform adapters | Trace views |
 | `ingest/health` (evolve existing core) | Staging, bounded publication, byte accounting, loss/health | Typed core | Filesystem, GUI |
 | `trace/store/query` (evolve existing core) | Bounded RAM, optional disk, queries, indexes and query generations | Raw batches, metadata | Device ownership, UI objects |
 | `recording` (future) | Independent bounded writer, direct standard-format decision, finalization and fault state | Raw batches, storage I/O | View refresh |
-| `protocols` (future) | Stateful reassembly/decoding with versioned provenance and gap resets | Raw event stream, protocol descriptions | Slint |
+| `protocols` (future) | Stateful reassembly/decoding with versioned provenance and gap resets | Raw event stream, protocol descriptions | Desktop toolkit |
 | `measurement` (future) | Shared acquisition planner, typed samples, cache, bounded history, rates/quality | Provider interfaces | Panel lifecycle |
 | `project/symbols/workspace` (future) | Portable resources, local mappings, versioned dashboards/presets | Project and artifact identities | Hardware-specific hardcoded paths |
-| `app-services` (future) | Typed read/query/action contracts, authorization, handles, audit | Domain services | Direct Slint internals |
+| `app-services` (future) | Typed read/query/action contracts, authorization, handles, audit | Domain services | Desktop toolkit internals |
 | `canexus-gui` / `canexus-cli` (existing) | Presentation and command-line clients | App services, view-model adapter | Direct device driver control in panels |
 
 Recommended dependency rule: **frontends → application services → domain runtime → typed core / HAL implementations**. Plugin API and GUI components can be separate adapters, not reverse dependencies into core. Begin with internal Rust modules; extract stable crates when compile-time dependency checks and independent tests justify it.
@@ -97,9 +97,9 @@ Recommended dependency rule: **frontends → application services → domain run
 | Protocol decode | Context-ordered bounded input; deterministic reset/gap handling; derived output linked to raw IDs |
 | Measurement | Provider planning, acquisition sharing, latest cache and bounded history; panel lifetime independent |
 | Query / resource index | Bounded background jobs, cancellation and generation-checked results; never hold capture/GUI locks across scans |
-| GUI | Slint event loop: only short snapshot application, visible-row rendering and coalesced notifications; no per-frame posted callback |
+| GUI | egui desktop event loop: short snapshot application, visible-row rendering and coalesced repaint requests |
 
-**Budgeting:** Per-consumer queue item limits are necessary but not sufficient. Introduce byte-size admission and a global per-project/session shared-allocation credit/lease model, charging each backing batch **once** and tracking all live references. Account staged buffers, queue slots, external retained pages/handles, indices and independent recorder headroom. Excess demand must produce an explicit reject/drop/failure classification rather than unbounded growth. Set numerical budgets from measurements (ADR-011 contains candidate values, not accepted guarantees).
+**Budgeting:** Per-consumer queue item limits are necessary but not sufficient. Introduce byte-size admission and a global per-project/session shared-allocation credit/lease model, charging each backing batch **once** and tracking all live references. Account staged buffers, queue slots, external retained pages/handles, indices and independent recorder headroom. Excess demand must produce an explicit reject/drop/failure classification rather than unbounded growth. Measure user-selectable RAM profiles and keep temporary Trace retention separate from streaming durable recording. [Logging requirements](../requirements/10-transmission-trigger-replay.md#configurable-resource-budgets-and-long-recordings)
 
 **Subscription behavior:** Consumers may arrive/leave while a session runs, but attachment/detachment and ownership must have a well-defined serialization point, generation and per-consumer loss/replay semantics. Current `BoundedIngest::subscribe` is pre-start only; a runtime broker can initially provide dynamic registration without mutating the tested core API unsafely.
 
@@ -107,7 +107,7 @@ Recommended dependency rule: **frontends → application services → domain run
 
 ## 6. Query and UI model
 
-One `TraceHistory` per appropriate source/session is shared by multiple Trace views. UI panel state (filter, sort, chronological/fixed, columns, selection, follow-live and display rate) is independent. A query service returns bounded **owned view snapshots or short-lived typed leases**, not borrowed Rust references held across background/Slint thread boundaries. Use versioned query generations and cancellable background work; stale results are discarded. Live append must not cause permanent starvation of scrolling queries.
+One `TraceHistory` per appropriate source/session is shared by multiple Trace views. UI panel state (filter, sort, chronological/fixed, columns, selection, follow-live and display rate) is independent. A query service returns bounded **owned view snapshots or short-lived typed leases**, not borrowed Rust references held across worker and UI thread boundaries. Use versioned query generations and cancellable background work; stale results are discarded. Live append must not cause permanent starvation of scrolling queries.
 
 M1 may display virtual-source chronological rows with bounded page sizes before the full hierarchical/100M-event indexed design. Fixed mode, independent sorting, disk history, byte-diff, signal view and real UI float windows are separately tracked deliverables, never implicitly claimed by a simple Trace panel.
 
@@ -116,7 +116,7 @@ Use the design system under `docs/design/` as presentation guidance, not as evid
 ## 7. HAL, plugins, scripting and automated interfaces
 
 - **HAL first:** Internal adapter API for discover → capabilities → open/configure → receive/error → authorized transmit → stop/close. State transitions and timestamp metadata are typed. Start with virtual CAN, then SocketCAN on Linux and a verified Windows device/API choice. Machine-local channel mapping is mandatory before physical TX.
-- **Native plugins:** Start with trusted in-process built-ins and an independently versioned manifest/capability contract. Compare an explicit C-compatible ABI, constrained process RPC and WASM for specific extension classes. A native in-process plugin is **not crash-isolated**. UI panel plugin loading must prove Slint component/thread/window lifecycle on Windows/Linux before public SDK freeze.
+- **Native plugins:** Start with trusted in-process built-ins and an independently versioned manifest/capability contract. Compare an explicit C-compatible ABI, constrained process RPC and WASM for specific extension classes. A native in-process plugin is **not crash-isolated**. UI panel plugin loading must prove host adapter, state and window lifecycle on Windows/Linux before public SDK freeze.
 - **Scripts:** Per-session isolated Python processes (accepted product direction). They call authorized services; do not share their interpreter state with capture and never auto-run project scripts.
 - **Commands/AI/MCP:** Common typed service facade and permissions come first. AI/MCP requirements are Proposed; opt-in read-only introspection may follow an accepted authorization contract. Unsafe TX, ECU writes, calibration, flashing and arbitrary code require explicit scoped user approval, not model-generated permission.
 
@@ -143,7 +143,7 @@ An internal Rust service API may evolve initially; **external plugin/MCP wire co
 | Record format and crash/finalization contract | Before recorder prototype and hardware capture | Standards compatibility, corruption tests, Windows/Linux readers |
 | Hardware choice and CAN timing/config capabilities | Before DEV-010 | SocketCAN and Windows adapter capability matrix |
 | Timestamp drift/correlation model | Before cross-adapter timeline claims | Reset/wrap/offset/drift fixtures |
-| Plugin trust, ABI and dynamic Slint panel loading | Before public SDK freeze | Independent third-party plugin + native-window proofs |
+| Plugin trust, ABI and external panel loading | Before public SDK freeze | Independent third-party plugin + native-window proofs |
 | Project config name/schema and local mapping | Before portable project persistence | Two-worktree and cross-platform path tests |
 | Authorization, scripting, AI/MCP exposure | Before agent/device mutations | Scoped permissions, stale handles, deny-by-default tests |
 | Benchmark reference hardware and targets | Before accepting performance objectives | Repeatable Windows/Linux load and percentile methodology |
@@ -153,10 +153,10 @@ An internal Rust service API may evolve initially; **external plugin/MCP wire co
 Use [Architecture remediation](ARCHITECTURE-REMEDIATION.md) for risk-to-work-item mapping. Suggested integration order:
 
 - **Gate A — reconcile and baseline:** Integrate/reconcile active PRs without duplicate DEV IDs; preserve accepted v0.7 direction; verify current main CI and document architecture ownership.
-- **Gate B — virtual vertical slice:** Runtime/session scope, capture worker flush/stop, robust loss accounting, global batch admission prototype, and a small headless app/trace service. In parallel DEV-008 may deliver a single-window bounded Slint Trace using existing core; it must not claim missing contracts as complete.
+- **Gate B — virtual vertical slice:** Runtime/session scope, capture worker flush/stop, robust loss accounting, global batch admission prototype, and a small headless app/trace service. Desktop work follows DEV-024 (isolated egui/Craft proof), DEV-025 (shell) and DEV-008 (bounded Trace), while DEV-023 can proceed in Core.
 - **Gate C — measurement evidence:** 1,000,000-event deterministic end-to-end fixture with overload/failures, Windows/Linux benchmarking, recorder design/prototype and cancellable Trace queries. Performance targets are hypotheses until reference machines and tests establish them.
 - **Gate D — usable adapters and decode:** Accepted HAL interface + at least one proven adapter per OS, DBC decoding with provenance, project path resolution, and safe scheduled TX after authorization.
 - **Gate E — professional workflows:** ISO-TP/UDS, XCP, CANopen, measurement/plotting, extensible recording and plugin SDK in independently testable vertical slices.
-- **Gate F — advanced extensions:** External Slint panels, isolated Python worker workflows, optional guarded MCP/AI and future networks, dependent on accepted contracts.
+- **Gate F — advanced extensions:** External dockable panels, isolated Python worker workflows, optional guarded MCP/AI and future networks, dependent on accepted contracts.
 
 Every gate needs requirement → implementation → test → evidence traceability, actual CI at the merged SHA, reproducible fault tests and explicit unresolved limitations. A design proposal, green build or a merged PR alone does not make an entire product requirement Verified.

@@ -2,9 +2,11 @@
 
 **Status:** Proposed; not an accepted product or implementation baseline. **Date:** 2026-11-08.
 
-This folder contains the initial visual and interaction design for the Windows/Linux Slint + pbSlintDock desktop application. The normative product requirements remain in [../requirements/](../requirements/).
+This folder contains the original visual design and the target [egui workspace and component catalog](EGUI-WORKSPACE.md). Use the historical Slint and HTML concepts as interaction references. Product requirements live in [../requirements/](../requirements/).
 
 ## Contents
+
+- [EGUI-WORKSPACE.md](EGUI-WORKSPACE.md) — target native workspace, design tokens, component catalog and showcase acceptance.
 
 - [slint/](slint/README.md) — Native Fluent-based Slint theme foundation with runtime System/Light/Dark switching and reusable components (prototype; not yet compiler-validated).
 
@@ -29,7 +31,4 @@ UX decisions in this package do not silently supersede requirements. In particul
 
 ## Next
 
-The native Slint theme contract is ready for integration after the Rust workspace and docking proof of concept. The legacy HTML/JSON files remain design references, not runtime theme definitions.
-
-
-Validate the main-shell, table and dock interactions using an actual Slint + pbSlintDock proof of concept; agree on theme, high-DPI/accessibility and keyboard conventions; decide whether to accept individual UI requirements in the canonical requirements files.
+Use DEV-024/025 to verify egui/Craft behavior on Windows and Linux and build the interactive native showcase. The [GUI migration plan](../development/GUI-MIGRATION.md) defines the evidence required before cutover.
