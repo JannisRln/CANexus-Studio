@@ -1,0 +1,78 @@
+import { DockHost, DockPanel, PbDock, PanelVm, TabVm, GroupVm, SplitterVm } from "@pbslintdock";
+import { Button, LineEdit } from "std-widgets.slint";
+
+export { PbDock, PanelVm, TabVm, GroupVm, SplitterVm }
+
+export global WorkspaceState {
+    in-out property <string> note: "State is owned by the workspace, not an individual dock panel.";
+}
+
+component PanelSet inherits Rectangle {
+    DockPanel {
+        panel-id: "explorer";
+        Rectangle {
+            background: #202732;
+            Text {
+                text: "Project Explorer";
+                color: white;
+                x: 12px;
+                y: 12px;
+            }
+        }
+    }
+    DockPanel {
+        panel-id: "trace";
+        Rectangle {
+            background: #18212b;
+            Text {
+                text: "Trace placeholder — no CAN acquisition in DEV-003";
+                color: #e2e8f0;
+                x: 12px;
+                y: 12px;
+            }
+        }
+    }
+    DockPanel {
+        panel-id: "details";
+        Rectangle {
+            background: #202732;
+            VerticalLayout {
+                padding: 12px;
+                spacing: 8px;
+                Text { text: "Workspace-owned note"; color: white; }
+                LineEdit {
+                    text: WorkspaceState.note;
+                    edited => { WorkspaceState.note = self.text; }
+                }
+            }
+        }
+    }
+}
+
+export component MainWindow inherits Window {
+    title: "CANexus-Studio — DEV-003 Docking Spike";
+    preferred-width: 1100px;
+    preferred-height: 700px;
+    background: #141a22;
+    callback toggle-panel(string);
+    callback save-layout();
+    callback load-layout();
+
+    VerticalLayout {
+        Rectangle {
+            height: 46px;
+            background: #242f3d;
+            HorizontalLayout {
+                padding: 6px;
+                spacing: 6px;
+                Button { text: "Explorer"; clicked => { root.toggle-panel("explorer"); } }
+                Button { text: "Trace"; clicked => { root.toggle-panel("trace"); } }
+                Button { text: "Details"; clicked => { root.toggle-panel("details"); } }
+                Rectangle { }
+                Button { text: "Save layout"; clicked => { root.save-layout(); } }
+                Button { text: "Restore layout"; clicked => { root.load-layout(); } }
+            }
+        }
+        DockHost { PanelSet { } }
+    }
+}

@@ -38,7 +38,7 @@ The generator must be **XCP-ready by design**, but **XCP-driven signal generatio
 
 ## Acceptance criteria
 
-1. A v1 architecture test demonstrates that a synthetic future signal source can provide typed values to a mock target without changes to capture or Slint panel ownership.
+1. A v1 architecture test demonstrates that a synthetic future signal source can provide typed values to a mock target without changing capture or relying on panel ownership.
 2. In a later release, a known waveform encoded through a DBC produces expected CAN payload bytes and timestamps within documented scheduling tolerances.
 3. Starting/stopping a generator through the shared TX engine obeys explicit hardware-transmit authorization and shutdown rules.
 4. Virtual CAN dry-run produces no physical TX; generated output and errors remain traceable.

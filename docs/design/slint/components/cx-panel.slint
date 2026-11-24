@@ -1,0 +1,28 @@
+import { CxTheme } from "../theme.slint";
+
+export component CxPanel inherits Rectangle {
+    in property <string> title;
+    in property <string> description;
+    background: CxTheme.surface;
+    border-color: CxTheme.border;
+    border-width: 1px;
+    border-radius: 6px;
+
+    VerticalLayout {
+        padding: 12px;
+        spacing: CxTheme.spacing;
+
+        Text {
+            text: root.title;
+            color: CxTheme.surface-foreground;
+            font-size: 16px;
+            font-weight: 600;
+        }
+        Text {
+            text: root.description;
+            color: CxTheme.surface-foreground;
+            font-size: 13px;
+            wrap: word-wrap;
+        }
+    }
+}

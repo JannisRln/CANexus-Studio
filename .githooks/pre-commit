@@ -1,0 +1,26 @@
+#!/bin/sh
+# Format Rust sources before committing, without silently changing the Git index.
+set -eu
+
+cd "$(git rev-parse --show-toplevel)"
+
+if [ ! -f Cargo.toml ]; then
+    exit 0
+fi
+
+if ! command -v cargo >/dev/null 2>&1; then
+    echo 'pre-commit: cargo is not installed or not on PATH.' >&2
+    exit 1
+fi
+
+echo 'pre-commit: formatting Rust workspace...'
+cargo fmt --all
+cargo fmt --all -- --check
+
+# A clean worktree/index boundary is essential: a partially staged Rust file
+# might be formatted on disk while its staged version is still unformatted.
+if ! git diff --quiet -- ':(glob)**/*.rs'; then
+    echo 'pre-commit: unstaged Rust changes remain after rustfmt.' >&2
+    echo 'Review the changes, run git add for the intended Rust files, and retry.' >&2
+    exit 1
+fi

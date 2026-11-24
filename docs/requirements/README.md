@@ -40,7 +40,8 @@
 22. [ADR-010 — Unified Measurement & Calibration Workspace UX (Proposed detail)](21-adr-010-measurement-calibration-workspace-ux.md)
 23. [ADR-011 — High-Performance Core Architecture & Data Flow (Proposed detail)](22-adr-011-high-performance-core-architecture.md)
 24. [ADR-008 — Central Measurement Engine (Proposed detail)](23-adr-008-central-measurement-engine.md)
-25. [CAN Signal Generator & XCP-Ready Architecture (Post-v1)](24-can-signal-generator-xcp-readiness.md)
+25. [AI-Native Integration, MCP & Agent-Driven Engineering Workflows (Proposed)](24-ai-native-mcp-integration.md)
+26. [CAN Signal Generator & XCP Readiness (Post-v1)](27-can-signal-generator-xcp-readiness.md)
 
 ## Confirmed requirements since v0.5
 
@@ -56,11 +57,11 @@
 - Exact project-shared vs user-local preference schemas and override precedence.
 - MVP hardware adapters and benchmark reference systems.
 - Select verified interoperable direct-recording standard format (MDF4 candidate).
-- Exact CANopen and UDS profiles for the first usable release; XCP readiness boundaries and the later XCP delivery milestone.
-- CAN Signal Generator waveform set, conflict handling and later XCP target semantics (explicitly excluded from v1).
+- Exact CANopen, UDS and XCP profiles and delivery milestones. CAN Signal Generator and XCP-driven generation are scheduled after v1.
 - Security model for plugins, scripts and transmit permissions.
 - Python runtime distribution, worker process lifecycle, dependency management, permission isolation.
 - Generic event representation, timestamp correlation and Ethernet integration milestones.
+- AI/MCP authorization and human approval model, protocol/version selection, project/dashboard authoring schema and model-provider privacy boundary.
 
 ## Process
 
@@ -82,7 +83,7 @@ See [v0.6 decisions and conflict register](11-decisions-v0.6.md).
 ## v0.7 accepted decisions
 
 - Live, Replay and Offline use a shared professional plotter; built-in math starts with basic statistics.
-- Custom dashboard widgets and dockable Slint panels may be supplied by external plugins.
+- Custom dashboard widgets and dockable panels may be supplied by external plugins. [ADR-012](26-adr-012-egui-craft-ui.md) updates the toolkit-specific design.
 - Prefer hardware timestamps, with explicit clock quality and cross-channel synchronization limits.
 - UDS service browser with form and raw mode; long-term ODX/PDX/CDD/vendor import, universal extensible flashing and stateful virtual UDS ECUs.
 - Automated XCP calibration with A2L/ECU compatibility checks; graphical CANopen network management.
@@ -90,3 +91,8 @@ See [v0.6 decisions and conflict register](11-decisions-v0.6.md).
 - Fully customizable command system and macros shared across modules.
 
 See [v0.7 decision and conflict register](17-decisions-v0.7.md). Accepted product direction does not imply MVP delivery or completed technical validation.
+
+## Proposed delivery baselines
+
+- [Analysis release baseline](25-analysis-release-baseline.md) defines workflow, architecture and measurable release acceptance profiles grounded in CANExplorer and Vector CANoe. It uses the existing requirement IDs and complements the accepted product decisions.
+- [ADR-012 — Migration to egui and Craft UI](26-adr-012-egui-craft-ui.md) records the accepted direction and proposed implementation and verification gates.
