@@ -1,7 +1,7 @@
 # Implementation status
 
 **Phase:** M1 — GUI migration architecture and ecosystem review prepared. DEV-024 is the next GUI task.
-**Active tasks:** DEV-024 (GUI proof) is ready.
+**Active tasks:** DEV-024 native and dependency proof is in progress on `spike/DEV-024-craft-desktop`, owned by this implementation session.
 **Latest verified baseline:** DEV-028 [PR #28](https://github.com/JannisRln/CANexus-Studio/pull/28) merged as `2bf56dd`. Its [main CI](https://github.com/JannisRln/CANexus-Studio/actions/runs/45432818018) passed all Windows/Linux jobs.
 **Last updated:** 2026-11-24
 **Branch policy:** Hybrid: PRs for substantial/risky/parallel tasks; direct main pushes allowed for small isolated changes
