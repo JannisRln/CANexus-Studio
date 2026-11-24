@@ -18,7 +18,7 @@ use std::{
     sync::{
         atomic::{AtomicU64, Ordering::Relaxed},
         mpsc::{Receiver, RecvTimeoutError},
-        Arc, Condvar, Mutex, Weak,
+        Arc, Condvar, Mutex, OnceLock, Weak,
     },
     thread::{self, JoinHandle},
     time::{Duration, Instant},
@@ -127,6 +127,10 @@ pub struct SourceStatus {
     pub ingest: IngestStats,
     /// Subset of producer rejections caused by shared-budget exhaustion.
     pub budget_rejections: u64,
+    /// Queue overflow losses for receivers detached before stop fenced input.
+    pub detached_overflow_events: u64,
+    /// Queued observations discarded when those receivers detached.
+    pub detached_discarded_events: u64,
 }
 
 /// Out-of-band health for one receiver.
@@ -267,6 +271,7 @@ impl CaptureSession {
         Ok(Subscription {
             id,
             shared: Arc::clone(&self.shared),
+            detached: OnceLock::new(),
         })
     }
 
@@ -390,10 +395,12 @@ impl CaptureInput {
 pub struct Subscription {
     id: SubscriptionId,
     shared: Arc<Shared>,
+    detached: OnceLock<SubscriptionStatus>,
 }
 
 impl Subscription {
-    /// Reads current receiver counters independently of queue capacity.
+    /// Reads receiver counters independently of queue capacity. After detach,
+    /// returns the final counters for as long as this handle is retained.
     #[must_use]
     pub fn status(&self) -> Option<SubscriptionStatus> {
         let state = self.shared.state.lock().expect("capture state");
@@ -402,6 +409,7 @@ impl Subscription {
             .get(&self.id)
             .filter(|entry| entry.attached)
             .map(|entry| entry.status)
+            .or_else(|| self.detached.get().copied())
     }
 
     /// Takes one delivery, waiting at most the supplied duration. An empty
@@ -454,9 +462,20 @@ impl Subscription {
         sub.attached = false;
         let discarded = sub.discard(LossReason::ConsumerDetached);
         let status = sub.status;
+        self.detached.set(status).expect("first detach");
         state.incomplete_delivery |= discarded;
         if state.draining_since.is_none() {
             state.subscribers.remove(&self.id);
+            let producer = state
+                .producers
+                .get_mut(&status.source)
+                .expect("configured source");
+            producer.detached_overflow_events = producer
+                .detached_overflow_events
+                .saturating_add(status.overflow_events);
+            producer.detached_discarded_events = producer
+                .detached_discarded_events
+                .saturating_add(status.discarded_events);
             state.flush(status.source);
         }
         self.shared.changed.notify_all();
@@ -646,6 +665,8 @@ impl State {
                     ..producer.ingest.stats()
                 },
                 budget_rejections: producer.budget_rejections,
+                detached_overflow_events: producer.detached_overflow_events,
+                detached_discarded_events: producer.detached_discarded_events,
             })
             .collect();
         sources.sort_unstable_by_key(|entry| entry.source.get());
@@ -670,6 +691,8 @@ struct Producer {
     published: Receiver<SharedBatch<CanFrame>>,
     deadline: Option<Duration>,
     budget_rejections: u64,
+    detached_overflow_events: u64,
+    detached_discarded_events: u64,
     unrouted_events: u64,
 }
 
@@ -692,6 +715,8 @@ impl Producer {
             published,
             deadline: None,
             budget_rejections: 0,
+            detached_overflow_events: 0,
+            detached_discarded_events: 0,
             unrouted_events: 0,
         })
     }

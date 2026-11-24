@@ -459,3 +459,53 @@ fn multi_gib_budget_is_representable_without_allocating_it() {
     assert_eq!(budget.peak_bytes(), 0);
     assert_eq!(session.stop().sources.len(), 2);
 }
+
+#[test]
+fn detached_receiver_losses_survive_replacement_and_stop() {
+    let config = config(1);
+    let budget = budget(config, 3);
+    let session = CaptureSession::start(config, budget.clone(), &[FIRST, SECOND]).unwrap();
+    let slow = session.subscribe(FIRST, 1).unwrap();
+    let peer = session.subscribe(FIRST, 1).unwrap();
+    let script = fixtures::mixed_classic_fd();
+    let mut adapter = adapter(FIRST, &script);
+    let input = session.input();
+    for expected in 0..3 {
+        assert!(input
+            .poll_virtual(input.generation(), &mut adapter, 10)
+            .unwrap());
+        assert_batch(&receive(&peer), FIRST, &[expected]);
+    }
+
+    let detached = slow.unsubscribe().unwrap();
+    assert_eq!(detached.overflow_events, 2);
+    assert_eq!(detached.discarded_events, 1);
+    assert_eq!(detached.delivery.dropped_batches, 3);
+    assert_eq!(slow.status(), Some(detached));
+    assert_eq!(slow.unsubscribe(), None);
+    assert_empty(&slow, mpsc::RecvTimeoutError::Disconnected);
+    drop(slow);
+    assert_eq!(budget.live_bytes(), 0);
+
+    let replacement = session.subscribe(FIRST, 1).unwrap();
+    assert!(input
+        .poll_virtual(input.generation(), &mut adapter, 25)
+        .unwrap());
+    assert_batch(&receive(&replacement), FIRST, &[3]);
+    assert_batch(&receive(&peer), FIRST, &[3]);
+    let live = session.status();
+    assert_eq!(live.sources[0].detached_overflow_events, 2);
+    assert_eq!(live.sources[0].detached_discarded_events, 1);
+    assert_eq!(live.sources[1].detached_overflow_events, 0);
+    assert_eq!(live.sources[1].detached_discarded_events, 0);
+    assert_eq!(live.subscriptions.len(), 2);
+    assert!(live
+        .subscriptions
+        .iter()
+        .all(|sub| sub.delivery.dropped_events == 0));
+
+    let stopped = session.stop();
+    assert!(stopped.incomplete_delivery);
+    assert_eq!(stopped.sources, live.sources);
+    assert_eq!(stopped.subscriptions, live.subscriptions);
+}

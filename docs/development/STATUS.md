@@ -1,8 +1,8 @@
 # Implementation status
 
 **Phase:** M1 — GUI migration architecture and ecosystem review prepared. DEV-024 is the next GUI task.
-**Active tasks:** DEV-024 (GUI proof) is ready. The Core implementation session owns DEV-028 on `feat/DEV-028-capture-session` through integration.
-**Latest verified baseline:** DEV-023 [PR #27](https://github.com/JannisRln/CANexus-Studio/pull/27) merged as `0b058dc`. Its [main CI](https://github.com/JannisRln/CANexus-Studio/actions/runs/45429678132) passed all Windows/Linux jobs.
+**Active tasks:** DEV-024 (GUI proof) is ready.
+**Latest verified baseline:** DEV-028 [PR #28](https://github.com/JannisRln/CANexus-Studio/pull/28) merged as `2bf56dd`. Its [main CI](https://github.com/JannisRln/CANexus-Studio/actions/runs/45432818018) passed all Windows/Linux jobs.
 **Last updated:** 2026-11-24
 **Branch policy:** Hybrid: PRs for substantial/risky/parallel tasks; direct main pushes allowed for small isolated changes
 
@@ -16,7 +16,7 @@ The live baseline for the migration review is `f158f3e`. Its [exact-main CI](htt
 
 ## DEV-023 shared-batch budget
 
-- Ownership: Core ingestion on `feat/DEV-023-batch-budget`, based on merged architecture PR #26 at `ed5e4e2`.
+- Ownership: Core ingestion on `feat/DEV-023-batch-budget`. [PR #27](https://github.com/JannisRln/CANexus-Studio/pull/27) merged as `0b058dc`; its [main CI](https://github.com/JannisRln/CANexus-Studio/actions/runs/45429678132) passed on Windows and Linux.
 - REQ-ARCH-006/007: `BoundedIngest::with_budget` reserves inline batch storage before staging, transfers it to shared immutable handles without a payload copy, and releases the charge on last-owner drop. Producer admission rejection counts and provenance are readable independently of subscriber queues.
 - Fixtures: concurrent reservations, two producers with pinned handles, Trace eviction with an external owner, sparse flush, rejected admission and resumption, and storage release on producer drop and shutdown.
 - Local verification on Linux with Rust 1.100.0: workspace Rustfmt, Core/CLI Clippy with warnings denied, Core/CLI all-target build, 47 Rust tests and project-state validation passed.
@@ -38,6 +38,8 @@ The live baseline for the migration review is `f158f3e`. Its [exact-main CI](htt
 | Shared batch memory, pin lifetime, recovery and 64-bit multi-GiB limits | `shared_budget_accounts_for_two_sources_and_recovers_after_the_last_reference`, `multi_gib_budget_is_representable_without_allocating_it` |
 
 The Core regression test `receiver_winning_the_lock_after_expiry_cannot_take_the_tail` schedules a receiver ahead of the stop waiter at expiry and verifies the frozen loss result.
+
+The follow-up `fix/DEV-028-retain-detached-loss` keeps the last receiver snapshot on each detached handle and maintains per-source detached loss totals in both live and stopped health. The integration test `detached_receiver_losses_survive_replacement_and_stop` verifies two overflows, a queued discard, replacement and final status. The local Linux workspace build, Clippy and all 61 Rust tests passed on Rust 1.100.0.
 
 Latest loss details give the first and last observed sequence plus the actual count. Cumulative counts distinguish budget rejection, per-receiver overflow and queued deliveries discarded during detach or stop. Queue metadata and overall process memory have separate accounting. DEV-009 retains the latency and process-memory benchmark, DEV-010 owns physical adapters, and DEV-013/030 retain optional recording and disk Trace history. No capture latency or process-memory target is claimed here.
 
