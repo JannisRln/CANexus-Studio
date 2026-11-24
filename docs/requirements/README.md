@@ -41,6 +41,7 @@
 23. [ADR-011 — High-Performance Core Architecture & Data Flow (Proposed detail)](22-adr-011-high-performance-core-architecture.md)
 24. [ADR-008 — Central Measurement Engine (Proposed detail)](23-adr-008-central-measurement-engine.md)
 25. [AI-Native Integration, MCP & Agent-Driven Engineering Workflows (Proposed)](24-ai-native-mcp-integration.md)
+26. [CAN Signal Generator & XCP Readiness (Post-v1)](27-can-signal-generator-xcp-readiness.md)
 
 ## Confirmed requirements since v0.5
 
@@ -56,7 +57,7 @@
 - Exact project-shared vs user-local preference schemas and override precedence.
 - MVP hardware adapters and benchmark reference systems.
 - Select verified interoperable direct-recording standard format (MDF4 candidate).
-- Required CANopen, UDS, XCP profiles for the first usable release.
+- Exact CANopen, UDS and XCP profiles and delivery milestones. CAN Signal Generator and XCP-driven generation are scheduled after v1.
 - Security model for plugins, scripts and transmit permissions.
 - Python runtime distribution, worker process lifecycle, dependency management, permission isolation.
 - Generic event representation, timestamp correlation and Ethernet integration milestones.
