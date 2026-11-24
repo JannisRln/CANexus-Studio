@@ -6,6 +6,7 @@
 //! channel or copied once per consumer. A full queue never blocks capture.
 
 use std::{
+    alloc::Layout,
     num::NonZeroUsize,
     sync::{
         mpsc::{self, Receiver, SyncSender, TrySendError},
@@ -14,6 +15,11 @@ use std::{
 };
 
 use crate::{event::Observed, SourceId};
+
+mod budget;
+
+pub use budget::BatchBudget;
+use budget::BatchLease;
 
 /// Limits for a capture producer and its consumers.
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -93,6 +99,10 @@ pub enum ConsumerState {
 /// Provenance for rejected event batches.
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum LossReason {
+    /// The producer could not reserve bytes for a new batch.
+    BatchBudgetExhausted,
+    /// The producer could not allocate backing storage.
+    BatchAllocationFailed,
     /// The bounded consumer queue was full.
     QueueFull,
     /// A previously failed consumer cannot receive new observations.
@@ -109,13 +119,13 @@ pub enum LossReason {
 pub struct BatchLoss {
     /// Source of all observations in this batch.
     pub source: SourceId,
-    /// First observed sequence rejected for this consumer.
+    /// First observed sequence in the rejected range.
     pub first_sequence: u64,
-    /// Last observed sequence rejected for this consumer.
+    /// Last observed sequence in the rejected range.
     pub last_sequence: u64,
     /// Number of observations actually rejected in this batch.
     pub event_count: usize,
-    /// Reason this consumer did not receive them.
+    /// Reason these observations could not be admitted or delivered.
     pub reason: LossReason,
 }
 
@@ -146,6 +156,10 @@ pub struct IngestStats {
     pub published_batches: u64,
     /// Events published without any registered consumer.
     pub unrouted_events: u64,
+    /// Events rejected before staging due to budget or allocation failure.
+    pub rejected_events: u64,
+    /// Most recent rejection before staging, independently of subscriber queues.
+    pub last_rejection: Option<BatchLoss>,
 }
 
 /// A registered consumer's immutable snapshot.
@@ -178,15 +192,27 @@ pub enum IngestError {
     Stopped,
     /// An event belongs to a different capture source.
     SourceMismatch,
+    /// The configured size does not fit in the address space.
+    BatchSizeOverflow,
+    /// A batch reservation would exceed the configured byte limit.
+    BatchBudgetExhausted,
+    /// Backing storage could not be allocated.
+    BatchAllocationFailed,
 }
 
 /// Immutable, reference-counted batch shared by subscribers.
 ///
-/// Cloning this handle clones only the `Arc`, not any observation. Consumers
-/// must release batches after processing: retained handles outside queues
-/// cannot be bounded by a producer's queue limits.
+/// A clone shares the observations and retains the original reservation.
+/// The final owner releases the reservation when dropping the storage.
 #[derive(Debug)]
-pub struct SharedBatch<T>(Arc<[Observed<T>]>);
+pub struct SharedBatch<T>(Arc<BatchStorage<T>>);
+
+#[derive(Debug)]
+struct BatchStorage<T> {
+    events: Vec<Observed<T>>,
+    // Drop the event buffer before returning its credit.
+    _lease: Option<BatchLease>,
+}
 
 impl<T> Clone for SharedBatch<T> {
     fn clone(&self) -> Self {
@@ -198,19 +224,19 @@ impl<T> SharedBatch<T> {
     /// Returns the immutable event slice.
     #[must_use]
     pub fn events(&self) -> &[Observed<T>] {
-        &self.0
+        &self.0.events
     }
 
     /// Number of observations in the batch.
     #[must_use]
     pub fn len(&self) -> usize {
-        self.0.len()
+        self.0.events.len()
     }
 
     /// True if this batch contains no observations.
     #[must_use]
     pub fn is_empty(&self) -> bool {
-        self.0.is_empty()
+        self.0.events.is_empty()
     }
 
     /// Whether two handles refer to the same backing allocation.
@@ -238,23 +264,63 @@ pub struct BoundedIngest<T> {
     config: IngestConfig,
     source: SourceId,
     state: IngestState,
-    staging: Vec<Observed<T>>,
+    staging: Option<BatchStorage<T>>,
+    budget: Option<(BatchBudget, usize)>,
     consumers: Vec<Consumer<T>>,
     stats: IngestStats,
 }
 
 impl<T> BoundedIngest<T> {
-    /// Creates an idle capture source with preallocated staging capacity.
+    /// Creates an idle source with batch and queue item limits.
+    ///
+    /// To bound retained batch bytes across owners, use [Self::with_budget].
     #[must_use]
     pub fn new(source: SourceId, config: IngestConfig) -> Self {
         Self {
             config,
             source,
             state: IngestState::Ready,
-            staging: Vec::with_capacity(config.batch_events()),
+            staging: None,
+            budget: None,
             consumers: Vec::new(),
             stats: IngestStats::default(),
         }
+    }
+
+    /// Creates a source that charges every staged or published batch to a shared budget.
+    ///
+    /// Each batch reserves the configured capacity, including for a sparse flush.
+    /// The budget covers inline observation storage and fixed batch metadata.
+    /// Queue slots, allocator overhead and heap storage owned by generic payloads
+    /// require their own accounting.
+    pub fn with_budget(
+        source: SourceId,
+        config: IngestConfig,
+        budget: BatchBudget,
+    ) -> Result<Self, IngestError> {
+        let bytes = Self::batch_bytes(config)?;
+        if bytes > budget.limit_bytes() {
+            return Err(IngestError::BatchBudgetExhausted);
+        }
+        Ok(Self {
+            budget: Some((budget, bytes)),
+            ..Self::new(source, config)
+        })
+    }
+
+    /// Charge for one batch at the configured capacity.
+    pub fn batch_bytes(config: IngestConfig) -> Result<usize, IngestError> {
+        let events = Layout::array::<Observed<T>>(config.batch_events())
+            .map_err(|_| IngestError::BatchSizeOverflow)?;
+        let metadata = Layout::new::<[usize; 2]>()
+            .extend(Layout::new::<BatchStorage<T>>())
+            .expect("fixed batch metadata fits")
+            .0
+            .pad_to_align();
+        events
+            .size()
+            .checked_add(metadata.size())
+            .ok_or(IngestError::BatchSizeOverflow)
     }
 
     /// Returns the capture lifecycle state.
@@ -272,7 +338,7 @@ impl<T> BoundedIngest<T> {
     /// Number of events still waiting in the bounded staging buffer.
     #[must_use]
     pub fn staged_events(&self) -> usize {
-        self.staging.len()
+        self.staging.as_ref().map_or(0, |batch| batch.events.len())
     }
 
     /// Returns the maximum number of queued events allowed per consumer.
@@ -340,15 +406,33 @@ impl<T> BoundedIngest<T> {
     ///
     /// An invalid source or lifecycle returns an error and does not update
     /// counters. On an accepted event, individual subscriber overflow is
-    /// recorded in that subscriber's snapshot rather than blocking capture.
+    /// recorded in that subscriber's snapshot. A reservation or allocation
+    /// failure rejects the event and records its sequence in producer stats.
     pub fn push(&mut self, event: Observed<T>) -> Result<(), IngestError> {
         self.require_running()?;
         if event.id.source != self.source {
             return Err(IngestError::SourceMismatch);
         }
-        self.staging.push(event);
+        if self.staging.is_none() {
+            match self.allocate_staging() {
+                Ok(staging) => self.staging = Some(staging),
+                Err((error, reason)) => {
+                    self.stats.rejected_events = self.stats.rejected_events.saturating_add(1);
+                    self.stats.last_rejection = Some(BatchLoss {
+                        source: self.source,
+                        first_sequence: event.id.sequence,
+                        last_sequence: event.id.sequence,
+                        event_count: 1,
+                        reason,
+                    });
+                    return Err(error);
+                }
+            }
+        }
+        let staging = self.staging.as_mut().expect("initialized staging");
+        staging.events.push(event);
         self.stats.accepted_events = self.stats.accepted_events.saturating_add(1);
-        if self.staging.len() == self.config.batch_events() {
+        if staging.events.len() == self.config.batch_events() {
             self.publish_staged();
         }
         Ok(())
@@ -359,7 +443,7 @@ impl<T> BoundedIngest<T> {
     /// Returns `true` only when a non-empty batch was published.
     pub fn flush(&mut self) -> Result<bool, IngestError> {
         self.require_running()?;
-        if self.staging.is_empty() {
+        if self.staging.is_none() {
             return Ok(false);
         }
         self.publish_staged();
@@ -372,7 +456,7 @@ impl<T> BoundedIngest<T> {
     /// Existing consumer snapshots remain readable after shutdown.
     pub fn shutdown(&mut self) -> Result<(), IngestError> {
         self.require_running()?;
-        if !self.staging.is_empty() {
+        if self.staging.is_some() {
             self.publish_staged();
         }
         self.state = IngestState::Stopped;
@@ -393,16 +477,42 @@ impl<T> BoundedIngest<T> {
         }
     }
 
+    fn allocate_staging(&self) -> Result<BatchStorage<T>, (IngestError, LossReason)> {
+        let lease = self
+            .budget
+            .as_ref()
+            .map(|(budget, bytes)| {
+                budget.reserve(*bytes).ok_or((
+                    IngestError::BatchBudgetExhausted,
+                    LossReason::BatchBudgetExhausted,
+                ))
+            })
+            .transpose()?;
+        let mut events = Vec::new();
+        events
+            .try_reserve_exact(self.config.batch_events())
+            .map_err(|_| {
+                (
+                    IngestError::BatchAllocationFailed,
+                    LossReason::BatchAllocationFailed,
+                )
+            })?;
+        Ok(BatchStorage {
+            events,
+            _lease: lease,
+        })
+    }
+
     fn publish_staged(&mut self) {
-        let events = std::mem::replace(
-            &mut self.staging,
-            Vec::with_capacity(self.config.batch_events()),
-        );
+        let storage = self
+            .staging
+            .take()
+            .expect("staging exists before publication");
+        let events = &storage.events;
         let count = events.len();
-        debug_assert!(count > 0);
         let first = events.first().expect("nonempty batch").id;
         let last = events.last().expect("nonempty batch").id;
-        let batch = SharedBatch(Arc::from(events));
+        let batch = SharedBatch(Arc::new(storage));
         self.stats.published_batches = self.stats.published_batches.saturating_add(1);
         if self.consumers.is_empty() {
             self.stats.unrouted_events = self.stats.unrouted_events.saturating_add(count as u64);
@@ -689,6 +799,140 @@ mod tests {
     }
 
     #[test]
+    fn producers_share_budget_until_last_batch_owner_releases_it() {
+        let limits = config(2, 2, 2);
+        let bytes = BoundedIngest::<CanFrame>::batch_bytes(limits).unwrap();
+        let budget = BatchBudget::new(bytes * 2);
+        let mut first =
+            BoundedIngest::with_budget(SourceId::new(7), limits, budget.clone()).unwrap();
+        let mut other =
+            BoundedIngest::with_budget(SourceId::new(8), limits, budget.clone()).unwrap();
+        let (_, first_trace) = first.subscribe(OverflowPolicy::DropNewest, 2).unwrap();
+        let (_, first_recorder) = first.subscribe(OverflowPolicy::FailConsumer, 2).unwrap();
+        let (_, second_trace) = other.subscribe(OverflowPolicy::DropNewest, 2).unwrap();
+        first.start().unwrap();
+        other.start().unwrap();
+
+        first.push(frame_event(0)).unwrap();
+        assert_eq!(budget.live_bytes(), bytes);
+        assert!(first.flush().unwrap());
+        let pinned = first_trace.try_recv().unwrap();
+        let recorder_batch = first_recorder.try_recv().unwrap();
+        assert!(pinned.shares_storage_with(&recorder_batch));
+        assert_eq!(budget.live_bytes(), bytes);
+        drop(recorder_batch);
+
+        let mut event = frame_event(0);
+        event.id.source = SourceId::new(8);
+        other.push(event).unwrap();
+        assert_eq!(budget.live_bytes(), bytes * 2);
+
+        for seq in [1, 3] {
+            assert_eq!(
+                first.push(frame_event(seq)),
+                Err(IngestError::BatchBudgetExhausted)
+            );
+        }
+        assert_eq!(first.stats().accepted_events, 1);
+        assert_eq!(first.stats().rejected_events, 2);
+        assert_eq!(
+            first.stats().last_rejection,
+            Some(BatchLoss {
+                source: SourceId::new(7),
+                first_sequence: 3,
+                last_sequence: 3,
+                event_count: 1,
+                reason: LossReason::BatchBudgetExhausted,
+            })
+        );
+        assert!(!first.flush().unwrap());
+
+        other.shutdown().unwrap();
+        assert_eq!(budget.live_bytes(), bytes * 2);
+        drop(pinned);
+        first.push(frame_event(4)).unwrap();
+        first.shutdown().unwrap();
+        drop(first);
+        drop(other);
+        assert_eq!(budget.live_bytes(), bytes * 2);
+        assert_eq!(first_trace.try_recv().unwrap().events()[0].id.sequence, 4);
+        drop(first_recorder);
+        let other_batch = second_trace.try_recv().unwrap();
+        assert_eq!(other_batch.events()[0].id.source, SourceId::new(8));
+        assert_eq!(budget.live_bytes(), bytes);
+        drop(other_batch);
+        assert_eq!(budget.live_bytes(), 0);
+        assert_eq!(budget.peak_bytes(), budget.limit_bytes());
+    }
+
+    #[test]
+    fn evicted_history_can_still_have_a_charged_external_owner() {
+        use crate::trace_history::{HistoryLimits, TraceHistory};
+
+        let limits = config(1, 1, 1);
+        let bytes = BoundedIngest::<CanFrame>::batch_bytes(limits).unwrap();
+        let budget = BatchBudget::new(bytes * 2);
+        let source = SourceId::new(7);
+        let mut ingest = BoundedIngest::with_budget(source, limits, budget.clone()).unwrap();
+        let mut history = TraceHistory::new(source, HistoryLimits::new(bytes, 1, 1).unwrap());
+        let (_, receiver) = ingest.subscribe(OverflowPolicy::DropNewest, 1).unwrap();
+        ingest.start().unwrap();
+
+        ingest.push(frame_event(1)).unwrap();
+        let pinned = receiver.try_recv().unwrap();
+        history.append(pinned.clone()).unwrap();
+        ingest.push(frame_event(2)).unwrap();
+        assert_eq!(
+            history
+                .append(receiver.try_recv().unwrap())
+                .unwrap()
+                .evicted_events,
+            1
+        );
+        assert_eq!(budget.live_bytes(), bytes * 2);
+        assert_eq!(
+            ingest.push(frame_event(3)),
+            Err(IngestError::BatchBudgetExhausted)
+        );
+        drop(pinned);
+        ingest.push(frame_event(4)).unwrap();
+        assert_eq!(
+            history
+                .append(receiver.try_recv().unwrap())
+                .unwrap()
+                .evicted_events,
+            1
+        );
+        assert_eq!(history.newest().unwrap().sequence, 4);
+        assert_eq!(budget.live_bytes(), bytes);
+        drop(history);
+        assert_eq!(budget.live_bytes(), 0);
+    }
+
+    #[test]
+    fn budget_validates_batch_capacity_and_releases_abandoned_staging() {
+        let limits = config(4, 1, 1);
+        let bytes = BoundedIngest::<CanFrame>::batch_bytes(limits).unwrap();
+        let source = SourceId::new(7);
+        assert!(matches!(
+            BoundedIngest::<CanFrame>::with_budget(source, limits, BatchBudget::new(bytes - 1)),
+            Err(IngestError::BatchBudgetExhausted)
+        ));
+        assert_eq!(
+            BoundedIngest::<CanFrame>::batch_bytes(config(usize::MAX, 1, 1)),
+            Err(IngestError::BatchSizeOverflow)
+        );
+        let budget = BatchBudget::new(bytes);
+        let mut ingest = BoundedIngest::with_budget(source, limits, budget.clone()).unwrap();
+        ingest.start().unwrap();
+        assert_eq!(budget.live_bytes(), 0);
+        ingest.push(frame_event(1)).unwrap();
+        assert_eq!(budget.live_bytes(), bytes);
+        drop(ingest);
+        assert_eq!(budget.live_bytes(), 0);
+    }
+
+    #[test]
     fn virtual_can_fixture_replays_through_bounded_pipeline() {
         let fixtures = fixtures::mixed_classic_fd();
         let mut source = VirtualCanAdapter::new(
@@ -698,7 +942,10 @@ mod tests {
             &fixtures,
         )
         .unwrap();
-        let mut ingest = BoundedIngest::new(SourceId::new(7), config(3, 2, 1));
+        let limits = config(3, 2, 1);
+        let budget = BatchBudget::new(2 * BoundedIngest::<CanFrame>::batch_bytes(limits).unwrap());
+        let mut ingest =
+            BoundedIngest::with_budget(SourceId::new(7), limits, budget.clone()).unwrap();
         let (_id, rx) = ingest.subscribe(OverflowPolicy::DropNewest, 2).unwrap();
         ingest.start().unwrap();
         source.start().unwrap();

@@ -1,7 +1,7 @@
 # Implementation status
 
 **Phase:** M1 — GUI migration architecture and ecosystem review prepared. DEV-024 is the next GUI task.
-**Active tasks:** This documentation change claims no implementation. DEV-024 (GUI proof), DEV-023 (shared-batch budget) and DEV-028 (session host) are ready. The [architecture review](ARCHITECTURE-COVERAGE.md) records planned contracts and remaining evidence against main at `9f1723b`.
+**Active tasks:** DEV-023 is in progress on `feat/DEV-023-batch-budget`. DEV-024 (GUI proof) and DEV-028 (session host) are ready. The [architecture review](ARCHITECTURE-COVERAGE.md) records planned contracts and remaining evidence against main at `9f1723b`.
 **Latest verified implementation milestone:** DEV-007 PR #18 merged as `3c53f1ee`; main CI run 42566143742 passed Windows/Linux; DEV-003 spike PR #12 and cross-platform CI previously verified
 **Last updated:** 2026-11-24
 **Branch policy:** Hybrid: PRs for substantial/risky/parallel tasks; direct main pushes allowed for small isolated changes
@@ -13,6 +13,14 @@ The live baseline for the migration review is `f158f3e`. Its [exact-main CI](htt
 - The workspace, local pin and CI use Rust 1.100.0. DEV-024 uses the same toolchain to evaluate the GUI dependency graph.
 - The additional coverage from PRs #13 and #14 checks typed non-CAN identity, fractional timestamp conversion and ordered virtual replay of 32,768 frames at one tick. The current timed Virtual CAN adapter and the already integrated DEV-003/004/005 behavior remain the product baseline.
 - Local Linux verification with Rust 1.100.0 passed Rustfmt, Core/CLI Clippy, Core/CLI build and 43 tests. Cross-platform workspace results are recorded by the integration PR and GitHub Actions. Native GUI, hardware and performance verification are separate.
+
+## DEV-023 shared-batch budget
+
+- Ownership: Core ingestion on `feat/DEV-023-batch-budget`, based on merged architecture PR #26 at `ed5e4e2`.
+- REQ-ARCH-006/007: `BoundedIngest::with_budget` reserves inline batch storage before staging, transfers it to shared immutable handles without a payload copy, and releases the charge on last-owner drop. Producer admission rejection counts and provenance are readable independently of subscriber queues.
+- Fixtures: concurrent reservations, two producers with pinned handles, Trace eviction with an external owner, sparse flush, rejected admission and resumption, and storage release on producer drop and shutdown.
+- Local verification on Linux with Rust 1.100.0: workspace Rustfmt, Core/CLI Clippy with warnings denied, Core/CLI all-target build, 47 Rust tests and project-state validation passed.
+- Runtime handoff: DEV-028 should pass one shared budget to the configured producers, publish rejection health, and keep room to admit the next batch even when history retains earlier batches. Recorder reservations, profile changes and process memory verification remain open. The prototype accounts for inline batch storage and fixed metadata. Other pools and payload-owned heap memory need separate accounting.
 
 ## Implemented
 
