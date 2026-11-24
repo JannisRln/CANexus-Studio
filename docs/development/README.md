@@ -4,6 +4,8 @@ The repository, not chat history, is the durable source of truth. No GitHub Issu
 
 See [implementation roles](IMPLEMENTATION-ROLES.md) for ownership boundaries, expected handoffs and verification evidence for the current analysis work.
 
+The [GUI migration plan](GUI-MIGRATION.md) lists the egui/Craft proof gates, branch boundaries, benchmark procedures and companion ecosystem assessment.
+
 ## Every new chat
 
 1. Read AGENTS.md, docs/development/STATUS.md, BACKLOG.md, DECISIONS.md, and relevant docs/requirements files.

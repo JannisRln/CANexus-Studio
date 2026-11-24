@@ -1,10 +1,12 @@
 # Implementation status
 
-**Phase:** M1 — DEV-003 single-window docking spike verified; DEV-008 and independent native docking follow-up ready
-**Active tasks:** None claimed by this documentation change; DEV-008 (Trace UI), DEV-022 (native floating proof) and DEV-023 (shared-batch memory budgets) are Ready for independent ownership
+**Phase:** M1 — GUI migration architecture and ecosystem review prepared. DEV-024 is the next GUI task.
+**Active tasks:** This documentation change claims no implementation. DEV-024 (isolated GUI proof) and DEV-023 (Core shared-batch budget) are ready for independent ownership.
 **Latest verified implementation milestone:** DEV-007 PR #18 merged as `3c53f1ee`; main CI run 42566143742 passed Windows/Linux; DEV-003 spike PR #12 and cross-platform CI previously verified
-**Last updated:** 2026-11-09
+**Last updated:** 2026-11-24
 **Branch policy:** Hybrid: PRs for substantial/risky/parallel tasks; direct main pushes allowed for small isolated changes
+
+The live baseline for the migration review is `f158f3e`. Its [exact-main CI](https://github.com/JannisRln/CANexus-Studio/actions/runs/45344406402) completed successfully on Windows and Linux. [ADR-012](../requirements/26-adr-012-egui-craft-ui.md) is the forward GUI direction. Older DEV-008/022 ownership and Slint host notes below are historical.
 
 ## Implemented
 
@@ -72,12 +74,10 @@ DEV-002 through DEV-007 (except separately listed tasks) are integrated, includi
 
 ## Next action
 
-1. Assign one independent chat/branch to DEV-008, DEV-022 and DEV-023, after checking up-to-date branch/PR ownership; use [PARALLEL-CHATS.md](PARALLEL-CHATS.md).
-2. DEV-008: connect virtual CAN + bounded ingest + TraceHistory to a virtualized Slint Trace inside the proven **single-window** dock layout.
-3. DEV-022: create a separately testable native floating-window proof and collect real Windows/Linux interaction evidence before claiming floating UI verified; plan production integration after DEV-008.
-4. DEV-023: prototype global pinned SharedBatch accounting without blocking acquisition or modifying GUI files. Reconcile shared status/backlog **after each verified merge**, not from parallel feature branches.
-
-Every future implementation chat must update this file with completed tasks, current commit, actual tests, failures and next action.
+1. Claim DEV-024 on an isolated branch after verifying the current backlog and open PRs. Record exact Cargo sources and native Windows/Linux results using the [GUI migration plan](GUI-MIGRATION.md).
+2. DEV-023 can proceed independently in Core ingestion with shared-batch budget evidence.
+3. After DEV-024, stage DEV-025 desktop cutover and DEV-022 isolated native floating proof. DEV-008 integrates production Trace after the shell lands.
+4. Reconcile shared status and backlog after each verified merge and record GUI, hardware and benchmark evidence separately from Rust CI.
 
 ## DEV-003 original PR evidence (minimal spike complete, native float split to DEV-022)
 

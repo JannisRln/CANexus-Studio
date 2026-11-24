@@ -82,7 +82,7 @@ See [v0.6 decisions and conflict register](11-decisions-v0.6.md).
 ## v0.7 accepted decisions
 
 - Live, Replay and Offline use a shared professional plotter; built-in math starts with basic statistics.
-- Custom dashboard widgets and dockable Slint panels may be supplied by external plugins.
+- Custom dashboard widgets and dockable panels may be supplied by external plugins. [ADR-012](26-adr-012-egui-craft-ui.md) updates the toolkit-specific design.
 - Prefer hardware timestamps, with explicit clock quality and cross-channel synchronization limits.
 - UDS service browser with form and raw mode; long-term ODX/PDX/CDD/vendor import, universal extensible flashing and stateful virtual UDS ECUs.
 - Automated XCP calibration with A2L/ECU compatibility checks; graphical CANopen network management.
@@ -94,3 +94,4 @@ See [v0.7 decision and conflict register](17-decisions-v0.7.md). Accepted produc
 ## Proposed delivery baselines
 
 - [Analysis release baseline](25-analysis-release-baseline.md) defines workflow, architecture and measurable release acceptance profiles grounded in CANExplorer and Vector CANoe. It uses the existing requirement IDs and complements the accepted product decisions.
+- [ADR-012 — Migration to egui and Craft UI](26-adr-012-egui-craft-ui.md) records the accepted direction and proposed implementation and verification gates.
