@@ -6,7 +6,7 @@ This desktop preview captures virtual Classic CAN and CAN FD in RAM. Start a ses
 
 Download the appropriate artifact from a successful **Virtual desktop app** run in GitHub Actions. Extract its ZIP.
 
-- Windows x64: run the setup executable. It installs per user and creates a Start menu entry. Preview installers are unsigned.
+- Windows x64 with Direct3D 12: run the setup executable. It installs per user and creates a Start menu entry. Preview installers are unsigned.
 - Ubuntu 24.04 amd64: run `sudo apt install ./CANexus-Studio-0.1.0-linux-amd64.deb`, then open **CANexus Studio** from the desktop menu.
 
 ## Build and test from source

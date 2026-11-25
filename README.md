@@ -1,6 +1,10 @@
 # CANexus-Studio
 
-CANexus-Studio is a planned cross-platform, high-performance CAN engineering application.
+CANexus-Studio is a cross-platform CAN engineering application in development.
+
+## Virtual analyzer preview
+
+Install the Windows x64 or Ubuntu 24.04 amd64 package from the [desktop build workflow](https://github.com/JannisRln/CANexus-Studio/actions/workflows/craft-desktop-proof.yml). The preview includes virtual Classic CAN and CAN FD live capture, Start/Stop, a filterable Trace, and a frame inspector. See the [install and build guide](examples/craft-desktop/README.md).
 
 ## Product direction
 

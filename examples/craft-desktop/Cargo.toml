@@ -11,7 +11,12 @@ publish = false
 [dependencies]
 canexus-core = { path = "../../crates/canexus-core" }
 craft-ui = { git = "https://github.com/storytold/craft-libs.git", rev = "249a41bd9306a1b34330ac94e596a1a8b881378a", default-features = false }
+[target.'cfg(target_os = "linux")'.dependencies]
 eframe = { version = "=0.37.0", default-features = false, features = ["accesskit", "default_fonts", "glow", "wayland", "x11"] }
+
+[target.'cfg(windows)'.dependencies]
+eframe = { version = "=0.37.0", default-features = false, features = ["accesskit", "default_fonts", "wgpu_no_default_features"] }
+wgpu = { version = "30.0", default-features = false, features = ["dx12"] }
 
 
 [patch.crates-io]

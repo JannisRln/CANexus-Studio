@@ -64,15 +64,18 @@ jobs:
           $setup = Get-ChildItem dist -Filter "*-setup.exe" | Select-Object -First 1
           $destination = Join-Path $env:RUNNER_TEMP "CANexus Studio test"
           $install = Start-Process -FilePath $setup.FullName -ArgumentList "/VERYSILENT /SUPPRESSMSGBOXES /NORESTART /DIR=`"$destination`"" -Wait -PassThru
-          if ($install.ExitCode -ne 0) { exit $install.ExitCode }
+          if ($install.ExitCode -ne 0) { throw "Installer exited with code $($install.ExitCode)" }
           $app = Join-Path $destination "canexus-studio.exe"
           if (!(Test-Path $app)) { throw "The installer did not write the application executable" }
-          $smoke = Start-Process -FilePath $app -ArgumentList "--smoke" -PassThru
+          $stdout = Join-Path $env:RUNNER_TEMP "canexus-smoke-out.log"
+          $stderr = Join-Path $env:RUNNER_TEMP "canexus-smoke-err.log"
+          $smoke = Start-Process -FilePath $app -ArgumentList "--smoke" -RedirectStandardOutput $stdout -RedirectStandardError $stderr -PassThru
           if (!$smoke.WaitForExit(20000)) {
             Stop-Process -Id $smoke.Id -Force
             throw "The installed desktop application did not complete its live capture smoke test"
           }
-          if ($smoke.ExitCode -ne 0) { exit $smoke.ExitCode }
+          Get-Content $stdout, $stderr
+          if ($smoke.ExitCode -ne 0) { throw "Installed application exited with code $($smoke.ExitCode)" }
       - uses: actions/upload-artifact@v4
         with:
           name: CANexus-Studio-${{ matrix.os }}

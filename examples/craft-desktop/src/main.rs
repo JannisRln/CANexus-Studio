@@ -1,5 +1,3 @@
-#![cfg_attr(all(windows, not(debug_assertions)), windows_subsystem = "windows")]
-
 mod capture;
 
 use canexus_core::{
@@ -442,14 +440,25 @@ fn default_layout() -> Layout<Panel> {
     }
 }
 
+#[cfg(windows)]
+fn configure_renderer(options: &mut eframe::NativeOptions) {
+    let mut setup = eframe::egui_wgpu::WgpuSetupCreateNew::without_display_handle();
+    setup.instance_descriptor.backends = wgpu::Backends::DX12;
+    options.wgpu_options.wgpu_setup = eframe::egui_wgpu::WgpuSetup::CreateNew(setup);
+}
+
+#[cfg(not(windows))]
+fn configure_renderer(_: &mut eframe::NativeOptions) {}
+
 fn main() -> eframe::Result {
     let smoke = std::env::args().any(|arg| arg == "--smoke");
-    let options = eframe::NativeOptions {
+    let mut options = eframe::NativeOptions {
         viewport: egui::ViewportBuilder::default()
             .with_inner_size([1260.0, 760.0])
             .with_min_inner_size([740.0, 420.0]),
         ..Default::default()
     };
+    configure_renderer(&mut options);
     eframe::run_native(
         "CANexus Studio",
         options,
