@@ -23,6 +23,12 @@ The live baseline for the migration review is `f158f3e`. Its [exact-main CI](htt
 - Runtime handoff: DEV-028 passes one shared budget to its producers and exposes rejection counters. The budget covers inline batch storage and fixed metadata. Other pools, recorder reservations, live profile changes and process memory verification remain open.
 
 
+## Virtual analyzer desktop preview
+
+The `feat/virtual-desktop-app` branch builds an installable preview from the isolated Craft host. It connects the real headless capture session to bounded RAM Trace history and exposes Start, Stop, frame inspection, ID and format filters, column sorting, follow and independent freezing of the view. The worker and Trace projection are covered by local Rust tests. The package workflow builds an Ubuntu 24.04 amd64 package and a Windows x64 per-user installer, then runs an installed-binary capture smoke test.
+
+The preview scope is the virtual desktop workflow. The catalog and production cutover, native Wayland and accessibility evidence, and the wider analyzer requirements retain their existing backlog tasks. The example and installer instructions are in [the desktop preview guide](../../examples/craft-desktop/README.md).
+
 ## DEV-028 headless virtual capture sessions
 
 - Ownership: Core on `feat/DEV-028-capture-session`, based on DEV-023 merge `0b058dc`.

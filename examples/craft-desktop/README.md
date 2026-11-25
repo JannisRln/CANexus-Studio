@@ -1,16 +1,21 @@
-# DEV-024 Craft desktop proof
+# CANexus Studio virtual analyzer
 
-Run the isolated workspace with Rust 1.100.0.
+This desktop preview captures virtual Classic CAN and CAN FD in RAM. Start a session with **Start**, stop and drain it with **Stop**, and select a sequence in **Trace** to inspect its full payload. Sort with the column headings, filter by hexadecimal CAN ID or frame format, and toggle **Follow** to browse older rows. **Freeze view** holds the visible history while capture continues. The latest 512 rows are retained, and the status shows accepted frames, RAM admission rejections, receiver loss and history eviction separately.
+
+## Install
+
+Download the appropriate artifact from a successful **Virtual desktop app** run in GitHub Actions. Extract its ZIP.
+
+- Windows x64: run the setup executable. It installs per user and creates a Start menu entry. Preview installers are unsigned.
+- Ubuntu 24.04 amd64: run `sudo apt install ./CANexus-Studio-0.1.0-linux-amd64.deb`, then open **CANexus Studio** from the desktop menu.
+
+## Build and test from source
 
 ```sh
-cargo run --locked --manifest-path examples/craft-desktop/Cargo.toml
+cargo run --locked --manifest-path examples/craft-desktop/Cargo.toml --release
 cargo test --locked --manifest-path examples/craft-desktop/Cargo.toml
 ```
 
-The window contains a fixed CAN fixture table and a sampled plot in two Craft dock panels. It offers the egui theme control and an in-memory layout snapshot. The layout test checks the serialized split and panel identities. With `--smoke`, the window closes after drawing three UI frames.
+Use the repository's Rust 1.100.0 toolchain. Linux needs an X11 or Wayland desktop and a working OpenGL stack. The workflow builds native packages and runs `--smoke` on the packaged app. This mode starts virtual capture, checks Classic and FD frames, stops the session and exits. The normal app starts with capture stopped.
 
-The dependency experiment used the revision in [the ecosystem review](../../docs/development/CRAFT-ECOSYSTEM.md). The unpatched egui 0.37.0 build fails on Craft's `egui::ime_context`, `Style::right_to_left`, and `IMEOutput` calls. Using Storytold's pinned egui family with registry winit also fails, including at `winit::platform::latin_layout` and `WindowEvent::ImeResetCompleted`. The manifest pins the matched egui and winit forks and locks resolution for repeatable checks. It enables Glow, X11, Wayland, default egui fonts, and AccessKit.
-
-Rustfmt, Clippy, build, and the layout test passed locally on Linux. The local sandbox did not allow Xvfb to open its Unix listening socket. The isolated workflow checks Windows and Linux builds and runs an X11 window smoke test on Linux. Windows native interaction, Wayland launch, screen-reader use, release performance, and complete dependency license review are separate DEV-024 evidence. The fixture has no live Core connection.
-
-The pinned Craft, egui, and winit projects publish their license and notice files in their source repositories. See the [Craft notice](https://github.com/storytold/craft-libs/blob/249a41bd9306a1b34330ac94e596a1a8b881378a/NOTICE), [egui license information](https://github.com/storytold/egui/tree/6d518fc799681571963842f95b55a6b68431b15a), and [winit license information](https://github.com/storytold/winit/tree/a517b3846ee8457d84ee4975110bfda6797c44dc).
+This preview uses the pinned Craft, egui and winit family from DEV-024. The crate remains isolated from the legacy GUI workspace while native Windows interaction, Wayland and accessibility acceptance for the production shell are tracked separately. The preview scope is virtual analysis and RAM-only retention.

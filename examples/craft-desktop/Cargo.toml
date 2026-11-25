@@ -1,19 +1,18 @@
 [workspace]
 
 [package]
-name = "canexus-craft-desktop-proof"
-version = "0.0.0"
+name = "canexus-studio"
+version = "0.1.0"
 edition = "2021"
 rust-version = "1.100"
 license = "MIT"
 publish = false
 
 [dependencies]
-craft-ui = { git = "https://github.com/storytold/craft-libs.git", rev = "249a41bd9306a1b34330ac94e596a1a8b881378a", default-features = false, features = ["serde"] }
+canexus-core = { path = "../../crates/canexus-core" }
+craft-ui = { git = "https://github.com/storytold/craft-libs.git", rev = "249a41bd9306a1b34330ac94e596a1a8b881378a", default-features = false }
 eframe = { version = "=0.37.0", default-features = false, features = ["accesskit", "default_fonts", "glow", "wayland", "x11"] }
 
-serde = { version = "1", features = ["derive"] }
-serde_json = "1"
 
 [patch.crates-io]
 ecolor = { git = "https://github.com/storytold/egui.git", rev = "6d518fc799681571963842f95b55a6b68431b15a" }
