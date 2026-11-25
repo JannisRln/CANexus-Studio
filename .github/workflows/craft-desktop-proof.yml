@@ -1,0 +1,85 @@
+name: Virtual desktop app
+on:
+  pull_request:
+    paths:
+      - 'examples/craft-desktop/**'
+      - 'crates/canexus-core/**'
+      - '.github/workflows/craft-desktop-proof.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'examples/craft-desktop/**'
+      - 'crates/canexus-core/**'
+      - '.github/workflows/craft-desktop-proof.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  desktop:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, windows-latest]
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        working-directory: examples/craft-desktop
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: '1.100.0'
+          components: rustfmt, clippy
+      - name: Linux display and renderer dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y xvfb xauth libgl1-mesa-dri libegl1 libxkbcommon-dev libxkbcommon-x11-dev libwayland-dev libx11-dev
+      - run: cargo fmt --all -- --check
+      - run: cargo clippy --locked --all-targets -- -D warnings
+      - run: cargo test --locked
+      - run: cargo build --locked --release
+      - name: Build and smoke-test Linux package
+        if: runner.os == 'Linux'
+        run: |
+          python packaging/package.py linux target/release/canexus-studio dist
+          package=$(find dist -maxdepth 1 -name '*.deb' -print -quit)
+          dpkg-deb --info "$package"
+          dpkg-deb -x "$package" installed
+          xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 timeout 20 installed/usr/bin/canexus-studio --smoke
+      - name: Build and install Windows package
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
+          if (!(Test-Path $iscc)) {
+            choco install innosetup --yes --no-progress
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          }
+          python packaging/package.py windows target/release/canexus-studio.exe dist --iscc "$iscc"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          $setup = Get-ChildItem dist -Filter "*-setup.exe" | Select-Object -First 1
+          $destination = Join-Path $env:RUNNER_TEMP "CANexus Studio test"
+          $install = Start-Process -FilePath $setup.FullName -ArgumentList "/VERYSILENT /SUPPRESSMSGBOXES /NORESTART /DIR=`"$destination`"" -Wait -PassThru
+          if ($install.ExitCode -ne 0) { throw "Installer exited with code $($install.ExitCode)" }
+          $app = Join-Path $destination "canexus-studio.exe"
+          if (!(Test-Path $app)) { throw "The installer did not write the application executable" }
+          $stdout = Join-Path $env:RUNNER_TEMP "canexus-smoke-out.log"
+          $stderr = Join-Path $env:RUNNER_TEMP "canexus-smoke-err.log"
+          $smoke = Start-Process -FilePath $app -ArgumentList "--smoke" -RedirectStandardOutput $stdout -RedirectStandardError $stderr -PassThru
+          if (!$smoke.WaitForExit(20000)) {
+            Stop-Process -Id $smoke.Id -Force
+            throw "The installed desktop application did not complete its live capture smoke test"
+          }
+          Get-Content $stdout, $stderr
+          if ($smoke.ExitCode -ne 0) { throw "Installed application exited with code $($smoke.ExitCode)" }
+      - uses: actions/upload-artifact@v4
+        with:
+          name: CANexus-Studio-${{ matrix.os }}
+          path: |
+            examples/craft-desktop/dist/*.deb
+            examples/craft-desktop/dist/*-setup.exe
+          if-no-files-found: error

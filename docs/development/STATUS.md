@@ -1,7 +1,7 @@
 # Implementation status
 
 **Phase:** M1 — GUI migration architecture and ecosystem review prepared. DEV-024 is the next GUI task.
-**Active tasks:** DEV-024 (GUI proof) is ready.
+**Active tasks:** DEV-024 native and dependency proof is in progress on `spike/DEV-024-craft-desktop`, owned by this implementation session.
 **Latest verified baseline:** DEV-028 [PR #28](https://github.com/JannisRln/CANexus-Studio/pull/28) merged as `2bf56dd`. Its [main CI](https://github.com/JannisRln/CANexus-Studio/actions/runs/45432818018) passed all Windows/Linux jobs.
 **Last updated:** 2026-11-24
 **Branch policy:** Hybrid: PRs for substantial/risky/parallel tasks; direct main pushes allowed for small isolated changes
@@ -22,6 +22,12 @@ The live baseline for the migration review is `f158f3e`. Its [exact-main CI](htt
 - Local verification on Linux with Rust 1.100.0: workspace Rustfmt, Core/CLI Clippy with warnings denied, Core/CLI all-target build, 47 Rust tests and project-state validation passed.
 - Runtime handoff: DEV-028 passes one shared budget to its producers and exposes rejection counters. The budget covers inline batch storage and fixed metadata. Other pools, recorder reservations, live profile changes and process memory verification remain open.
 
+
+## Virtual analyzer desktop preview
+
+The `feat/virtual-desktop-app` branch builds an installable preview from the isolated Craft host. It connects the real headless capture session to bounded RAM Trace history and exposes Start, Stop, frame inspection, ID and format filters, column sorting, follow and independent freezing of the view. The worker and Trace projection are covered by local Rust tests. The package workflow builds an Ubuntu 24.04 amd64 package and a Windows x64 per-user installer, then runs an installed-binary capture smoke test.
+
+The preview scope is the virtual desktop workflow. The catalog and production cutover, native Wayland and accessibility evidence, and the wider analyzer requirements retain their existing backlog tasks. The example and installer instructions are in [the desktop preview guide](../../examples/craft-desktop/README.md).
 
 ## DEV-028 headless virtual capture sessions
 
